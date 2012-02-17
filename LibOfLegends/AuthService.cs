@@ -13,7 +13,11 @@ namespace LibOfLegends
     /// </summary>
     public class AuthService
     {
-        public static string API = "https://lq.eu.lol.riotgames.com/login-queue/rest/queue/";
+        public AuthService(RegionTag region)
+        {
+            _loginQueue = string.Format("https://lq.{0}.lol.riotgames.com/login-queue/rest/queue/", Regions.HostnameTags[region]);
+        }
+
 
         /// <summary>
         /// Authenticates with the REST queue service.
@@ -22,10 +26,10 @@ namespace LibOfLegends
         /// <param name="name">The username</param>
         /// <param name="password">The user's password</param>
         /// <returns></returns>
-        public static AuthResponse Authenticate(string name, string password)
+        public AuthResponse Authenticate(string name, string password)
         {
             // Authenticate with the queue service
-            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", API));
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", _loginQueue));
             req.Method = "POST";
 
             string postBody = string.Format("user={0},password={1}", name, password);
@@ -49,5 +53,11 @@ namespace LibOfLegends
 
             return ar;
         }
+
+        #region Configuration variables
+
+        private string _loginQueue;
+
+        #endregion
     }
 }

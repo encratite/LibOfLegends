@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 using FluorineFx;
 using FluorineFx.Net;
 
 using LibOfLegends;
+
+
 
 namespace LolineFX
 {
@@ -61,7 +61,8 @@ namespace LolineFX
 
     class Program
     {
-        private static RPCService _rpc = new RPCService();
+        private static RPCService _rpc = new RPCService(RegionTag.EUW);
+
         static void Main(string[] args)
         {
             _rpc.Connect(args[0], args[1], OnConnect );

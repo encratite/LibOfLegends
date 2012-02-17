@@ -10,14 +10,17 @@ using FluorineFx.IO;
 using FluorineFx.Configuration;
 using System.Net;
 using System.IO;
+
 using FluorineFx.Messaging;
 
 namespace LibOfLegends
 {
     public class RPCService
     {
-        public RPCService()
+        public RPCService(RegionTag region)
         {
+            _region = region;
+            _remotingServer = string.Format("rtmps://prod.{0}.lol.riotgames.com:2099/", Regions.HostnameTags[_region]);
         }
 
         public void Connect(string user, string password, ConnectSubscriber connectSubscriber)
@@ -31,8 +34,9 @@ namespace LibOfLegends
             // TODO: Run this in another thread and call back, this is a blocking operation.
             try
             {
-                // Get an Auth token (Dumb, assumes no queueing)
-                _authResponse = AuthService.Authenticate(_user, _password);
+                AuthService authService = new AuthService(_region);
+                // Get an Auth token (Dumb, assumes no queueing, blocks)
+                _authResponse = authService.Authenticate(_user, _password);
             }
             catch (WebException)
             {
@@ -159,22 +163,31 @@ namespace LibOfLegends
         private ConnectSubscriber _connectSubscriber = null;
 #endregion
 
-        #region Server constants
-        private const string _remotingServer = "rtmps://prod.eu.lol.riotgames.com:2099/loginService";
-        private const string _endpoint = "my-rtmps";
-        #endregion
-
         #region Client configuration
         private string _user;
         private string _password;
         #endregion
 
+        #region Server constants
+        
+        private const string _endpoint = "my-rtmps";
+
+        #endregion
+
+        #region Configuration variables
+
+        private string _remotingServer;
+        private RegionTag _region;
+        
+        #endregion
+
         #region Runtime variables
-        // Runtime variables
+
         public static NetConnection NetConnection { get { return _netConnection; } set { _netConnection = value; } }
         private static NetConnection _netConnection;
 
         private static AuthResponse _authResponse;
+
         #endregion
     }
 }
