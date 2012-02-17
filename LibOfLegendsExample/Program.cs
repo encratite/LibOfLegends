@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 using FluorineFx;
@@ -45,10 +46,12 @@ namespace LolineFX
             Console.WriteLine("\tGetRecentGames");
             Dictionary<string, object> dictionary = (Dictionary<string, object>)o;
 
-            RecentGames = new List<object>();
-
             foreach (object gameStat in (FluorineFx.AMF3.ArrayCollection)dictionary["gameStatistics"])
-                RecentGames.Add(gameStat);
+                RecentGames.Add((Dictionary<string, object>) gameStat);
+
+            // Convert this to a more strongly typed list and sort it by gameId.
+            RecentGames = RecentGames.ConvertAll(i => (Dictionary<string, object>)i);
+            RecentGames = RecentGames.OrderBy(g => g["gameId"]).ToList();
 
             // Signal that the games have been retrieved.
             lock (this)
@@ -58,7 +61,7 @@ namespace LolineFX
             Console.WriteLine("\t</GetRecentGames>");
         }
 
-        public List<object> RecentGames;
+        public List<Dictionary<string, object>> RecentGames = new List<Dictionary<string,object>>();
 
         private RPCService _service;
         private string _name;
@@ -107,11 +110,10 @@ namespace LolineFX
                     Monitor.Wait(c);
 
                 Console.WriteLine("Printing stuff now.");
-                foreach (object o in c.RecentGames)
+                foreach (Dictionary<string, object> d in c.RecentGames)
                 {
-                    Dictionary<string, object> dictionary = o as Dictionary<string, object>;
                     Console.WriteLine("\tNew match");
-                    foreach(KeyValuePair<string, object> kvp in dictionary)
+                    foreach(KeyValuePair<string, object> kvp in d)
                     {
                         if (kvp.Value is string || kvp.Value is int || kvp.Value is bool || kvp.Value is double)
                             Console.WriteLine("\t\t{0}, {1}", kvp.Key, kvp.Value);
