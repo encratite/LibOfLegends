@@ -12,6 +12,8 @@ using System.Net;
 using System.IO;
 
 using FluorineFx.Messaging;
+using com.riotgames.platform.clientfacade.domain;
+using com.riotgames.platform.login;
 
 namespace LibOfLegends
 {
@@ -107,7 +109,7 @@ namespace LibOfLegends
         /// 
         /// </summary>
         /// <param name="success"></param>
-        private void _OnLogin(com.riotgames.platform.login.Session session)
+        private void _OnLogin(Session session)
         {
             /// TODO: Convert this function to receive an arbitrary object and check for errors.
             
@@ -115,6 +117,9 @@ namespace LibOfLegends
             //  _connectSubscriber(false);
 
             Console.WriteLine(session.token);
+
+            // Store the session
+            _session = session;
 
             // Client header should be set to the token we received from REST authentication
             _netConnection.AddHeader(MessageBase.FlexClientIdHeader, false, session.token);
@@ -135,16 +140,15 @@ namespace LibOfLegends
 
         private void _OnFlexLogin(string am)
         {
-            /// TODO: Convert this function to receive an arbitrary object and check for errors if necessary.
-
-            _connectSubscriber(true);
+            if (am == "success")
+                _connectSubscriber(true);
+            else
+                _connectSubscriber(false);
         }
+
         #endregion
 
         #region RPCs
-
-        private const string _summonerService = "summonerService";
-        private const string _playerStatsService = "playerStatsService";
 
         public void GetSummonerByName(string name, Responder<object> responder)
         {
@@ -154,6 +158,11 @@ namespace LibOfLegends
         public void GetRecentGames(int accountID, Responder<object> responder)
         {
             _netConnection.Call(_endpoint, _playerStatsService, null, "getRecentGames", responder, new object[] { accountID });
+        }
+
+        private void _GetLoginDataPacketForUser(Responder<LoginDataPacket> responder)
+        {
+            _netConnection.Call(_endpoint, _clientFacadeService, null, "getLoginDataPacketForUser", responder, new object[] { });
         }
 
         #endregion
@@ -172,6 +181,10 @@ namespace LibOfLegends
         
         private const string _endpoint = "my-rtmps";
 
+        private const string _summonerService = "summonerService";
+        private const string _playerStatsService = "playerStatsService";
+        private const string _clientFacadeService = "clientFacadeService";
+
         #endregion
 
         #region Configuration variables
@@ -183,11 +196,12 @@ namespace LibOfLegends
 
         #region Runtime variables
 
-        public static NetConnection NetConnection { get { return _netConnection; } set { _netConnection = value; } }
-        private static NetConnection _netConnection;
+        public NetConnection NetConnection { get { return _netConnection; } set { _netConnection = value; } }
+        private NetConnection _netConnection;
 
-        private static AuthResponse _authResponse;
-
+        private AuthResponse _authResponse;
+        private Session _session;
+        private LoginDataPacket _loginDataPacket;
         #endregion
     }
 }
