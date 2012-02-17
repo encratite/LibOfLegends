@@ -32,7 +32,7 @@ namespace LibOfLegends
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", _loginQueue));
             req.Method = "POST";
 
-            string postBody = string.Format("user={0},password={1}", name, password);
+            string postBody = string.Format("user={0},password={1}", System.Web.HttpUtility.UrlEncode(name), System.Web.HttpUtility.UrlEncode(password));
 
             // WRONG! We don't take into account encoding here.
             // But it'll probably work, so write the body to the request.
