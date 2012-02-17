@@ -49,6 +49,12 @@ namespace LolineFX
 
             foreach (object gameStat in (FluorineFx.AMF3.ArrayCollection)dictionary["gameStatistics"])
                 RecentGames.Add(gameStat);
+
+            // Signal that the games have been retrieved.
+            lock (this)
+                Monitor.Pulse(this);
+
+
             Console.WriteLine("\t</GetRecentGames>");
         }
 
@@ -96,9 +102,9 @@ namespace LolineFX
                 GetRecentGamesByNameContext c = new GetRecentGamesByNameContext(_rpc, summoner);
                 c.Retrieve();
 
-                // Wait some time. This should be replaced with something more sensible!
-                // Like the monitor code I deleted because I was convinced it was broken.
-                System.Threading.Thread.Sleep(10000);
+                // Wait for the games to be retrieved.
+                lock (c)
+                    Monitor.Wait(c);
 
                 Console.WriteLine("Printing stuff now.");
                 foreach (object o in c.RecentGames)
