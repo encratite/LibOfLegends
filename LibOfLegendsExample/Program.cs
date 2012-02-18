@@ -16,9 +16,15 @@ namespace LolineFX
     {
         private static RPCService _rpc = new RPCService(RegionTag.EUW);
 
-        static void Main(string[] args)
+        static void Main(string[] arguments)
         {
-            _rpc.Connect(args[0], args[1], OnConnect);
+			if (arguments.Length != 2)
+			{
+				System.Console.WriteLine("Usage:");
+				System.Console.WriteLine(Environment.GetCommandLineArgs()[0] + " <user> <password>");
+				return;
+			}
+            _rpc.Connect(arguments[0], arguments[1], OnConnect);
 
             // Eugh.
             while(true)
