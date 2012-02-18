@@ -17,28 +17,50 @@ using com.riotgames.platform.login;
 
 namespace LibOfLegends
 {
+	public class RegionData
+	{
+		public string LoginQueueURL;
+		public string RPCURL;
+
+		public RegionData(string loginQueueURL, string rpcURL)
+		{
+			LoginQueueURL = loginQueueURL;
+			RPCURL = rpcURL;
+		}
+	}
+
+	public class ConnectionData
+	{
+		public RegionData RegionData;
+
+		public string User;
+		public string Password;
+
+		public ConnectionData(RegionData regionData, string user, string password)
+		{
+			RegionData = regionData;
+			User = user;
+			Password = password;
+		}
+	}
+
     public class RPCService
     {
-        public RPCService(RegionTag region)
+        public RPCService(ConnectionData connectionData)
         {
-            _region = region;
-            _remotingServer = string.Format("rtmps://prod.{0}.lol.riotgames.com:2099/", Regions.HostnameTags[_region]);
+			_connectionData = connectionData;
         }
 
-        public void Connect(string user, string password, ConnectSubscriber connectSubscriber)
+        public void Connect(ConnectSubscriber connectSubscriber)
         {
-            /// TODO: Make these safe strings and delete as soon as faesible.
-            _user = user;
-            _password = password;
-
             _connectSubscriber = connectSubscriber;
 
             // TODO: Run this in another thread and call back, this is a blocking operation.
             try
             {
-                AuthService authService = new AuthService(_region);
+                AuthService authService = new AuthService(_connectionData.RegionData.LoginQueueURL);
                 // Get an Auth token (Dumb, assumes no queueing, blocks)
-                _authResponse = authService.Authenticate(_user, _password);
+				_authResponse = authService.Authenticate(_connectionData.User, _connectionData.Password);
             }
             catch (WebException)
             {
@@ -57,7 +79,7 @@ namespace LibOfLegends
             _netConnection.NetStatus += new NetStatusHandler(netConnection_NetStatus);
 
             // Connect to the rtmps server
-            _netConnection.Connect(_remotingServer);
+            _netConnection.Connect(_connectionData.RegionData.RPCURL);
         }
 
 
@@ -85,8 +107,8 @@ namespace LibOfLegends
             ad.oldPassword = null;
             ad.partnerCredentials = null;
             ad.securityAnswer = null;
-            ad.password = _password;
-            ad.username = _user;
+            ad.password = _connectionData.Password;
+			ad.username = _connectionData.User;
 
             // Add some default headers
             _netConnection.AddHeader(MessageBase.RequestTimeoutHeader, false, 60);
@@ -102,7 +124,6 @@ namespace LibOfLegends
             /// TODO: Setup a delegate to call here
         }
         #endregion
-
 
         #region LoL and Flex login
         /// <summary>
@@ -127,7 +148,7 @@ namespace LibOfLegends
             // Create the command message which will do flex authentication
             CommandMessage m = new CommandMessage();
             m.operation = CommandMessage.LoginOperation;
-            m.body = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(_user + ":" + session.token));
+			m.body = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(_connectionData.User + ":" + session.token));
             m.clientId = _netConnection.ClientId;
             m.correlationId = null;
             m.destination = "";
@@ -192,11 +213,6 @@ namespace LibOfLegends
         private ConnectSubscriber _connectSubscriber = null;
 #endregion
 
-        #region Client configuration
-        private string _user;
-        private string _password;
-        #endregion
-
         #region Server constants
         
         private const string _endpoint = "my-rtmps";
@@ -209,8 +225,7 @@ namespace LibOfLegends
 
         #region Configuration variables
 
-        private string _remotingServer;
-        private RegionTag _region;
+		private ConnectionData _connectionData;
         
         #endregion
 

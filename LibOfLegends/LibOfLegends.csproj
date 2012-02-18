@@ -62,7 +62,6 @@
     <Compile Include="com.riotgames.platform\systemstate\ClientSystemStatesNotification.cs" />
     <Compile Include="LegendaryConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Regions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="services-config.xml" />

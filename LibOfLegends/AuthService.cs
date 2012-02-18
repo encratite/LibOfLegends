@@ -3,9 +3,6 @@ using System.IO;
 using System.Net;
 using System.Web.Script.Serialization;
 
-
-
-
 namespace LibOfLegends
 {
     /// <summary>
@@ -13,11 +10,10 @@ namespace LibOfLegends
     /// </summary>
     public class AuthService
     {
-        public AuthService(RegionTag region)
+        public AuthService(string loginQueueURL)
         {
-            _loginQueue = string.Format("https://lq.{0}.lol.riotgames.com/login-queue/rest/queue/", Regions.HostnameTags[region]);
+			_loginQueueURL = loginQueueURL;
         }
-
 
         /// <summary>
         /// Authenticates with the REST queue service.
@@ -29,7 +25,7 @@ namespace LibOfLegends
         public AuthResponse Authenticate(string name, string password)
         {
             // Authenticate with the queue service
-            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", _loginQueue));
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", _loginQueueURL));
             req.Method = "POST";
 
             string postBody = string.Format("user={0},password={1}", System.Web.HttpUtility.UrlEncode(name), System.Web.HttpUtility.UrlEncode(password));
@@ -56,7 +52,7 @@ namespace LibOfLegends
 
         #region Configuration variables
 
-        private string _loginQueue;
+        private string _loginQueueURL;
 
         #endregion
     }

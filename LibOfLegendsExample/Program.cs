@@ -8,23 +8,54 @@ using FluorineFx.Net;
 
 using LibOfLegends;
 
-
-
-namespace LolineFX
+namespace LibOfLegendsExample
 {
     class Program
     {
-        private static RPCService _rpc = new RPCService(RegionTag.EUW);
+		private const string ConfigurationFile = "Configuration.xml";
+        private static RPCService RPC;
 
         static void Main(string[] arguments)
         {
-			if (arguments.Length != 2)
+			Configuration configuration;
+			Serialiser<Configuration> serialiser = new Serialiser<Configuration>(ConfigurationFile);
+			configuration = serialiser.Load();
+			if (arguments.Length != 3)
 			{
 				System.Console.WriteLine("Usage:");
-				System.Console.WriteLine(Environment.GetCommandLineArgs()[0] + " <user> <password>");
+				System.Console.WriteLine(Environment.GetCommandLineArgs()[0] + " <server> <user> <password>");
+				System.Console.Write("Servers available:");
+				foreach (ServerProfile profile in configuration.ServerProfiles)
+					System.Console.Write(" " + profile.Abbreviation);
+				System.Console.WriteLine("");
 				return;
 			}
-            _rpc.Connect(arguments[0], arguments[1], OnConnect);
+
+			string server = arguments[0];
+			string user = arguments[1];
+			string password = arguments[2];
+
+			ServerProfile chosenProfile = null;
+			foreach (ServerProfile profile in configuration.ServerProfiles)
+			{
+				if (profile.Abbreviation.ToLower() == server.ToLower())
+				{
+					chosenProfile = profile;
+					break;
+				}
+			}
+
+			if (chosenProfile == null)
+			{
+				System.Console.WriteLine("Unable to find server profile \"" + server + "\"");
+				return;
+			}
+
+			RegionData regionData = new RegionData(chosenProfile.LoginQueueURL, chosenProfile.RPCURL);
+			ConnectionData connectionData = new ConnectionData(regionData, user, password);
+
+			RPC = new RPCService(connectionData);
+            RPC.Connect(OnConnect);
 
             // Eugh.
             while(true)
@@ -53,18 +84,17 @@ namespace LolineFX
             while (true)
             {
                 Console.Write("[Legendary Prompt] ");
-                string command = Console.ReadLine();
+                string commandString = Console.ReadLine();
 
                 try
                 {
+                    Command command = new Command(commandString);
 
-                    Command c = new Command(command);
-
-                    switch (c.Name)
+                    switch (command.Name)
                     {
                         case "GetRecentGamesByName":
                         {
-                            GetRecentGamesByNameContext games = new GetRecentGamesByNameContext(_rpc, c.Arguments[0]);
+                            GetRecentGamesByNameContext games = new GetRecentGamesByNameContext(RPC, command.Arguments[0]);
                             games.Execute();
 
                             Console.WriteLine(games);
@@ -72,7 +102,7 @@ namespace LolineFX
                         }
                         case "GetRecentGames":
                         {
-                            GetRecentGamesContext games = new GetRecentGamesContext(_rpc, int.Parse(c.Arguments[0]));
+                            GetRecentGamesContext games = new GetRecentGamesContext(RPC, int.Parse(command.Arguments[0]));
                             games.Execute();
 
                             Console.WriteLine(games);
@@ -80,7 +110,7 @@ namespace LolineFX
                         }
                         case "GetSummonerByName":
                         {
-                            GetSummonerByNameContext name = new GetSummonerByNameContext(_rpc, c.Arguments[0]);
+                            GetSummonerByNameContext name = new GetSummonerByNameContext(RPC, command.Arguments[0]);
                             name.Execute();
 
                             Console.WriteLine(name);
@@ -88,7 +118,7 @@ namespace LolineFX
                         }
                         case "GetAllPublicSummonerDataByAccount":
                         {
-                            GetAllPublicSummonerDataByAccountContext publicData = new GetAllPublicSummonerDataByAccountContext(_rpc, int.Parse(c.Arguments[0]));
+                            GetAllPublicSummonerDataByAccountContext publicData = new GetAllPublicSummonerDataByAccountContext(RPC, int.Parse(command.Arguments[0]));
                             publicData.Execute();
 
                             Console.WriteLine(publicData);
@@ -96,7 +126,7 @@ namespace LolineFX
                         }
                         case "GetAllSummonerDataByAccount":
                         {
-                            GetAllSummonerDataByAccountContext data = new GetAllSummonerDataByAccountContext(_rpc, int.Parse(c.Arguments[0]));
+                            GetAllSummonerDataByAccountContext data = new GetAllSummonerDataByAccountContext(RPC, int.Parse(command.Arguments[0]));
                             data.Execute();
 
                             Console.WriteLine(data);
@@ -104,7 +134,7 @@ namespace LolineFX
                         }
                         case "RetrievePlayerStatsByAccountID":
                         {
-                            RetrievePlayerStatsByAccountIdContext playerStats = new RetrievePlayerStatsByAccountIdContext(_rpc, int.Parse(c.Arguments[0]), c.Arguments[1]);
+                            RetrievePlayerStatsByAccountIdContext playerStats = new RetrievePlayerStatsByAccountIdContext(RPC, int.Parse(command.Arguments[0]), command.Arguments[1]);
                             playerStats.Execute();
 
                             Console.WriteLine(playerStats);
@@ -112,7 +142,7 @@ namespace LolineFX
                         }
                         case "GetAggregatedStats":
                         {
-                            GetAggregatedStatsContext aggregatedStats = new GetAggregatedStatsContext(_rpc, int.Parse(c.Arguments[0]), c.Arguments[1], c.Arguments[2]);
+                            GetAggregatedStatsContext aggregatedStats = new GetAggregatedStatsContext(RPC, int.Parse(command.Arguments[0]), command.Arguments[1], command.Arguments[2]);
                             aggregatedStats.Execute();
 
                             Console.WriteLine(aggregatedStats);

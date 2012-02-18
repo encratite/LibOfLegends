@@ -54,6 +54,8 @@
   <ItemGroup>
     <Compile Include="Command.cs" />
     <Compile Include="Contexts.cs" />
+    <Compile Include="Serialiser.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

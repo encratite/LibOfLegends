@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 
-namespace LibOfLegends
+namespace LibOfLegendsExample
 {
     class Utility
     {

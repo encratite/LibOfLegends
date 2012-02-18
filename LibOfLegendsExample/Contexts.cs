@@ -6,7 +6,9 @@ using System.Threading;
 
 using FluorineFx.Net;
 
-namespace LibOfLegends
+using LibOfLegends;
+
+namespace LibOfLegendsExample
 {
     public abstract class ExecutionContext
     {
