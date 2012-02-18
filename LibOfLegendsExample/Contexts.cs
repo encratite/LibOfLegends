@@ -49,8 +49,14 @@ namespace LibOfLegends
 
         private void _OnGetSummonerByName(object o)
         {
-            Dictionary<string, object> dictionary = (Dictionary<string, object>)o;
-            AccountID = Convert.ToInt32(dictionary["acctId"]);
+            if (o != null)
+            {
+                Dictionary<string, object> dictionary = (Dictionary<string, object>)o;
+                AccountID = Convert.ToInt32(dictionary["acctId"]);
+            }
+            else
+                AccountID = -1;
+
             _Signal();
         }
 
