@@ -43,7 +43,7 @@ namespace LibOfLegendsExample
 					System.Console.Write(" " + profile.Abbreviation);
 				System.Console.WriteLine("");
 				return;
-			}
+			}			
 
 			string server = arguments[0];
 			string user = arguments[1];
@@ -65,8 +65,8 @@ namespace LibOfLegendsExample
 				return;
 			}
 
-			RegionData regionData = new RegionData(chosenProfile.LoginQueueURL, chosenProfile.RPCURL);
-			ConnectionData connectionData = new ConnectionData(regionData, user, password);
+			RegionProfile regionData = new RegionProfile(chosenProfile.LoginQueueURL, chosenProfile.RPCURL);
+			ConnectionProfile connectionData = new ConnectionProfile(configuration.Authentication, regionData, user, password);
 
 			RPC = new RPCService(connectionData);
             RPC.Connect(OnConnect);

@@ -17,28 +17,38 @@ using com.riotgames.platform.login;
 
 namespace LibOfLegends
 {
-	public class RegionData
+	public class RegionProfile
 	{
 		public string LoginQueueURL;
 		public string RPCURL;
 
-		public RegionData(string loginQueueURL, string rpcURL)
+		public RegionProfile(string loginQueueURL, string rpcURL)
 		{
 			LoginQueueURL = loginQueueURL;
 			RPCURL = rpcURL;
 		}
 	}
 
-	public class ConnectionData
+	public class AuthenticationProfile
 	{
-		public RegionData RegionData;
+		public string ClientVersion;
+		public string Domain;
+		public string IPAddress;
+		public string Locale;
+	}
+
+	public class ConnectionProfile
+	{
+		public AuthenticationProfile Authentication;
+		public RegionProfile Region;
 
 		public string User;
 		public string Password;
 
-		public ConnectionData(RegionData regionData, string user, string password)
+		public ConnectionProfile(AuthenticationProfile authentication, RegionProfile region, string user, string password)
 		{
-			RegionData = regionData;
+			Authentication = authentication;
+			Region = region;
 			User = user;
 			Password = password;
 		}
@@ -46,7 +56,7 @@ namespace LibOfLegends
 
     public class RPCService
     {
-        public RPCService(ConnectionData connectionData)
+        public RPCService(ConnectionProfile connectionData)
         {
 			_connectionData = connectionData;
         }
@@ -58,7 +68,7 @@ namespace LibOfLegends
             // TODO: Run this in another thread and call back, this is a blocking operation.
             try
             {
-                AuthService authService = new AuthService(_connectionData.RegionData.LoginQueueURL);
+                AuthService authService = new AuthService(_connectionData.Region.LoginQueueURL);
                 // Get an Auth token (Dumb, assumes no queueing, blocks)
 				_authResponse = authService.Authenticate(_connectionData.User, _connectionData.Password);
             }
@@ -79,7 +89,7 @@ namespace LibOfLegends
             _netConnection.NetStatus += new NetStatusHandler(netConnection_NetStatus);
 
             // Connect to the rtmps server
-            _netConnection.Connect(_connectionData.RegionData.RPCURL);
+            _netConnection.Connect(_connectionData.Region.RPCURL);
         }
 
 
@@ -97,13 +107,10 @@ namespace LibOfLegends
             com.riotgames.platform.login.AuthenticationCredentials ad = new com.riotgames.platform.login.AuthenticationCredentials();
             ad.authToken = _authResponse.Token;
 
-            // Older versions
-            //ad.clientVersion = "1.50.11_12_20_17_53";
-            //ad.clientVersion = "1.52.12_02_07_16_03";
-            ad.clientVersion = "1.54.12_02_14_13_07";
-            ad.domain = "lolclient.lol.riotgames.com";
-            ad.ipAddress = "10.0.0.1";
-            ad.locale = "en_GB";
+            ad.clientVersion = _connectionData.Authentication.ClientVersion;
+            ad.domain = _connectionData.Authentication.Domain;
+            ad.ipAddress = _connectionData.Authentication.IPAddress;
+            ad.locale = _connectionData.Authentication.Locale;
             ad.oldPassword = null;
             ad.partnerCredentials = null;
             ad.securityAnswer = null;
@@ -225,7 +232,7 @@ namespace LibOfLegends
 
         #region Configuration variables
 
-		private ConnectionData _connectionData;
+		private ConnectionProfile _connectionData;
         
         #endregion
 
