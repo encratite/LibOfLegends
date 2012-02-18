@@ -160,6 +160,16 @@ namespace LibOfLegends
             _netConnection.Call(_endpoint, _playerStatsService, null, "getRecentGames", responder, new object[] { accountID });
         }
 
+        public void GetAllPublicSummonerDataByAccount(int accountID, Responder<object> responder)
+        {
+            _netConnection.Call(_endpoint, _summonerService, null, "getAllPublicSummonerDataByAccount", responder, new object[] { accountID });
+        }
+
+        public void GetAllSummonerDataByAccount(int accountID, Responder<object> responder)
+        {
+            _netConnection.Call(_endpoint, _summonerService, null, "getAllSummonerDataByAccount", responder, new object[] { accountID });
+        }
+
         private void _GetLoginDataPacketForUser(Responder<LoginDataPacket> responder)
         {
             _netConnection.Call(_endpoint, _clientFacadeService, null, "getLoginDataPacketForUser", responder, new object[] { });

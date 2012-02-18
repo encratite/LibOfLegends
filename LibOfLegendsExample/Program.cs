@@ -12,6 +12,7 @@ using LibOfLegends;
 
 namespace LolineFX
 {
+    #region Command Object
     public class ArgumentListException : ApplicationException
     {
     }
@@ -43,12 +44,15 @@ namespace LolineFX
         {
             {"GetSummonerByName", 1},
             {"GetRecentGames", 1},
+            {"GetAllPublicSummonerDataByAccount", 1},
+            {"GetAllSummonerDataByAccount", 1},
             {"GetRecentGamesByName", 1}
         };
 
         public string Name;
         public List<string> Arguments;
     }
+    #endregion
 
     #region RPC Contexts
 
@@ -154,6 +158,66 @@ namespace LolineFX
 
         public List<Dictionary<string, object>> RecentGames = new List<Dictionary<string, object>>();
 
+        private int _accountID;
+    }
+
+    public class GetAllPublicSummonerDataByAccountContext : ExecutionContext
+    {
+        public GetAllPublicSummonerDataByAccountContext(RPCService service, int accountID)
+            : base(service)
+        {
+            SummonerData = null;
+            _accountID = accountID;
+        }
+
+        public override void Execute()
+        {
+            _service.GetAllPublicSummonerDataByAccount(_accountID, new Responder<object>(_OnGetAllPublicSummonerData));
+            _Wait();
+        }
+
+        private void _OnGetAllPublicSummonerData(object o)
+        {
+            SummonerData = o as Dictionary<string, object>;
+            _Signal();
+        }
+
+        public override string ToString()
+        {
+            return SummonerData.PrettyPrint();
+        }
+
+        Dictionary<string, object> SummonerData;
+        private int _accountID;
+    }
+
+    public class GetAllSummonerDataByAccountContext : ExecutionContext
+    {
+        public GetAllSummonerDataByAccountContext(RPCService service, int accountID)
+            : base(service)
+        {
+            SummonerData = null;
+            _accountID = accountID;
+        }
+
+        public override void Execute()
+        {
+            _service.GetAllSummonerDataByAccount(_accountID, new Responder<object>(_OnGetAllSummonerData));
+            _Wait();
+        }
+
+        private void _OnGetAllSummonerData(object o)
+        {
+            SummonerData = o as Dictionary<string, object>;
+            _Signal();
+        }
+
+        public override string ToString()
+        {
+            return SummonerData.PrettyPrint();
+        }
+
+        Dictionary<string, object> SummonerData;
         private int _accountID;
     }
 
@@ -267,6 +331,22 @@ namespace LolineFX
                             Console.WriteLine(name);
                             break;
                         }
+                        case "GetAllPublicSummonerDataByAccount":
+                        {
+                            GetAllPublicSummonerDataByAccountContext publicData = new GetAllPublicSummonerDataByAccountContext(_rpc, int.Parse(c.Arguments[0]));
+                            publicData.Execute();
+
+                            Console.WriteLine(publicData);
+                            break;
+                        }
+                        case "GetAllSummonerDataByAccount":
+                        {
+                            GetAllSummonerDataByAccountContext data = new GetAllSummonerDataByAccountContext(_rpc, int.Parse(c.Arguments[0]));
+                            data.Execute();
+
+                            Console.WriteLine(data);
+                            break;
+                        }
                         default:
                         {
                             Console.WriteLine("Unrecognised command, type ? or help for a list of commands");
@@ -277,6 +357,10 @@ namespace LolineFX
                 catch (Exception e)
                 {
                     Console.WriteLine("Error executing command");
+                    Console.WriteLine("------------------------------------------------");
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine("------------------------------------------------");
                 }
                 Console.WriteLine();
             }
