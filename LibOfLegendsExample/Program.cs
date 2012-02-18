@@ -112,6 +112,12 @@ namespace LolineFX
                             Console.WriteLine(aggregatedStats);
                             break;
                         }
+                        case "?":
+                        case "help":
+                        {
+                            Command.PrintHelp();
+                            break;
+                        }
                         default:
                         {
                             Console.WriteLine("Unrecognised command, type ? or help for a list of commands");
