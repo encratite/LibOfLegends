@@ -18,8 +18,22 @@ namespace LibOfLegendsExample
         static void Main(string[] arguments)
         {
 			Configuration configuration;
-			Serialiser<Configuration> serialiser = new Serialiser<Configuration>(ConfigurationFile);
-			configuration = serialiser.Load();
+			try
+			{
+				Serialiser<Configuration> serialiser = new Serialiser<Configuration>(ConfigurationFile);
+				configuration = serialiser.Load();
+			}
+			catch (System.IO.FileNotFoundException)
+			{
+				System.Console.WriteLine("Unable to load configuration file \"" + ConfigurationFile + "\"");
+				return;
+			}
+			catch (System.InvalidOperationException)
+			{
+				System.Console.WriteLine("Malformed configuration file");
+				return;
+			}
+
 			if (arguments.Length != 3)
 			{
 				System.Console.WriteLine("Usage:");
@@ -156,17 +170,17 @@ namespace LibOfLegendsExample
                         }
                         default:
                         {
-                            Console.WriteLine("Unrecognised command, type ? or help for a list of commands");
+                            Console.WriteLine("Unrecognised command, type \"?\" or \"help\" for a list of commands");
                             break;
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception exception)
                 {
                     Console.WriteLine("Error executing command");
                     Console.WriteLine("------------------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine(exception.Message);
+                    Console.WriteLine(exception.StackTrace);
                     Console.WriteLine("------------------------------------------------");
                 }
                 Console.WriteLine();
