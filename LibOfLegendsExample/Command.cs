@@ -24,17 +24,17 @@ namespace LibOfLegendsExample
 
             Name = parts[0];
 
-            if (!ExpectedArgs.ContainsKey(Name))
+            if (!ExpectedArguments.ContainsKey(Name))
                 throw new InvalidCommandException();
 
             Arguments = new List<string>();
             if (parts.Length > 1)
                 Arguments = Utility.CommandLineToArgs(parts[1]).ToList();
-            if (Arguments.Count != ExpectedArgs[Name])
+            if (Arguments.Count != ExpectedArguments[Name])
                 throw new InvalidCommandException();
         }
 
-        public static Dictionary<string, int> ExpectedArgs = new Dictionary<string, int>()
+        public static Dictionary<string, int> ExpectedArguments = new Dictionary<string, int>()
         {
             {"GetSummonerByName", 1},
             {"GetRecentGames", 1},

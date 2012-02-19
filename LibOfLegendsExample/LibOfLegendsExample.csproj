@@ -53,7 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
+    <Compile Include="CommandHandler.cs" />
     <Compile Include="Contexts.cs" />
+    <Compile Include="LegendaryPrompt.cs" />
     <Compile Include="Serialiser.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Utility.cs" />
