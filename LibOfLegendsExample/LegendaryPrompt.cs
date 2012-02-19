@@ -13,8 +13,9 @@ namespace LibOfLegendsExample
 	class LegendaryPrompt
 	{
 		RPCService RPC;
-		AutoResetEvent TerminationEvent;
+		AutoResetEvent OnConnectEvent;
 		AutoResetEvent CommandEvent;
+		bool ConnectionSuccess;
 
 		public LegendaryPrompt(ConnectionProfile connectionData)
 		{
@@ -24,23 +25,22 @@ namespace LibOfLegendsExample
 
 		public void Run()
 		{
-			TerminationEvent = new AutoResetEvent(false);
+			OnConnectEvent = new AutoResetEvent(false);
+			ConnectionSuccess = false;
 			Console.WriteLine("Connecting to server...");
 			RPC.Connect(OnConnect);
-			TerminationEvent.WaitOne();
+			OnConnectEvent.WaitOne();
+			PerformQueries();
 		}
 
 		void OnConnect(bool connected)
 		{
+			ConnectionSuccess = connected;
 			if (connected)
-			{
 				Console.WriteLine("Successfully connected to the server.");
-				PerformQueries();
-			}
 			else
 				Console.WriteLine("There was an error connecting to the server.");
-
-			TerminationEvent.Set();
+			OnConnectEvent.Set();
 		}
 
 		void ProcessLine(string line)
