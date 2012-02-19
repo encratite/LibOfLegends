@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthenticationProfile.cs" />
     <Compile Include="AuthResponse.cs" />
     <Compile Include="AuthService.cs" />
     <Compile Include="com.riotgames.platform\clientfacade.domain\LoginDatapacket.cs" />
@@ -60,8 +61,11 @@
     <Compile Include="com.riotgames.platform\login\Login.cs" />
     <Compile Include="com.riotgames.platform\statistics\Statistics.cs" />
     <Compile Include="com.riotgames.platform\systemstate\ClientSystemStatesNotification.cs" />
+    <Compile Include="ConnectionProfile.cs" />
+    <Compile Include="InternalCallContext.cs" />
     <Compile Include="LegendaryConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegionProfile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="services-config.xml" />

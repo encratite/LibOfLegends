@@ -1,4 +1,4 @@
-
+*.user
 *.suo
 /LibOfLegends/obj
 /LibOfLegends/bin

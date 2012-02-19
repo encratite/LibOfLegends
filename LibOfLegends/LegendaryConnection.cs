@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Net;
+using System.IO;
+using System.Threading;
 
 using FluorineFx;
 using FluorineFx.Net;
@@ -8,52 +11,13 @@ using FluorineFx.Messaging.Rtmp;
 using FluorineFx.AMF3;
 using FluorineFx.IO;
 using FluorineFx.Configuration;
-using System.Net;
-using System.IO;
-
 using FluorineFx.Messaging;
+
 using com.riotgames.platform.clientfacade.domain;
 using com.riotgames.platform.login;
 
 namespace LibOfLegends
 {
-	public class RegionProfile
-	{
-		public string LoginQueueURL;
-		public string RPCURL;
-
-		public RegionProfile(string loginQueueURL, string rpcURL)
-		{
-			LoginQueueURL = loginQueueURL;
-			RPCURL = rpcURL;
-		}
-	}
-
-	public class AuthenticationProfile
-	{
-		public string ClientVersion;
-		public string Domain;
-		public string IPAddress;
-		public string Locale;
-	}
-
-	public class ConnectionProfile
-	{
-		public AuthenticationProfile Authentication;
-		public RegionProfile Region;
-
-		public string User;
-		public string Password;
-
-		public ConnectionProfile(AuthenticationProfile authentication, RegionProfile region, string user, string password)
-		{
-			Authentication = authentication;
-			Region = region;
-			User = user;
-			Password = password;
-		}
-	}
-
     public class RPCService
     {
         public RPCService(ConnectionProfile connectionData)
@@ -104,25 +68,25 @@ namespace LibOfLegends
             /// TODO: Check if there was a problem connecting
 
             // Now that we are connected call the remote login function
-            com.riotgames.platform.login.AuthenticationCredentials ad = new com.riotgames.platform.login.AuthenticationCredentials();
-            ad.authToken = _authResponse.Token;
+            com.riotgames.platform.login.AuthenticationCredentials authenticationCredentials = new com.riotgames.platform.login.AuthenticationCredentials();
+            authenticationCredentials.authToken = _authResponse.Token;
 
-            ad.clientVersion = _connectionData.Authentication.ClientVersion;
-            ad.domain = _connectionData.Authentication.Domain;
-            ad.ipAddress = _connectionData.Authentication.IPAddress;
-            ad.locale = _connectionData.Authentication.Locale;
-            ad.oldPassword = null;
-            ad.partnerCredentials = null;
-            ad.securityAnswer = null;
-            ad.password = _connectionData.Password;
-			ad.username = _connectionData.User;
+            authenticationCredentials.clientVersion = _connectionData.Authentication.ClientVersion;
+            authenticationCredentials.domain = _connectionData.Authentication.Domain;
+            authenticationCredentials.ipAddress = _connectionData.Authentication.IPAddress;
+            authenticationCredentials.locale = _connectionData.Authentication.Locale;
+            authenticationCredentials.oldPassword = null;
+            authenticationCredentials.partnerCredentials = null;
+            authenticationCredentials.securityAnswer = null;
+            authenticationCredentials.password = _connectionData.Password;
+			authenticationCredentials.username = _connectionData.User;
 
             // Add some default headers
             _netConnection.AddHeader(MessageBase.RequestTimeoutHeader, false, 60);
             _netConnection.AddHeader(MessageBase.FlexClientIdHeader, false, Guid.NewGuid().ToString());
             _netConnection.AddHeader(MessageBase.EndpointHeader, false, _endpoint);
 
-            _netConnection.Call(_endpoint, "loginService", null, "login", new Responder<com.riotgames.platform.login.Session>(_OnLogin), ad);
+            _netConnection.Call(_endpoint, "loginService", null, "login", new Responder<com.riotgames.platform.login.Session>(_OnLogin), authenticationCredentials);
         }
 
         void netConnection_NetStatus(object sender, NetStatusEventArgs e)
@@ -164,9 +128,9 @@ namespace LibOfLegends
             _netConnection.Call("auth", new Responder<string>(_OnFlexLogin), m);
         }
 
-        private void _OnFlexLogin(string am)
+        private void _OnFlexLogin(string message)
         {
-            if (am == "success")
+            if (message == "success")
                 _connectSubscriber(true);
             else
                 _connectSubscriber(false);
@@ -174,47 +138,96 @@ namespace LibOfLegends
 
         #endregion
 
-        #region RPCs
+        #region Internal RPC
 
-        public void GetSummonerByName(string name, Responder<object> responder)
+		private void GetSummonerByNameInternal(Responder<object> responder, object[] arguments)
+		{
+			_netConnection.Call(_endpoint, _summonerService, null, "getSummonerByName", responder, arguments);
+		}
+
+		private void GetRecentGamesInternal(Responder<object> responder, object[] arguments)
         {
-            _netConnection.Call(_endpoint, _summonerService, null, "getSummonerByName", responder, new object[] { name });
+            _netConnection.Call(_endpoint, _playerStatsService, null, "getRecentGames", responder, arguments);
         }
 
-        public void GetRecentGames(int accountID, Responder<object> responder)
+		public void GetAllPublicSummonerDataByAccountInternal(Responder<object> responder, object[] arguments)
         {
-            _netConnection.Call(_endpoint, _playerStatsService, null, "getRecentGames", responder, new object[] { accountID });
+            _netConnection.Call(_endpoint, _summonerService, null, "getAllPublicSummonerDataByAccount", responder, arguments);
         }
 
-        public void GetAllPublicSummonerDataByAccount(int accountID, Responder<object> responder)
+		public void GetAllSummonerDataByAccountInternal(Responder<object> responder, object[] arguments)
         {
-            _netConnection.Call(_endpoint, _summonerService, null, "getAllPublicSummonerDataByAccount", responder, new object[] { accountID });
+            _netConnection.Call(_endpoint, _summonerService, null, "getAllSummonerDataByAccount", responder, arguments);
         }
 
-        public void GetAllSummonerDataByAccount(int accountID, Responder<object> responder)
+		public void RetrievePlayerStatsByAccountIDInternal(Responder<object> responder, object[] arguments)
         {
-            _netConnection.Call(_endpoint, _summonerService, null, "getAllSummonerDataByAccount", responder, new object[] { accountID });
+            _netConnection.Call(_endpoint, _playerStatsService, null, "retrievePlayerStatsByAccountId", responder, arguments);
         }
 
-        public void RetrievePlayerStatsByAccountID(int accountID, string season, Responder<object> responder)
+		public void GetAggregatedStatsInternal(Responder<object> responder, object[] arguments)
         {
-            _netConnection.Call(_endpoint, _playerStatsService, null, "retrievePlayerStatsByAccountId", responder, new object[] { accountID, season });
+            _netConnection.Call(_endpoint, _playerStatsService, null, "getAggregatedStats", responder, arguments);
         }
 
-        public void GetAggregatedStats(int accountID, string gameMode, string season, Responder<object> responder)
+		//This call is not exposed to the outside
+        private void GetLoginDataPacketForUserInternal(Responder<LoginDataPacket> responder)
         {
-            _netConnection.Call(_endpoint, _playerStatsService, null, "getAggregatedStats", responder, new object[] { accountID, gameMode, season });
+            _netConnection.Call(_endpoint, _clientFacadeService, null, "getLoginDataPacketForUser", responder, new object[] {});
         }
 
-        private void _GetLoginDataPacketForUser(Responder<LoginDataPacket> responder)
-        {
-            _netConnection.Call(_endpoint, _clientFacadeService, null, "getLoginDataPacketForUser", responder, new object[] { });
-        }
+		#endregion
 
-        #endregion
+		#region Non-blocking RPC
 
-        #region Delegates
-        public delegate void ConnectSubscriber(bool success);
+		public void GetSummonerByNameAsync(string name, Responder<object> responder)
+		{
+			GetSummonerByNameInternal(responder, new object[] { name });
+		}
+
+		public void GetRecentGamesAsync(int accountID, Responder<object> responder)
+		{
+			GetRecentGamesInternal(responder, new object[] { accountID });
+		}
+
+		public void GetAllPublicSummonerDataByAccountAsync(int accountID, Responder<object> responder)
+		{
+			GetAllPublicSummonerDataByAccountInternal(responder, new object[] { accountID });
+		}
+
+		public void GetAllSummonerDataByAccountAsync(int accountID, Responder<object> responder)
+		{
+			GetAllSummonerDataByAccountInternal(responder, new object[] { accountID });
+		}
+
+		public void RetrievePlayerStatsByAccountIDAsync(int accountID, string season, Responder<object> responder)
+		{
+			RetrievePlayerStatsByAccountIDInternal(responder, new object[] { accountID, season });
+		}
+
+		public void GetAggregatedStatsAsync(int accountID, string gameMode, string season, Responder<object> responder)
+		{
+			GetAggregatedStatsInternal(responder, new object[] { accountID, gameMode, season });
+		}
+
+		#endregion
+
+		#region Blocking RPC
+
+		public object GetSummonerByName(string name)
+		{
+			return (new InternalCallContext<object>(GetSummonerByNameInternal, new object[] { name })).Execute();
+		}
+
+		public object GetRecentGames(int accountID)
+		{
+			return (new InternalCallContext<object>(GetSummonerByNameInternal, new object[] { accountID })).Execute();
+		}
+
+		#endregion
+
+		#region Delegates
+		public delegate void ConnectSubscriber(bool success);
         private ConnectSubscriber _connectSubscriber = null;
 #endregion
 

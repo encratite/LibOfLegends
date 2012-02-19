@@ -185,14 +185,17 @@ namespace LibOfLegendsExample
 		void GetSummonerByName(List<string> arguments)
 		{
 			string summonerName = arguments[0];
-			RPC.GetSummonerByName(summonerName, new Responder<object>(OnGetSummonerByName));
-            Wait();
-		}
-
-		void OnGetSummonerByName(object result)
-		{
-			Console.WriteLine("Success");
-			Signal();
+			object result = RPC.GetSummonerByName(summonerName);
+			if (result != null)
+			{
+				Dictionary<string, object> dictionary = (Dictionary<string, object>)result;
+				foreach(var entry in dictionary)
+				{
+					Console.WriteLine("Key: " + entry.Key);
+				}
+			}
+			else
+				Console.WriteLine("No such summoner");
 		}
 	}
 }

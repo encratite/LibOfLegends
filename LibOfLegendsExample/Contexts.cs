@@ -44,7 +44,7 @@ namespace LibOfLegendsExample
 
         public override void Execute()
         {
-            _service.GetSummonerByName(_name, new Responder<object>(_OnGetSummonerByName));
+            _service.GetSummonerByNameAsync(_name, new Responder<object>(_OnGetSummonerByName));
             _Wait();
         }
 
@@ -80,7 +80,7 @@ namespace LibOfLegendsExample
 
         public override void Execute()
         {
-            _service.GetRecentGames(_accountID, new Responder<object>(_OnGetRecentGames));
+            _service.GetRecentGamesAsync(_accountID, new Responder<object>(_OnGetRecentGames));
             _Wait();
         }
 
@@ -132,7 +132,7 @@ namespace LibOfLegendsExample
 
         public override void Execute()
         {
-            _service.GetAllPublicSummonerDataByAccount(_accountID, new Responder<object>(_OnGetAllPublicSummonerData));
+            _service.GetAllPublicSummonerDataByAccountAsync(_accountID, new Responder<object>(_OnGetAllPublicSummonerData));
             _Wait();
         }
 
@@ -162,7 +162,7 @@ namespace LibOfLegendsExample
 
         public override void Execute()
         {
-            _service.GetAllSummonerDataByAccount(_accountID, new Responder<object>(_OnGetAllSummonerData));
+            _service.GetAllSummonerDataByAccountAsync(_accountID, new Responder<object>(_OnGetAllSummonerData));
             _Wait();
         }
 
@@ -193,7 +193,7 @@ namespace LibOfLegendsExample
 
         public override void Execute()
         {
-            _service.RetrievePlayerStatsByAccountID(_accountID, _season, new Responder<object>(_OnRetrievePlayerStatsByAccountID));
+            _service.RetrievePlayerStatsByAccountIDAsync(_accountID, _season, new Responder<object>(_OnRetrievePlayerStatsByAccountID));
             _Wait();
         }
 
@@ -227,7 +227,7 @@ namespace LibOfLegendsExample
 
         public override void Execute()
         {
-            _service.GetAggregatedStats(_accountID, _gameMode, _season, new Responder<object>(_OnGetAggregatedStats));
+            _service.GetAggregatedStatsAsync(_accountID, _gameMode, _season, new Responder<object>(_OnGetAggregatedStats));
             _Wait();
         }
 
