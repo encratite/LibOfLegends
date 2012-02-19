@@ -144,8 +144,6 @@ namespace LibOfLegends
             // if (error)
             //  _connectSubscriber(false);
 
-            Console.WriteLine(session.token);
-
             // Store the session
             _session = session;
 
