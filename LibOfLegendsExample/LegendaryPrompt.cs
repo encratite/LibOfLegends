@@ -8,19 +8,22 @@ using FluorineFx.Net;
 
 using LibOfLegends;
 
+using com.riotgames.platform.summoner;
+
 namespace LibOfLegendsExample
 {
 	class LegendaryPrompt
 	{
 		RPCService RPC;
 		AutoResetEvent OnConnectEvent;
-		AutoResetEvent CommandEvent;
 		bool ConnectionSuccess;
+
+		Dictionary<string, CommandInformation> CommandDictionary;
 
 		public LegendaryPrompt(ConnectionProfile connectionData)
 		{
 			RPC = new RPCService(connectionData);
-			CommandEvent = new AutoResetEvent(false);
+			InitialiseCommandDictionary();
 		}
 
 		public void Run()
@@ -45,12 +48,7 @@ namespace LibOfLegendsExample
 
 		void ProcessLine(string line)
 		{
-			Dictionary<string, CommandInformation> CommandDictionary = new Dictionary<string, CommandInformation>()
-			{
-				{"GetSummonerByName", new CommandInformation(1, GetSummonerByName, "<name>", "name\n\tRetrieve the summoner data for a given name")},
-			};
-
-			List<string> arguments = line.Split(new string[] { " " }, 2, StringSplitOptions.None).ToList();
+			List<string> arguments = line.Split(new char[] {' '}).ToList();
 			if (line.Length == 0 || arguments.Count == 0)
 				return;
 
@@ -59,12 +57,12 @@ namespace LibOfLegendsExample
 
 			if (!CommandDictionary.ContainsKey(command))
 			{
-				Console.WriteLine("Unrecognised command, type \"?\" or \"help\" for a list of commands");
+				Console.WriteLine("Unrecognised command, enter \"help\" for a list of commands");
 				return;
 			}
 
 			CommandInformation commandInformation = CommandDictionary[command];
-			if (arguments.Count != commandInformation.ArgumentCount)
+			if (commandInformation.ArgumentCount != -1 && arguments.Count != commandInformation.ArgumentCount)
 			{
 				Console.WriteLine("Invalid number of arguments specified");
 				return;
@@ -73,127 +71,51 @@ namespace LibOfLegendsExample
 			commandInformation.Handler(arguments);
 		}
 
-		void ProcessLineOld(string line)
-		{
-			try
-			{
-				Command command = new Command(line);
-
-				switch (command.Name)
-				{
-					case "GetRecentGamesByName":
-					{
-						GetRecentGamesByNameContext games = new GetRecentGamesByNameContext(RPC, command.Arguments[0]);
-						games.Execute();
-
-						Console.WriteLine(games);
-						break;
-					}
-					case "GetRecentGames":
-					{
-						GetRecentGamesContext games = new GetRecentGamesContext(RPC, int.Parse(command.Arguments[0]));
-						games.Execute();
-
-						Console.WriteLine(games);
-						break;
-					}
-					case "GetSummonerByName":
-					{
-						GetSummonerByNameContext name = new GetSummonerByNameContext(RPC, command.Arguments[0]);
-						name.Execute();
-
-						Console.WriteLine(name);
-						break;
-					}
-					case "GetAllPublicSummonerDataByAccount":
-					{
-						GetAllPublicSummonerDataByAccountContext publicData = new GetAllPublicSummonerDataByAccountContext(RPC, int.Parse(command.Arguments[0]));
-						publicData.Execute();
-
-						Console.WriteLine(publicData);
-						break;
-					}
-					case "GetAllSummonerDataByAccount":
-					{
-						GetAllSummonerDataByAccountContext data = new GetAllSummonerDataByAccountContext(RPC, int.Parse(command.Arguments[0]));
-						data.Execute();
-
-						Console.WriteLine(data);
-						break;
-					}
-					case "RetrievePlayerStatsByAccountID":
-					{
-						RetrievePlayerStatsByAccountIdContext playerStats = new RetrievePlayerStatsByAccountIdContext(RPC, int.Parse(command.Arguments[0]), command.Arguments[1]);
-						playerStats.Execute();
-
-						Console.WriteLine(playerStats);
-						break;
-					}
-					case "GetAggregatedStats":
-					{
-						GetAggregatedStatsContext aggregatedStats = new GetAggregatedStatsContext(RPC, int.Parse(command.Arguments[0]), command.Arguments[1], command.Arguments[2]);
-						aggregatedStats.Execute();
-
-						Console.WriteLine(aggregatedStats);
-						break;
-					}
-					case "?":
-					case "help":
-					{
-						Command.PrintHelp();
-						break;
-					}
-					default:
-					{
-						Console.WriteLine("Unrecognised command, type \"?\" or \"help\" for a list of commands");
-						break;
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Console.WriteLine("Error executing command");
-				Console.WriteLine("------------------------------------------------");
-				Console.WriteLine(exception.Message);
-				Console.WriteLine(exception.StackTrace);
-				Console.WriteLine("------------------------------------------------");
-			}
-			Console.WriteLine();
-		}
-
 		void PerformQueries()
         {
 			while (true)
 			{
-				Console.Write("[Legendary Prompt] ");
+				Console.Write("> ");
 				string line = Console.ReadLine();
-				//ProcessLine(line);
-				ProcessLineOld(line);
+				ProcessLine(line);
 			}
         }
 
-		void Wait()
-        {
-			CommandEvent.WaitOne();
-        }
-
-        void Signal()
-        {
-			CommandEvent.Set();
-        }
-
-		void GetSummonerByName(List<string> arguments)
+		void InitialiseCommandDictionary()
 		{
-			string summonerName = arguments[0];
-			object result = RPC.GetSummonerByName(summonerName);
-			if (result != null)
+			CommandDictionary = new Dictionary<string, CommandInformation>()
 			{
-				Dictionary<string, object> dictionary = (Dictionary<string, object>)result;
-				foreach(var entry in dictionary)
-				{
-					Console.WriteLine("Key: " + entry.Key);
-				}
+				{"id", new CommandInformation(-1, GetAccountID, "<name>", "Retrieve the account ID of the given summoner name")},
+				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
+			};
+		}
+
+		void PrintHelp(List<string> arguments)
+		{
+			Console.WriteLine("List of commands available:");
+			foreach (var entry in CommandDictionary)
+			{
+				var information = entry.Value;
+				Console.WriteLine(entry.Key + " " + information.ArgumentDescription);
+				Console.WriteLine("\t" + information.Description);
 			}
+		}
+
+		void GetAccountID(List<string> arguments)
+		{
+			string summonerName = "";
+			bool first = true;
+			foreach (var argument in arguments)
+			{
+				if (first)
+					first = false;
+				else
+					summonerName += " ";
+				summonerName += argument;
+			}
+			PublicSummoner summoner = RPC.GetSummonerByName(summonerName);
+			if (summoner != null)
+				Console.WriteLine(summoner.acctId);
 			else
 				Console.WriteLine("No such summoner");
 		}

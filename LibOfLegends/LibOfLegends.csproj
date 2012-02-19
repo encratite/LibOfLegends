@@ -59,6 +59,7 @@
     <Compile Include="com.riotgames.platform\gameclient.domain\broadcast\BroadcastNotification.cs" />
     <Compile Include="com.riotgames.platform\gameclient.domain\game\GameReconnectionInfo.cs" />
     <Compile Include="com.riotgames.platform\login\Login.cs" />
+    <Compile Include="com.riotgames.platform\summoner\PublicSummoner.cs" />
     <Compile Include="com.riotgames.platform\statistics\Statistics.cs" />
     <Compile Include="com.riotgames.platform\systemstate\ClientSystemStatesNotification.cs" />
     <Compile Include="ConnectionProfile.cs" />
