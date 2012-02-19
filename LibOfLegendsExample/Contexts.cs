@@ -21,16 +21,15 @@ namespace LibOfLegendsExample
 
         protected void _Wait()
         {
-            lock (this)
-                Monitor.Wait(this);
+            _event.WaitOne();
         }
 
         protected void _Signal()
         {
-            lock (this)
-                Monitor.Pulse(this);
+            _event.Set();
         }
 
+        AutoResetEvent _event = new AutoResetEvent(false);
         protected RPCService _service;
     }
 
