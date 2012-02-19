@@ -16,6 +16,7 @@ using FluorineFx.Messaging;
 using com.riotgames.platform.clientfacade.domain;
 using com.riotgames.platform.login;
 using com.riotgames.platform.summoner;
+using com.riotgames.platform.statistics;
 
 namespace LibOfLegends
 {
@@ -146,7 +147,7 @@ namespace LibOfLegends
 			_netConnection.Call(_endpoint, _summonerService, null, "getSummonerByName", responder, arguments);
 		}
 
-		private void GetRecentGamesInternal(Responder<object> responder, object[] arguments)
+		private void GetRecentGamesInternal(Responder<RecentGames> responder, object[] arguments)
         {
             _netConnection.Call(_endpoint, _playerStatsService, null, "getRecentGames", responder, arguments);
         }
@@ -186,7 +187,7 @@ namespace LibOfLegends
 			GetSummonerByNameInternal(responder, new object[] { name });
 		}
 
-		public void GetRecentGamesAsync(int accountID, Responder<object> responder)
+		public void GetRecentGamesAsync(int accountID, Responder<RecentGames> responder)
 		{
 			GetRecentGamesInternal(responder, new object[] { accountID });
 		}
@@ -218,6 +219,11 @@ namespace LibOfLegends
 		public PublicSummoner GetSummonerByName(string name)
 		{
 			return (new InternalCallContext<PublicSummoner>(GetSummonerByNameInternal, new object[] { name })).Execute();
+		}
+
+		public RecentGames GetRecentGames(int accountID)
+		{
+			return (new InternalCallContext<RecentGames>(GetRecentGamesInternal, new object[] { accountID })).Execute();
 		}
 
 		#endregion

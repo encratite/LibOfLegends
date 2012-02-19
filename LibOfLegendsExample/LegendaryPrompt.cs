@@ -9,6 +9,7 @@ using FluorineFx.Net;
 using LibOfLegends;
 
 using com.riotgames.platform.summoner;
+using com.riotgames.platform.statistics;
 
 namespace LibOfLegendsExample
 {
@@ -85,7 +86,8 @@ namespace LibOfLegendsExample
 		{
 			CommandDictionary = new Dictionary<string, CommandInformation>()
 			{
-				{"id", new CommandInformation(-1, GetAccountID, "<name>", "Retrieve the account ID of the given summoner name")},
+				{"id", new CommandInformation(-1, GetAccountID, "<name>", "Retrieve the account ID associated with the given summoner name")},
+				{"analyse", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
 			};
 		}
@@ -101,7 +103,7 @@ namespace LibOfLegendsExample
 			}
 		}
 
-		void GetAccountID(List<string> arguments)
+		string GetNameFromArguments(List<string> arguments)
 		{
 			string summonerName = "";
 			bool first = true;
@@ -113,11 +115,56 @@ namespace LibOfLegendsExample
 					summonerName += " ";
 				summonerName += argument;
 			}
+			return summonerName;
+		}
+
+		void NoSuchSummoner()
+		{
+			Console.WriteLine("No such summoner");
+		}
+
+		void GetAccountID(List<string> arguments)
+		{
+			string summonerName = GetNameFromArguments(arguments);
 			PublicSummoner summoner = RPC.GetSummonerByName(summonerName);
 			if (summoner != null)
 				Console.WriteLine(summoner.acctId);
 			else
-				Console.WriteLine("No such summoner");
+				NoSuchSummoner();
+		}
+
+		static int CompareGames(PlayerGameStats x, PlayerGameStats y)
+		{
+			return - x.gameId.CompareTo(y.gameId);
+		}
+
+		void AnalyseRecentGames(List<string> arguments)
+		{
+			string summonerName = GetNameFromArguments(arguments);
+			PublicSummoner summoner = RPC.GetSummonerByName(summonerName);
+			if (summoner == null)
+			{
+				NoSuchSummoner();
+				return;
+			}
+			RecentGames recentGameData = RPC.GetRecentGames(summoner.acctId);
+			var recentGames = recentGameData.gameStatistics;
+			recentGames.Sort(CompareGames);
+			int normalElo = 0;
+			bool foundNormalElo = false;
+			foreach (var stats in recentGames)
+			{
+				if (stats.queueType == "NORMAL" && stats.gameMode == "CLASSIC" && !stats.ranked)
+				{
+					normalElo = stats.rating + stats.eloChange;
+					foundNormalElo = true;
+					break;
+				}
+			}
+			if (foundNormalElo)
+				Console.WriteLine("Normal Elo: " + normalElo);
+			else
+				Console.WriteLine("No normal games in match history");
 		}
 	}
 }
