@@ -145,7 +145,7 @@ namespace LibOfLegendsExample
 			{
 				if (stats.queueType == "NORMAL" && stats.gameMode == "CLASSIC" && !stats.ranked)
 				{
-					normalElo = stats.adjustedRating;
+					normalElo = stats.rating + stats.eloChange;
 					return true;
 				}
 			}
@@ -250,10 +250,15 @@ namespace LibOfLegendsExample
 							break;
 					}
 				}
+				int currentElo = stats.rating + stats.eloChange;
 				if (stats.adjustedRating != 0)
-					Console.Write(", " + stats.adjustedRating + " (" + SignPrefix(stats.eloChange) + ")");
+					Console.Write(", " + (currentElo) + " (" + SignPrefix(stats.eloChange) + ")");
+				if (stats.adjustedRating != 0)
+					Console.Write(", adjusted " + stats.adjustedRating);
 				if (stats.teamRating != 0)
-					Console.Write(", team " + stats.teamRating + " (" + SignPrefix(stats.adjustedRating - stats.rating) + ")");
+					Console.Write(", team " + stats.teamRating + " (" + SignPrefix(stats.teamRating - stats.rating) + ")");
+				if (stats.predictedWinPct != 0)
+					Console.Write(", prediction " + string.Format("{0:0.0%}", stats.predictedWinPct));
 				if (stats.premadeSize > 1)
 					Console.Write(", queued with " + stats.premadeSize);
 				Console.WriteLine("");
