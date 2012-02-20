@@ -241,6 +241,10 @@ namespace LibOfLegendsExample
 							Console.Write("Summoner's Rift");
 							break;
 
+						case "RANKED_TEAM_5x5":
+							Console.Write("Summoner's Rift (team)");
+							break;
+
 						case "ODIN_UNRANKED":
 							Console.Write("Dominion");
 							break;
