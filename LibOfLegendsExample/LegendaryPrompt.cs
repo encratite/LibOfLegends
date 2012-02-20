@@ -73,14 +73,14 @@ namespace LibOfLegendsExample
 		}
 
 		void PerformQueries()
-        {
+		{
 			while (true)
 			{
 				Console.Write("> ");
 				string line = Console.ReadLine();
 				ProcessLine(line);
 			}
-        }
+		}
 
 		void InitialiseCommandDictionary()
 		{

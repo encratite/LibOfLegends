@@ -7,12 +7,12 @@ using LibOfLegends;
 
 namespace LibOfLegendsExample
 {
-    class Program
-    {
+	class Program
+	{
 		private const string ConfigurationFile = "Configuration.xml";
 
-        static void Main(string[] arguments)
-        {
+		static void Main(string[] arguments)
+		{
 			Configuration configuration;
 			try
 			{
@@ -66,6 +66,6 @@ namespace LibOfLegendsExample
 
 			LegendaryPrompt prompt = new LegendaryPrompt(connectionData);
 			prompt.Run();
-        }
-    }
+		}
+	}
 }

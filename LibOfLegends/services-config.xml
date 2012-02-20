@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <services-config>
-  <channels>
-    <channel-definition id="my-rtmps" class="mx.messaging.channels.RTMPChannel">
-      <endpoint uri="rtmps://{server.name}:{server.port}" class="flex.messaging.endpoints.RTMPEndpoint"/>
-    </channel-definition>
-  </channels>
+	<channels>
+		<channel-definition id="my-rtmps" class="mx.messaging.channels.RTMPChannel">
+			<endpoint uri="rtmps://{server.name}:{server.port}" class="flex.messaging.endpoints.RTMPEndpoint"/>
+		</channel-definition>
+	</channels>
 </services-config>
