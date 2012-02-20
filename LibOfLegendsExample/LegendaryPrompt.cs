@@ -87,7 +87,8 @@ namespace LibOfLegendsExample
 			CommandDictionary = new Dictionary<string, CommandInformation>()
 			{
 				{"id", new CommandInformation(-1, GetAccountID, "<name>", "Retrieve the account ID associated with the given summoner name")},
-				{"analyse", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
+				{"profile", new CommandInformation(-1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
+				{"recent", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
 			};
 		}
@@ -138,33 +139,125 @@ namespace LibOfLegendsExample
 			return - x.gameId.CompareTo(y.gameId);
 		}
 
-		void AnalyseRecentGames(List<string> arguments)
+		bool GetNormalElo(List<PlayerGameStats> recentGames, ref int normalElo)
 		{
-			string summonerName = GetNameFromArguments(arguments);
-			PublicSummoner summoner = RPC.GetSummonerByName(summonerName);
-			if (summoner == null)
-			{
-				NoSuchSummoner();
-				return;
-			}
-			RecentGames recentGameData = RPC.GetRecentGames(summoner.acctId);
-			var recentGames = recentGameData.gameStatistics;
-			recentGames.Sort(CompareGames);
-			int normalElo = 0;
-			bool foundNormalElo = false;
 			foreach (var stats in recentGames)
 			{
 				if (stats.queueType == "NORMAL" && stats.gameMode == "CLASSIC" && !stats.ranked)
 				{
-					normalElo = stats.rating + stats.eloChange;
-					foundNormalElo = true;
-					break;
+					normalElo = stats.adjustedRating;
+					return true;
 				}
 			}
+			return false;
+		}
+
+		bool GetRecentGames(string summonerName, ref PublicSummoner publicSummoner, ref List<PlayerGameStats> recentGames)
+		{
+			publicSummoner = RPC.GetSummonerByName(summonerName);
+			if (publicSummoner == null)
+				return false;
+			RecentGames recentGameData = RPC.GetRecentGames(publicSummoner.acctId);
+			recentGames = recentGameData.gameStatistics;
+			recentGames.Sort(CompareGames);
+			return true;
+		}
+
+		void AnalyseSummonerProfile(List<string> arguments)
+		{
+			string summonerName = GetNameFromArguments(arguments);
+			PublicSummoner publicSummoner = new PublicSummoner();
+			List<PlayerGameStats> recentGames = new List<PlayerGameStats>();
+			bool foundSummoner = GetRecentGames(summonerName, ref publicSummoner, ref recentGames);
+			if (!foundSummoner)
+			{
+				NoSuchSummoner();
+				return;
+			}
+
+			int normalElo = 0;
+			bool foundNormalElo = GetNormalElo(recentGames, ref normalElo);
+
+			Console.WriteLine("Account ID: " + publicSummoner.summonerId);
+			Console.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
+
 			if (foundNormalElo)
 				Console.WriteLine("Normal Elo: " + normalElo);
 			else
 				Console.WriteLine("No normal games in match history");
+		}
+
+		string SignPrefix(int input)
+		{
+			if (input > 0)
+				return "+" + input;
+			return input.ToString();
+		}
+
+		void AnalyseRecentGames(List<string> arguments)
+		{
+			string summonerName = GetNameFromArguments(arguments);
+			PublicSummoner publicSummoner = new PublicSummoner();
+			List<PlayerGameStats> recentGames = new List<PlayerGameStats>();
+			bool foundSummoner = GetRecentGames(summonerName, ref publicSummoner, ref recentGames);
+			if (!foundSummoner)
+			{
+				NoSuchSummoner();
+				return;
+			}
+			foreach (var stats in recentGames)
+			{
+				Console.Write("[" + stats.gameId + "] ");
+				if (stats.ranked)
+					Console.Write("Ranked ");
+				if (stats.gameType == "PRACTICE_GAME")
+				{
+					Console.Write("Custom ");
+					switch (stats.gameMode)
+					{
+						case "CLASSIC":
+							Console.Write("Summoner's Rift");
+							break;
+
+						case "ODIN":
+							Console.Write("Dominion");
+							break;
+
+						default:
+							Console.Write(stats.gameMode);
+							break;
+					}
+				}
+				else
+				{
+					switch (stats.queueType)
+					{
+						case "RANKED_TEAM_3x3":
+							Console.WriteLine("Twisted Treeline");
+							break;
+
+						case "NORMAL":
+						case "RANKED_SOLO_5x5":
+							Console.Write("Summoner's Rift");
+							break;
+
+						case "ODIN_UNRANKED":
+							Console.Write("Dominion");
+							break;
+
+						default:
+							Console.Write(stats.queueType);
+							break;
+					}
+				}
+				if (stats.adjustedRating != 0)
+					Console.Write(", " + stats.adjustedRating + " (" + SignPrefix(stats.eloChange) + ")");
+				if (stats.teamRating != 0)
+					Console.Write(", team " + stats.teamRating + " (" + SignPrefix(stats.adjustedRating - stats.rating) + ")");
+				if (stats.premadeSize > 1)
+					Console.Write(", queued with " + stats.premadeSize);
+				Console.WriteLine("");
+			}
 		}
 	}
 }
