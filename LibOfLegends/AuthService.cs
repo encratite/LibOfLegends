@@ -3,6 +3,8 @@ using System.IO;
 using System.Net;
 using System.Web.Script.Serialization;
 
+using FluorineFx.Net;
+
 namespace LibOfLegends
 {
 	/// <summary>
@@ -10,9 +12,13 @@ namespace LibOfLegends
 	/// </summary>
 	public class AuthService
 	{
-		public AuthService(string loginQueueURL)
+		public AuthService(string loginQueueURL, Proxy proxy = null)
 		{
 			_loginQueueURL = loginQueueURL;
+			_proxy = proxy;
+
+			if (_proxy != null && _proxy.Type != ProxyType.HTTP)
+				throw new NotImplementedException("Proxy not supported for login queue with type other than HTTP");
 		}
 
 		/// <summary>
@@ -27,6 +33,12 @@ namespace LibOfLegends
 			// Authenticate with the queue service
 			HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", _loginQueueURL));
 			req.Method = "POST";
+
+			if (_proxy != null)
+			{
+				string[] proxyParts = _proxy.Server.Split(':');
+				req.Proxy = new WebProxy(proxyParts[0], int.Parse(proxyParts[1]));
+			}
 
 			string postBody = string.Format("user={0},password={1}", System.Web.HttpUtility.UrlEncode(name), System.Web.HttpUtility.UrlEncode(password));
 
@@ -53,6 +65,7 @@ namespace LibOfLegends
 		#region Configuration variables
 
 		private string _loginQueueURL;
+		private Proxy _proxy;
 
 		#endregion
 	}

@@ -28,11 +28,11 @@ namespace LibOfLegends
 			// TODO: Run this in another thread and call back, this is a blocking operation.
 			try
 			{
-				AuthService authService = new AuthService(_connectionData.Region.LoginQueueURL);
+				AuthService authService = new AuthService(_connectionData.Region.LoginQueueURL, _connectionData.Proxy.LoginQueueProxy);
 				// Get an Auth token (Dumb, assumes no queueing, blocks)
 				_authResponse = authService.Authenticate(_connectionData.User, _connectionData.Password);
 			}
-			catch (WebException)
+			catch (WebException e)
 			{
 				_connectSubscriber(false);
 				return;
@@ -40,6 +40,8 @@ namespace LibOfLegends
 
 			// Initialise our rtmps connection
 			_netConnection = new NetConnection();
+			_netConnection.Proxy = _connectionData.Proxy.RTMPProxy;
+
 			// We should use AMF3 to behave as closely to the client as possible.
 			_netConnection.ObjectEncoding = ObjectEncoding.AMF3;
 
