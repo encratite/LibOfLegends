@@ -59,6 +59,7 @@
     <Compile Include="com\riotgames\platform\gameclient\domain\broadcast\BroadcastNotification.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\FellowPlayerInfo.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\game\GameReconnectionInfo.cs" />
+    <Compile Include="com\riotgames\platform\gameclient\domain\RawStat.cs" />
     <Compile Include="com\riotgames\platform\login\Login.cs" />
     <Compile Include="com\riotgames\platform\statistics\PlayerGameStats.cs" />
     <Compile Include="com\riotgames\platform\statistics\RecentGames.cs" />

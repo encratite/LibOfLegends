@@ -24,7 +24,7 @@ namespace com.riotgames.platform.statistics
 		public string gameTypeEnum;
 		public int teamId;
 		public int summonerId;
-		public List<object> statistics;
+		public List<RawStat> statistics;
 		public int spell2;
 		public bool afk;
 		public int id;
