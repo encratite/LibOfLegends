@@ -7,12 +7,12 @@ using LibOfLegends;
 
 namespace LibOfLegendsExample
 {
-    class Program
-    {
+	class Program
+	{
 		private const string ConfigurationFile = "Configuration.xml";
 
-        static void Main(string[] arguments)
-        {
+		static void Main(string[] arguments)
+		{
 			Configuration configuration;
 			try
 			{
@@ -62,10 +62,10 @@ namespace LibOfLegendsExample
 			}
 
 			RegionProfile regionData = new RegionProfile(chosenProfile.LoginQueueURL, chosenProfile.RPCURL);
-			ConnectionProfile connectionData = new ConnectionProfile(configuration.Authentication, regionData, user, password);
+			ConnectionProfile connectionData = new ConnectionProfile(configuration.Authentication, regionData, configuration.Proxy, user, password);
 
 			LegendaryPrompt prompt = new LegendaryPrompt(connectionData);
 			prompt.Run();
-        }
-    }
+		}
+	}
 }
