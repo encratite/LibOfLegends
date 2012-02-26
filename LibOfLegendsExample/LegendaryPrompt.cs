@@ -187,11 +187,16 @@ namespace LibOfLegendsExample
 				Console.WriteLine("No normal games in match history");
 		}
 
-		string SignPrefix(int input)
+		string GetPrefix(int input)
 		{
 			if (input > 0)
-				return "+" + input;
-			return input.ToString();
+				return "+";
+			return "-";
+		}
+
+		string SignPrefix(int input)
+		{
+			return GetPrefix(input) + Math.Abs(input).ToString();
 		}
 
 		void AnalyseRecentGames(List<string> arguments)
@@ -254,9 +259,12 @@ namespace LibOfLegendsExample
 							break;
 					}
 				}
-				int currentElo = stats.rating + stats.eloChange;
 				if (stats.adjustedRating != 0)
-					Console.Write(", " + (currentElo) + " (" + SignPrefix(stats.eloChange) + ")");
+				{
+					//Sometimes the servers are bugged and show invalid rating values
+					//Console.Write(", " + stats.rating + " " + GetPrefix(stats.eloChange) + " " + Math.Abs(stats.eloChange) + " = " + (stats.rating + stats.eloChange));
+					Console.Write(", " + (stats.rating + stats.eloChange) + " (" + SignPrefix(stats.eloChange) + ")");
+				}
 				if (stats.adjustedRating != 0)
 					Console.Write(", adjusted " + stats.adjustedRating);
 				if (stats.teamRating != 0)
