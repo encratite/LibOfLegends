@@ -72,7 +72,11 @@
     <Compile Include="com\riotgames\platform\summoner\spellbook\SlotEntry.cs" />
     <Compile Include="com\riotgames\platform\summoner\spellbook\SpellBook.cs" />
     <Compile Include="com\riotgames\platform\summoner\spellbook\SpellBookPage.cs" />
+    <Compile Include="com\riotgames\platform\summoner\SummonerAssociatedTalent.cs" />
+    <Compile Include="com\riotgames\platform\summoner\SummonerAssociatedTalentPK.cs" />
     <Compile Include="com\riotgames\platform\summoner\SummonerGameModeSpells.cs" />
+    <Compile Include="com\riotgames\platform\summoner\SummonerTalentsAndPoints.cs" />
+    <Compile Include="com\riotgames\platform\summoner\Talent.cs" />
     <Compile Include="com\riotgames\platform\systemstate\ClientSystemStatesNotification.cs" />
     <Compile Include="ConnectionProfile.cs" />
     <Compile Include="InternalCallContext.cs" />
