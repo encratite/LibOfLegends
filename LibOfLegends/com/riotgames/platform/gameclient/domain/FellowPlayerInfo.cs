@@ -10,9 +10,5 @@ namespace com.riotgames.platform.gameclient.domain
 		public int championId;
 		public int summonerId;
 		public int teamId;
-
-		public FellowPlayerInfo()
-		{
-		}
 	}
 }

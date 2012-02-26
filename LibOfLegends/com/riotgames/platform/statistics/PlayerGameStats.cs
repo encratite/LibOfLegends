@@ -53,9 +53,5 @@ namespace com.riotgames.platform.statistics
 		public float predictedWinPct;
 		public int rating;
 		public int championId;
-
-		public PlayerGameStats()
-		{
-		}
 	}
 }

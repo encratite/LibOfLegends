@@ -10,9 +10,5 @@ namespace com.riotgames.platform.gameclient.domain
 		public string displayName;
 		public string statType;
 		public int value;
-
-		public RawStat()
-		{
-		}
 	}
 }
