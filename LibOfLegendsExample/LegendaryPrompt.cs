@@ -256,6 +256,10 @@ namespace LibOfLegendsExample
 							Console.Write("Dominion");
 							break;
 
+						case "BOT":
+							Console.Write("Co-op vs. AI");
+							break;
+
 						default:
 							Console.Write(stats.queueType);
 							break;
