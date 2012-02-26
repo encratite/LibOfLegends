@@ -11,6 +11,7 @@ using com.riotgames.platform.clientfacade.domain;
 using com.riotgames.platform.login;
 using com.riotgames.platform.summoner;
 using com.riotgames.platform.statistics;
+using com.riotgames.platform.gameclient.domain;
 
 namespace LibOfLegends
 {
@@ -148,7 +149,7 @@ namespace LibOfLegends
 			_netConnection.Call(_endpoint, _playerStatsService, null, "getRecentGames", responder, arguments);
 		}
 
-		public void GetAllPublicSummonerDataByAccountInternal(Responder<object> responder, object[] arguments)
+		public void GetAllPublicSummonerDataByAccountInternal(Responder<AllPublicSummonerDataDTO> responder, object[] arguments)
 		{
 			_netConnection.Call(_endpoint, _summonerService, null, "getAllPublicSummonerDataByAccount", responder, arguments);
 		}
@@ -188,7 +189,7 @@ namespace LibOfLegends
 			GetRecentGamesInternal(responder, new object[] { accountID });
 		}
 
-		public void GetAllPublicSummonerDataByAccountAsync(int accountID, Responder<object> responder)
+		public void GetAllPublicSummonerDataByAccountAsync(int accountID, Responder<AllPublicSummonerDataDTO> responder)
 		{
 			GetAllPublicSummonerDataByAccountInternal(responder, new object[] { accountID });
 		}
@@ -220,6 +221,11 @@ namespace LibOfLegends
 		public RecentGames GetRecentGames(int accountID)
 		{
 			return (new InternalCallContext<RecentGames>(GetRecentGamesInternal, new object[] { accountID })).Execute();
+		}
+
+		public AllPublicSummonerDataDTO GetAllPublicSummonerDataByAccount(int accountID)
+		{
+			return (new InternalCallContext<AllPublicSummonerDataDTO>(GetAllPublicSummonerDataByAccountInternal, new object[] { accountID })).Execute();
 		}
 
 		#endregion

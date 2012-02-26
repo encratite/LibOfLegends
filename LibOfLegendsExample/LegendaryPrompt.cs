@@ -10,6 +10,7 @@ using LibOfLegends;
 
 using com.riotgames.platform.summoner;
 using com.riotgames.platform.statistics;
+using com.riotgames.platform.gameclient.domain;
 
 namespace LibOfLegendsExample
 {
@@ -86,10 +87,11 @@ namespace LibOfLegendsExample
 		{
 			CommandDictionary = new Dictionary<string, CommandInformation>()
 			{
+				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
 				{"id", new CommandInformation(-1, GetAccountID, "<name>", "Retrieve the account ID associated with the given summoner name")},
 				{"profile", new CommandInformation(-1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
 				{"recent", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
-				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
+				{"test", new CommandInformation(-1, RunTest, "<name>", "Perform test")},
 			};
 		}
 
@@ -275,6 +277,20 @@ namespace LibOfLegendsExample
 					Console.Write(", queued with " + stats.premadeSize);
 				Console.WriteLine("");
 			}
+		}
+
+		void RunTest(List<string> arguments)
+		{
+			string summonerName = GetNameFromArguments(arguments);
+			PublicSummoner publicSummoner = RPC.GetSummonerByName(summonerName);
+			if (publicSummoner == null)
+			{
+				NoSuchSummoner();
+				return;
+			}
+			AllPublicSummonerDataDTO publicSummonerData = RPC.GetAllPublicSummonerDataByAccount(publicSummoner.acctId);
+			Console.WriteLine(publicSummonerData.summonerDefaultSpells.summonerDefaultSpellMap.Count);
+			Console.WriteLine("Successs");
 		}
 	}
 }
