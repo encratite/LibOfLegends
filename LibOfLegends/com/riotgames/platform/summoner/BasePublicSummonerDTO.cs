@@ -15,3 +15,4 @@ namespace com.riotgames.platform.summoner
 		public int profileIconId;
 	}
 }
+

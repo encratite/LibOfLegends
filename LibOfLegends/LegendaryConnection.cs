@@ -154,7 +154,7 @@ namespace LibOfLegends
 			_netConnection.Call(_endpoint, _summonerService, null, "getAllPublicSummonerDataByAccount", responder, arguments);
 		}
 
-		public void GetAllSummonerDataByAccountInternal(Responder<object> responder, object[] arguments)
+		public void GetAllSummonerDataByAccountInternal(Responder<AllSummonerData> responder, object[] arguments)
 		{
 			_netConnection.Call(_endpoint, _summonerService, null, "getAllSummonerDataByAccount", responder, arguments);
 		}
@@ -194,7 +194,7 @@ namespace LibOfLegends
 			GetAllPublicSummonerDataByAccountInternal(responder, new object[] { accountID });
 		}
 
-		public void GetAllSummonerDataByAccountAsync(int accountID, Responder<object> responder)
+		public void GetAllSummonerDataByAccountAsync(int accountID, Responder<AllSummonerData> responder)
 		{
 			GetAllSummonerDataByAccountInternal(responder, new object[] { accountID });
 		}
@@ -226,6 +226,11 @@ namespace LibOfLegends
 		public AllPublicSummonerDataDTO GetAllPublicSummonerDataByAccount(int accountID)
 		{
 			return (new InternalCallContext<AllPublicSummonerDataDTO>(GetAllPublicSummonerDataByAccountInternal, new object[] { accountID })).Execute();
+		}
+
+		public AllSummonerData GetAllSummonerDataByAccount(int accountID)
+		{
+			return (new InternalCallContext<AllSummonerData>(GetAllSummonerDataByAccountInternal, new object[] { accountID })).Execute();
 		}
 
 		#endregion

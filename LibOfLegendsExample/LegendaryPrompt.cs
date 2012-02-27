@@ -292,8 +292,7 @@ namespace LibOfLegendsExample
 				NoSuchSummoner();
 				return;
 			}
-			AllPublicSummonerDataDTO publicSummonerData = RPC.GetAllPublicSummonerDataByAccount(publicSummoner.acctId);
-			//Console.WriteLine(publicSummonerData.summonerDefaultSpells.summonerDefaultSpellMap.Count);
+			AllSummonerData result = RPC.GetAllSummonerDataByAccount(publicSummoner.acctId);
 			Console.WriteLine("Successs");
 		}
 	}
