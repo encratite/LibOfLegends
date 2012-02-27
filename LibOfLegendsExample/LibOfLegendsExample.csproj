@@ -54,8 +54,10 @@
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
     <Compile Include="LegendaryPrompt.cs" />
+    <Compile Include="SerialisableDictionary.cs" />
     <Compile Include="Serialiser.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="ServerProfile.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -64,7 +64,7 @@ namespace LibOfLegendsExample
 			RegionProfile regionData = new RegionProfile(chosenProfile.LoginQueueURL, chosenProfile.RPCURL);
 			ConnectionProfile connectionData = new ConnectionProfile(configuration.Authentication, regionData, configuration.Proxy, user, password);
 
-			LegendaryPrompt prompt = new LegendaryPrompt(connectionData);
+			LegendaryPrompt prompt = new LegendaryPrompt(configuration, connectionData);
 			prompt.Run();
 		}
 	}

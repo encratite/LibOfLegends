@@ -22,8 +22,11 @@ namespace LibOfLegendsExample
 
 		Dictionary<string, CommandInformation> CommandDictionary;
 
-		public LegendaryPrompt(ConnectionProfile connectionData)
+		Configuration ProgramConfiguration;
+
+		public LegendaryPrompt(Configuration configuration, ConnectionProfile connectionData)
 		{
+			ProgramConfiguration = configuration;
 			RPC = new RPCService(connectionData);
 			InitialiseCommandDictionary();
 		}
@@ -374,6 +377,11 @@ namespace LibOfLegendsExample
 			return output.Values.ToList();
 		}
 
+		int CompareNames(ChampionStatistics x, ChampionStatistics y)
+		{
+			return x.Name.CompareTo(y.Name);
+		}
+
 		void RankedStatistics(List<string> arguments)
 		{
 			string summonerName = GetNameFromArguments(arguments);
@@ -387,8 +395,14 @@ namespace LibOfLegendsExample
 			List<ChampionStatistics> statistics = TranslateAggregatedStatistics(aggregatedStatistics);
 			foreach (var entry in statistics)
 			{
-				Console.WriteLine(entry.ChampionId + ": " + entry.Victories + " W - " + entry.Defeats + " L (" + SignPrefix(entry.Victories - entry.Defeats) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
+				if (ProgramConfiguration.ChampionNames.ContainsKey(entry.ChampionId))
+					entry.Name = ProgramConfiguration.ChampionNames[entry.ChampionId];
+				else
+					entry.Name = "Champion " + entry.ChampionId;
 			}
+			statistics.Sort(CompareNames);
+			foreach (var entry in statistics)
+				Console.WriteLine(entry.Name + ": " + entry.Victories + " W - " + entry.Defeats + " L (" + SignPrefix(entry.Victories - entry.Defeats) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 		}
 
 		void RunTest(List<string> arguments)
