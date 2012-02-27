@@ -10,9 +10,9 @@ namespace com.riotgames.platform.summoner.spellbook
 		public int dataVersion;
 		public int runeId;
 		public int runeSlotId;
-		//Undefined
+		//Not sure about type as it is null
 		public object runeSlot;
-		//Undefined
+		//Not sure about type as it is null
 		public object rune;
 		public object futureData;
 	}

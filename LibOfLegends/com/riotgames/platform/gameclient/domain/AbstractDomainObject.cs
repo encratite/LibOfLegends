@@ -12,7 +12,7 @@ namespace com.riotgames.platform.gameclient.domain
 		}
 
 		public object futureData;
-		public object dataVersion;
+		public int dataVersion;
 		public object count;
 	}
 }

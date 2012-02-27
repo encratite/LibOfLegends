@@ -10,15 +10,13 @@ namespace com.riotgames.platform.gameclient.domain
 {
 	public class AllPublicSummonerDataDTO
 	{
-		/*
-		public SummonerLevelAndPoints summonerLevelAndPoints;
-		public SummonerLevel summonerLevel;
-		*/
+		public int dataVersion;
 		public BasePublicSummonerDTO summoner;
 		public SpellBook spellBook;
 		public SummonerDefaultSpells summonerDefaultSpells;
 		public SummonerTalentsAndPoints summonerTalentsAndPoints;
-		public object summonerLevelAndPoints;
-		public object summonerLevel;
+		public SummonerLevelAndPoints summonerLevelAndPoints;
+		public SummonerLevel summonerLevel;
+		public object futureData;
 	}
 }

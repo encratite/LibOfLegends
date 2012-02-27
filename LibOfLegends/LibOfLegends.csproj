@@ -75,6 +75,8 @@
     <Compile Include="com\riotgames\platform\summoner\SummonerAssociatedTalent.cs" />
     <Compile Include="com\riotgames\platform\summoner\SummonerAssociatedTalentPK.cs" />
     <Compile Include="com\riotgames\platform\summoner\SummonerGameModeSpells.cs" />
+    <Compile Include="com\riotgames\platform\summoner\SummonerLevel.cs" />
+    <Compile Include="com\riotgames\platform\summoner\SummonerLevelAndPoints.cs" />
     <Compile Include="com\riotgames\platform\summoner\SummonerTalentsAndPoints.cs" />
     <Compile Include="com\riotgames\platform\summoner\Talent.cs" />
     <Compile Include="com\riotgames\platform\systemstate\ClientSystemStatesNotification.cs" />
