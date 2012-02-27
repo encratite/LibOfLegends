@@ -164,7 +164,7 @@ namespace LibOfLegends
 			_netConnection.Call(_endpoint, _playerStatsService, null, "retrievePlayerStatsByAccountId", responder, arguments);
 		}
 
-		public void GetAggregatedStatsInternal(Responder<object> responder, object[] arguments)
+		public void GetAggregatedStatsInternal(Responder<AggregatedStats> responder, object[] arguments)
 		{
 			_netConnection.Call(_endpoint, _playerStatsService, null, "getAggregatedStats", responder, arguments);
 		}
@@ -204,7 +204,7 @@ namespace LibOfLegends
 			RetrievePlayerStatsByAccountIDInternal(responder, new object[] { accountID, season });
 		}
 
-		public void GetAggregatedStatsAsync(int accountID, string gameMode, string season, Responder<object> responder)
+		public void GetAggregatedStatsAsync(int accountID, string gameMode, string season, Responder<AggregatedStats> responder)
 		{
 			GetAggregatedStatsInternal(responder, new object[] { accountID, gameMode, season });
 		}
@@ -236,6 +236,11 @@ namespace LibOfLegends
 		public PlayerLifeTimeStats RetrievePlayerStatsByAccountID(int accountID, string season)
 		{
 			return (new InternalCallContext<PlayerLifeTimeStats>(RetrievePlayerStatsByAccountIDInternal, new object[] { accountID, season })).Execute();
+		}
+
+		public AggregatedStats GetAggregatedStats(int accountID, string gameMode, string season)
+		{
+			return (new InternalCallContext<AggregatedStats>(GetAggregatedStatsInternal, new object[] { accountID, gameMode, season })).Execute();
 		}
 
 		#endregion

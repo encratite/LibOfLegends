@@ -54,9 +54,13 @@
     <Compile Include="AuthenticationProfile.cs" />
     <Compile Include="AuthResponse.cs" />
     <Compile Include="AuthService.cs" />
+    <Compile Include="ChampionStatistics.cs" />
     <Compile Include="com\riotgames\platform\clientfacade\domain\LoginDatapacket.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\AbstractDomainObject.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\AllPublicSummonerDataDTO.cs" />
+    <Compile Include="com\riotgames\platform\statistics\AggregatedStat.cs" />
+    <Compile Include="com\riotgames\platform\statistics\AggregatedStats.cs" />
+    <Compile Include="com\riotgames\platform\statistics\AggregatedStatsKey.cs" />
     <Compile Include="com\riotgames\platform\statistics\LeaverPenaltyStats.cs" />
     <Compile Include="com\riotgames\platform\statistics\PlayerLifeTimeStats.cs" />
     <Compile Include="com\riotgames\platform\statistics\PlayerStats.cs" />

@@ -90,6 +90,7 @@ namespace LibOfLegendsExample
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
 				{"id", new CommandInformation(-1, GetAccountID, "<name>", "Retrieve the account ID associated with the given summoner name")},
 				{"profile", new CommandInformation(-1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
+				{"ranked", new CommandInformation(-1, RankedStatistics, "<name>", "Analyse the ranked statistics of the summoner given")},
 				{"recent", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"test", new CommandInformation(-1, RunTest, "<name>", "Perform test")},
 			};
@@ -255,7 +256,7 @@ namespace LibOfLegendsExample
 
 		string GetPrefix(int input)
 		{
-			if (input > 0)
+			if (input >= 0)
 				return "+";
 			return "-";
 		}
@@ -340,10 +341,53 @@ namespace LibOfLegendsExample
 				if (stats.teamRating != 0)
 					Console.Write(", team " + stats.teamRating + " (" + SignPrefix(stats.teamRating - stats.rating) + ")");
 				if (stats.predictedWinPct != 0)
-					Console.Write(", prediction " + string.Format("{0:0.0%}", stats.predictedWinPct));
+					Console.Write(", prediction " + Percentage(stats.predictedWinPct));
 				if (stats.premadeSize > 1)
 					Console.Write(", queued with " + stats.premadeSize);
 				Console.WriteLine("");
+			}
+		}
+
+		string Percentage(double input)
+		{
+			return string.Format("{0:0.0%}", input);
+		}
+
+		string Round(double input)
+		{
+			return string.Format("{0:0.0}", input);
+		}
+
+		List<ChampionStatistics> TranslateAggregatedStatistics(AggregatedStats statistics)
+		{
+			Dictionary<int, ChampionStatistics> output = new Dictionary<int, ChampionStatistics>();
+			foreach (var statisticsEntry in statistics.lifetimeStatistics)
+			{
+				int key = statisticsEntry.championId;
+				if (key == 0)
+					continue;
+				if (output.ContainsKey(key))
+					continue;
+				ChampionStatistics newEntry = new ChampionStatistics(key, statistics);
+				output[key] = newEntry;
+			}
+			return output.Values.ToList();
+		}
+
+		void RankedStatistics(List<string> arguments)
+		{
+			string summonerName = GetNameFromArguments(arguments);
+			PublicSummoner publicSummoner = RPC.GetSummonerByName(summonerName);
+			if (publicSummoner == null)
+			{
+				NoSuchSummoner();
+				return;
+			}
+			AggregatedStats aggregatedStatistics = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", "CURRENT");
+			List<ChampionStatistics> statistics = TranslateAggregatedStatistics(aggregatedStatistics);
+			foreach (var entry in statistics)
+			{
+				Console.WriteLine(entry.ChampionId + ": " + entry.Victories + " W - " + entry.Defeats + " L (" + SignPrefix(entry.Victories - entry.Defeats) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 			}
 		}
 
@@ -356,7 +400,7 @@ namespace LibOfLegendsExample
 				NoSuchSummoner();
 				return;
 			}
-			PlayerLifeTimeStats result = RPC.RetrievePlayerStatsByAccountID(publicSummoner.acctId, "CURRENT");
+			AggregatedStats result = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", "CURRENT");
 			Console.WriteLine("Successs");
 		}
 	}
