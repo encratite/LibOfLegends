@@ -13,6 +13,7 @@ namespace com.riotgames.platform.statistics
 		{
 		}
 
+		//May be a real value, using int out of convenience
 		public int userId;
 		public int maxRating;
 		public int leaves;

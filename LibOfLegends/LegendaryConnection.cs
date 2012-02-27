@@ -233,7 +233,7 @@ namespace LibOfLegends
 			return (new InternalCallContext<AllSummonerData>(GetAllSummonerDataByAccountInternal, new object[] { accountID })).Execute();
 		}
 
-		public object RetrievePlayerStatsByAccountIDAsync(int accountID, string season)
+		public object RetrievePlayerStatsByAccountID(int accountID, string season)
 		{
 			return (new InternalCallContext<object>(RetrievePlayerStatsByAccountIDInternal, new object[] { accountID, season })).Execute();
 		}

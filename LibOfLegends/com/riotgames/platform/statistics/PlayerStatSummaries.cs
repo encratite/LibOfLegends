@@ -12,6 +12,7 @@ namespace com.riotgames.platform.statistics
 		}
 
 		public List<PlayerStatSummary> playerStatSummarySet;
+		//May be a real value, using int out of convenience
 		public int userId;
 	}
 }
