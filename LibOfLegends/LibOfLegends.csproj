@@ -57,6 +57,13 @@
     <Compile Include="com\riotgames\platform\clientfacade\domain\LoginDatapacket.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\AbstractDomainObject.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\AllPublicSummonerDataDTO.cs" />
+    <Compile Include="com\riotgames\platform\statistics\LeaverPenaltyStats.cs" />
+    <Compile Include="com\riotgames\platform\statistics\PlayerLifeTimeStats.cs" />
+    <Compile Include="com\riotgames\platform\statistics\PlayerStats.cs" />
+    <Compile Include="com\riotgames\platform\statistics\PlayerStatSummary.cs" />
+    <Compile Include="com\riotgames\platform\statistics\SummaryAggStat.cs" />
+    <Compile Include="com\riotgames\platform\statistics\SummaryAggStats.cs" />
+    <Compile Include="com\riotgames\platform\statistics\TimeTrackedStat.cs" />
     <Compile Include="com\riotgames\platform\summoner\AllSummonerData.cs" />
     <Compile Include="com\riotgames\platform\summoner\BasePublicSummonerDTO.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\broadcast\BroadcastNotification.cs" />
@@ -70,7 +77,7 @@
     <Compile Include="com\riotgames\platform\statistics\PlayerGameStats.cs" />
     <Compile Include="com\riotgames\platform\statistics\RecentGames.cs" />
     <Compile Include="com\riotgames\platform\summoner\PublicSummoner.cs" />
-    <Compile Include="com\riotgames\platform\statistics\Statistics.cs" />
+    <Compile Include="com\riotgames\platform\statistics\PlayerStatSummaries.cs" />
     <Compile Include="com\riotgames\platform\summoner\spellbook\SlotEntry.cs" />
     <Compile Include="com\riotgames\platform\summoner\spellbook\SpellBook.cs" />
     <Compile Include="com\riotgames\platform\summoner\spellbook\SpellBookPage.cs" />

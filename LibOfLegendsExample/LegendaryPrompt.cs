@@ -292,7 +292,7 @@ namespace LibOfLegendsExample
 				NoSuchSummoner();
 				return;
 			}
-			AllSummonerData result = RPC.GetAllSummonerDataByAccount(publicSummoner.acctId);
+			object result = RPC.RetrievePlayerStatsByAccountIDAsync(publicSummoner.acctId, "CURRENT");
 			Console.WriteLine("Successs");
 		}
 	}
