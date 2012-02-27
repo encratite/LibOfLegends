@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using com.riotgames.platform.gameclient.domain;
+
 namespace com.riotgames.platform.summoner
 {
-	public class SummonerTalentsAndPoints
+	public class SummonerTalentsAndPoints : AbstractDomainObject
 	{
 		public int talentPoints;
 		public int unusedTalentPoints;
-		public int dataVersion;
 		public List<SummonerAssociatedTalent> summonerAssociatedTalents;
 		public DateTime modifyDate;
 		public DateTime createDate;
 		public int summonerId;
-		public object futureData;
 	}
 }

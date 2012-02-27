@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using com.riotgames.platform.gameclient.domain;
+
 namespace com.riotgames.platform.summoner
 {
-	public class SummonerAssociatedTalentPK
+	public class SummonerAssociatedTalentPK : AbstractDomainObject
 	{
-		public int dataVersion;
 		public int sumId;
 		public int tltId;
-		public object futureData;
 	}
 }

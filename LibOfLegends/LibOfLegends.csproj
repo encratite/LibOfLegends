@@ -57,13 +57,13 @@
     <Compile Include="com\riotgames\platform\clientfacade\domain\LoginDatapacket.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\AbstractDomainObject.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\AllPublicSummonerDataDTO.cs" />
-    <Compile Include="com\riotgames\platform\gameclient\domain\BasePublicSummonerDTO.cs" />
+    <Compile Include="com\riotgames\platform\summoner\BasePublicSummonerDTO.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\broadcast\BroadcastNotification.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\FellowPlayerInfo.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\game\GameReconnectionInfo.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\RawStat.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\Spell.cs" />
-    <Compile Include="com\riotgames\platform\gameclient\domain\SummonerDefaultSpells.cs" />
+    <Compile Include="com\riotgames\platform\summoner\SummonerDefaultSpells.cs" />
     <Compile Include="com\riotgames\platform\login\Login.cs" />
     <Compile Include="com\riotgames\platform\statistics\PlayerGameStats.cs" />
     <Compile Include="com\riotgames\platform\statistics\RecentGames.cs" />

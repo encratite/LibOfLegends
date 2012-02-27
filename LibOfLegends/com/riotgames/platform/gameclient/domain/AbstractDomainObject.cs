@@ -5,7 +5,7 @@ using System.Text;
 
 namespace com.riotgames.platform.gameclient.domain
 {
-	class AbstractDomainObject
+	public class AbstractDomainObject
 	{
 		public AbstractDomainObject()
 		{
@@ -13,7 +13,6 @@ namespace com.riotgames.platform.gameclient.domain
 
 		public object futureData;
 		public int dataVersion;
-		public object count;
 	}
 }
 

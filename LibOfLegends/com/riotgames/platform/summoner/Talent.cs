@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using com.riotgames.platform.gameclient.domain;
+
 namespace com.riotgames.platform.summoner
 {
-	public class Talent
+	public class Talent : AbstractDomainObject
 	{
 		public int index;
 		public string level5Desc;
@@ -14,13 +16,11 @@ namespace com.riotgames.platform.summoner
 		public string level4Desc;
 		public int tltId;
 		public string level3Desc;
-		public object futuredata;
 		public int talentGroupId;
 		public int gameCode;
 		public int minTier;
 		//No idea about the type, as it is null
 		public object prereqTalentGameCode;
-		public int dataVersion;
 		public string level2Desc;
 		public string name;
 		public int talentRowId;

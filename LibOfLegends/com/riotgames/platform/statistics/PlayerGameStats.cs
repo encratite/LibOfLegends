@@ -7,7 +7,7 @@ using com.riotgames.platform.gameclient.domain;
 
 namespace com.riotgames.platform.statistics
 {
-	public class PlayerGameStats
+	public class PlayerGameStats : AbstractDomainObject
 	{
 		public string skinName;
 		public bool ranked;
@@ -31,7 +31,6 @@ namespace com.riotgames.platform.statistics
 		public int boostXpEarned;
 		public int level;
 		public bool invalid;
-		public int dataVersion;
 		public int userId;
 		public DateTime createDate;
 		public int userServerPing;
@@ -42,7 +41,6 @@ namespace com.riotgames.platform.statistics
 		public int timeInQueue;
 		public int ipEarned;
 		public int eloChange;
-		public object futureData;
 		public string gameMode;
 		public string difficultyString;
 		public int KCoefficient;
