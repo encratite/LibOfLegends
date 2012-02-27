@@ -12,7 +12,9 @@ namespace com.riotgames.platform.statistics
 		public DateTime previousFirstWinOfDay;
 		public int userId;
 		public int dodgeStreak;
-		public int dodgePenaltyDate;
+		//Can be null so it must not have the right type right away, otherwise it will get converted to a bogus date
+		//public DateTime dodgePenaltyDate;
+		public object dodgePenaltyDate;
 		public string playerStatsJson;
 		public PlayerStats playerStats;
 	}

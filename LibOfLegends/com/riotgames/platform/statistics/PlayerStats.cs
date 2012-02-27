@@ -12,6 +12,6 @@ namespace com.riotgames.platform.statistics
 		public List<TimeTrackedStat> timeTrackedStats;
 		public int promoGamesPlayed;
 		//always null?
-		public DateTime promoGamesPlayedLastUpdated;
+		public object promoGamesPlayedLastUpdated;
 	}
 }

@@ -165,6 +165,30 @@ namespace LibOfLegendsExample
 			return true;
 		}
 
+		void AnalayseStatistics(string description, string target, List<PlayerStatSummary> summaries, bool isNormalElo = false, bool foundNormalElo = false, int normalElo = 0)
+		{
+			foreach (var summary in summaries)
+			{
+				if (summary.playerStatSummaryType == target)
+				{
+					string intro = description + ": ";
+					string winLossAnalysis = summary.wins + " W - " + summary.losses + " L (" + SignPrefix(summary.wins - summary.losses) + ")";
+					if (summary.leaves > 0)
+						winLossAnalysis += ", left " + summary.leaves + " " + (summary.leaves > 1 ? "games" : "game");
+					if (isNormalElo)
+					{
+						if(foundNormalElo)
+							Console.WriteLine(intro + normalElo + ", " + winLossAnalysis);
+						else
+							Console.WriteLine(intro + "unknown rating, " + winLossAnalysis);
+					}
+					else
+						Console.WriteLine(intro + summary.rating + " (top " + summary.maxRating + "), " + winLossAnalysis);
+					return;
+				}
+			}
+		}
+
 		void AnalyseSummonerProfile(List<string> arguments)
 		{
 			string summonerName = GetNameFromArguments(arguments);
@@ -177,16 +201,56 @@ namespace LibOfLegendsExample
 				return;
 			}
 
+			PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(publicSummoner.acctId, "CURRENT");
+			if (lifeTimeStatistics == null)
+			{
+				Console.WriteLine("Unable to retrieve lifetime statistics");
+				return;
+			}
+
 			int normalElo = 0;
 			bool foundNormalElo = GetNormalElo(recentGames, ref normalElo);
+
+			List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
 
 			Console.WriteLine("Account ID: " + publicSummoner.summonerId);
 			Console.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
 
-			if (foundNormalElo)
-				Console.WriteLine("Normal Elo: " + normalElo);
-			else
-				Console.WriteLine("No normal games in match history");
+			/*
+			 * SK Ocelote:
+			 * 
+			 * RankedPremade3x3: 0 - 0, 1291 (1791)
+			 * RankedTeam3x3: 1 - 0, 1410 (1435)
+			 * RankedPremade5x5: 19 - 7, 1751 (2085)
+			 * RankedTeam5x5: 69 - 12, 1400 (1442)
+			 * 
+			 * Actual values from the profile:
+			 * 
+			 * Arranged team 5v5: 19 - 7, 1751 (2085)
+			 * Unranked in 3v3
+			 * 
+			 * syrela:
+			 * 
+			 * RankedPremade3x3: 37 - 9, 1715 (1924)
+			 * RankedTeam3x3: 53 - 6, 1400 (1400)
+			 * RankedPremade5x5: 19 - 6 1611 (1733)
+			 * RankedTeam5x5: 26 - 4, 1400 (1400)
+			 * 
+			 * Actual values from the profile:
+			 * 
+			 * Arranged team 3v3: 37 - 9, 1715 (1924)
+			 * Arranged team 5v5: 19 - 6, 1611 (1733)
+			 * 
+			 * Doesn't match any data from last season either.
+			 * This means that all the "Team" variants are unused right now.
+			 */
+
+
+			AnalayseStatistics("Unranked Summoner's Rift", "Unranked", summaries, true, foundNormalElo, normalElo);
+			AnalayseStatistics("Ranked Twisted Treeline (team)", "RankedPremade3x3", summaries);
+			AnalayseStatistics("Ranked Summoner's Rift (solo)", "RankedSolo5x5", summaries);
+			AnalayseStatistics("Ranked Summoner's Rift (team)", "RankedPremade5x5", summaries);
+			AnalayseStatistics("Unranked Dominion", "OdinUnranked", summaries);
 		}
 
 		string GetPrefix(int input)
@@ -292,7 +356,7 @@ namespace LibOfLegendsExample
 				NoSuchSummoner();
 				return;
 			}
-			object result = RPC.RetrievePlayerStatsByAccountID(publicSummoner.acctId, "CURRENT");
+			PlayerLifeTimeStats result = RPC.RetrievePlayerStatsByAccountID(publicSummoner.acctId, "CURRENT");
 			Console.WriteLine("Successs");
 		}
 	}

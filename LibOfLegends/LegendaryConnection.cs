@@ -159,7 +159,7 @@ namespace LibOfLegends
 			_netConnection.Call(_endpoint, _summonerService, null, "getAllSummonerDataByAccount", responder, arguments);
 		}
 
-		public void RetrievePlayerStatsByAccountIDInternal(Responder<object> responder, object[] arguments)
+		public void RetrievePlayerStatsByAccountIDInternal(Responder<PlayerLifeTimeStats> responder, object[] arguments)
 		{
 			_netConnection.Call(_endpoint, _playerStatsService, null, "retrievePlayerStatsByAccountId", responder, arguments);
 		}
@@ -199,7 +199,7 @@ namespace LibOfLegends
 			GetAllSummonerDataByAccountInternal(responder, new object[] { accountID });
 		}
 
-		public void RetrievePlayerStatsByAccountIDAsync(int accountID, string season, Responder<object> responder)
+		public void RetrievePlayerStatsByAccountIDAsync(int accountID, string season, Responder<PlayerLifeTimeStats> responder)
 		{
 			RetrievePlayerStatsByAccountIDInternal(responder, new object[] { accountID, season });
 		}
@@ -233,9 +233,9 @@ namespace LibOfLegends
 			return (new InternalCallContext<AllSummonerData>(GetAllSummonerDataByAccountInternal, new object[] { accountID })).Execute();
 		}
 
-		public object RetrievePlayerStatsByAccountID(int accountID, string season)
+		public PlayerLifeTimeStats RetrievePlayerStatsByAccountID(int accountID, string season)
 		{
-			return (new InternalCallContext<object>(RetrievePlayerStatsByAccountIDInternal, new object[] { accountID, season })).Execute();
+			return (new InternalCallContext<PlayerLifeTimeStats>(RetrievePlayerStatsByAccountIDInternal, new object[] { accountID, season })).Execute();
 		}
 
 		#endregion
