@@ -175,6 +175,9 @@ namespace LibOfLegendsExample
 			{
 				if (summary.playerStatSummaryType == target)
 				{
+					int games = summary.wins + summary.losses;
+					if (games == 0)
+						continue;
 					string intro = description + ": ";
 					string winLossAnalysis = summary.wins + " W - " + summary.losses + " L (" + SignPrefix(summary.wins - summary.losses) + ")";
 					if (summary.leaves > 0)
