@@ -16,6 +16,8 @@ namespace LibOfLegends
 		public int Deaths;
 		public int Assists;
 
+		public int MinionKills;
+
 		public int Gold;
 
 		public int TurretsDestroyed;
@@ -53,6 +55,8 @@ namespace LibOfLegends
 			Kills = Load("TOTAL_CHAMPION_KILLS");
 			Deaths = Load("TOTAL_DEATHS_PER_SESSION");
 			Assists = Load("TOTAL_ASSISTS");
+
+			MinionKills = Load("TOTAL_MINION_KILLS");
 
 			Gold = Load("TOTAL_GOLD_EARNED");
 
