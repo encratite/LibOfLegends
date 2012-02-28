@@ -95,7 +95,7 @@
     <Compile Include="com\riotgames\platform\systemstate\ClientSystemStatesNotification.cs" />
     <Compile Include="ConnectionProfile.cs" />
     <Compile Include="InternalCallContext.cs" />
-    <Compile Include="LegendaryConnection.cs" />
+    <Compile Include="RPCService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyProfile.cs" />
     <Compile Include="RegionProfile.cs" />
