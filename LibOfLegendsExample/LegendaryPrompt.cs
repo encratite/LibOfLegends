@@ -82,7 +82,16 @@ namespace LibOfLegendsExample
 			{
 				Console.Write("> ");
 				string line = Console.ReadLine();
-				ProcessLine(line);
+				try
+				{
+					ProcessLine(line);
+				}
+				catch (Exception exception)
+				{
+					Console.WriteLine("An exception occurred:");
+					Console.WriteLine(exception.Message);
+					break;
+				}
 			}
 		}
 
