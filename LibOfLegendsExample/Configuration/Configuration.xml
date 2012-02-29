@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Authentication>
-    <ClientVersion>1.54.12_02_14_13_07</ClientVersion>
+    <ClientVersion>1.55.12_02_28_18_00</ClientVersion>
     <Domain>lolclient.lol.riotgames.com</Domain>
     <IPAddress>10.0.0.1</IPAddress>
     <Locale>en_GB</Locale>
@@ -21,17 +21,17 @@
   <ServerProfiles>
     <ServerProfile>
       <Abbreviation>NA</Abbreviation>
-      <LoginQueueURL>https://lq.na1.lol.riotgames.com/login-queue/rest/queue/</LoginQueueURL>
+      <LoginQueueURL>https://lq.na1.lol.riotgames.com/login-queue/rest/queue</LoginQueueURL>
       <RPCURL>rtmps://prod.na1.lol.riotgames.com:2099/</RPCURL>
     </ServerProfile>
     <ServerProfile>
       <Abbreviation>EUW</Abbreviation>
-      <LoginQueueURL>https://lq.eu.lol.riotgames.com/login-queue/rest/queue/</LoginQueueURL>
+      <LoginQueueURL>https://lq.eu.lol.riotgames.com/login-queue/rest/queue</LoginQueueURL>
       <RPCURL>rtmps://prod.eu.lol.riotgames.com:2099/</RPCURL>
     </ServerProfile>
     <ServerProfile>
       <Abbreviation>EUNE</Abbreviation>
-      <LoginQueueURL>https://lq.eun1.lol.riotgames.com/login-queue/rest/queue/</LoginQueueURL>
+      <LoginQueueURL>https://lq.eun1.lol.riotgames.com/login-queue/rest/queue</LoginQueueURL>
       <RPCURL>rtmps://prod.eun1.lol.riotgames.com:2099/</RPCURL>
     </ServerProfile>
   </ServerProfiles>

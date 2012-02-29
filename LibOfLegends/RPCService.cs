@@ -67,10 +67,10 @@ namespace LibOfLegends
 				// Get an Auth token (Dumb, assumes no queueing, blocks)
 				AuthResponse = authService.Authenticate(ConnectionData.User, ConnectionData.Password);
 			}
-			catch (WebException exception)
+			catch (WebException)
 			{
 				RPCConnectSubscriber(false);
-				throw exception;
+				throw;
 			}
 
 			// Initialise our rtmps connection
@@ -92,17 +92,17 @@ namespace LibOfLegends
 
 		#region Net connection state handlers
 
-		void NetConnectionOnDisconnect(object sender, EventArgs e)
+		void NetConnectionOnDisconnect(object sender, EventArgs eventArguments)
 		{
 			/// TODO: Setup a delegate to call here
 		}
 
-		void NetConnectionOnConnect(object sender, EventArgs e)
+		void NetConnectionOnConnect(object sender, EventArgs eventArguments)
 		{
 			/// TODO: Check if there was a problem connecting
 
 			// Now that we are connected call the remote login function
-			AuthenticationCredentials authenticationCredentials = new com.riotgames.platform.login.AuthenticationCredentials();
+			AuthenticationCredentials authenticationCredentials = new AuthenticationCredentials();
 			authenticationCredentials.authToken = AuthResponse.Token;
 
 			authenticationCredentials.clientVersion = ConnectionData.Authentication.ClientVersion;
@@ -120,21 +120,18 @@ namespace LibOfLegends
 			RPCNetConnection.AddHeader(MessageBase.FlexClientIdHeader, false, Guid.NewGuid().ToString());
 			RPCNetConnection.AddHeader(MessageBase.EndpointHeader, false, EndpointString);
 
-			RPCNetConnection.Call(EndpointString, "loginService", null, "login", new Responder<com.riotgames.platform.login.Session>(OnLogin), authenticationCredentials);
+			RPCNetConnection.Call(EndpointString, "loginService", null, "login", new Responder<Session>(OnLogin, OnLoginFault), authenticationCredentials);
 		}
 
-		void NetConnectionNetStatus(object sender, NetStatusEventArgs e)
+		void NetConnectionNetStatus(object sender, NetStatusEventArgs eventArguments)
 		{
-			string level = e.Info["level"] as string;
+			string level = eventArguments.Info["level"] as string;
 			/// TODO: Setup a delegate to call here
 		}
 		#endregion
 
 		#region LoL and Flex login
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="success"></param>
+		
 		void OnLogin(Session session)
 		{
 			/// TODO: Convert this function to receive an arbitrary object and check for errors.
@@ -149,17 +146,22 @@ namespace LibOfLegends
 			RPCNetConnection.AddHeader(MessageBase.FlexClientIdHeader, false, session.token);
 
 			// Create the command message which will do flex authentication
-			CommandMessage m = new CommandMessage();
-			m.operation = CommandMessage.LoginOperation;
-			m.body = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(ConnectionData.User + ":" + session.token));
-			m.clientId = RPCNetConnection.ClientId;
-			m.correlationId = null;
-			m.destination = "";
-			m.messageId = Guid.NewGuid().ToString();
+			CommandMessage message = new CommandMessage();
+			message.operation = CommandMessage.LoginOperation;
+			message.body = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(ConnectionData.User + ":" + session.token));
+			message.clientId = RPCNetConnection.ClientId;
+			message.correlationId = null;
+			message.destination = "";
+			message.messageId = Guid.NewGuid().ToString();
 
 			// Perform flex authentication.
 			//_netConnection.Call("auth", new Responder<AcknowledgeMessage>(_OnFlexLogin), m);
-			RPCNetConnection.Call("auth", new Responder<string>(OnFlexLogin), m);
+			RPCNetConnection.Call("auth", new Responder<string>(OnFlexLogin), message);
+		}
+
+		void OnLoginFault(Fault fault)
+		{
+			Console.WriteLine("Login error: " + fault.FaultString);
 		}
 
 		void OnFlexLogin(string message)

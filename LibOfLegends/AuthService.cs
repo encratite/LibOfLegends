@@ -31,7 +31,7 @@ namespace LibOfLegends
 		public AuthResponse Authenticate(string name, string password)
 		{
 			// Authenticate with the queue service
-			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", LoginQueueURL));
+			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}/authenticate", LoginQueueURL));
 			request.Method = "POST";
 
 			if (Proxy != null)
@@ -40,7 +40,8 @@ namespace LibOfLegends
 				request.Proxy = new WebProxy(proxyParts[0], int.Parse(proxyParts[1]));
 			}
 
-			string postBody = string.Format("user={0},password={1}", System.Web.HttpUtility.UrlEncode(name), System.Web.HttpUtility.UrlEncode(password));
+			string innerPostBody = "user=" + System.Web.HttpUtility.UrlEncode(name) + ",password=" + System.Web.HttpUtility.UrlEncode(password);
+			string postBody = "payload=" + System.Web.HttpUtility.UrlEncode(innerPostBody);
 
 			// WRONG! We don't take into account encoding here.
 			// But it'll probably work, so write the body to the request.
@@ -56,10 +57,10 @@ namespace LibOfLegends
 			streamReader.Close();
 
 			// Deserialize the JSON into an AuthResponse
-			JavaScriptSerializer s = new JavaScriptSerializer();
-			AuthResponse ar = s.Deserialize<AuthResponse>(json);
+			JavaScriptSerializer serialiser = new JavaScriptSerializer();
+			AuthResponse authResponse = serialiser.Deserialize<AuthResponse>(json);
 
-			return ar;
+			return authResponse;
 		}
 
 		#region Configuration variables
