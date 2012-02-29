@@ -18,9 +18,10 @@ namespace LibOfLegends
 		{
 			Authentication = authentication;
 			Region = region;
+			Proxy = proxy;
+
 			User = user;
 			Password = password;
-			Proxy = proxy;
 		}
 	}
 }
