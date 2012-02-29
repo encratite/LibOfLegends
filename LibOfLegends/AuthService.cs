@@ -14,10 +14,10 @@ namespace LibOfLegends
 	{
 		public AuthService(string loginQueueURL, Proxy proxy = null)
 		{
-			_loginQueueURL = loginQueueURL;
-			_proxy = proxy;
+			LoginQueueURL = loginQueueURL;
+			Proxy = proxy;
 
-			if (_proxy != null && _proxy.Type != ProxyType.HTTP)
+			if (Proxy != null && Proxy.Type != ProxyType.HTTP)
 				throw new NotImplementedException("Proxy not supported for login queue with type other than HTTP");
 		}
 
@@ -31,29 +31,29 @@ namespace LibOfLegends
 		public AuthResponse Authenticate(string name, string password)
 		{
 			// Authenticate with the queue service
-			HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", _loginQueueURL));
-			req.Method = "POST";
+			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}authenticate", LoginQueueURL));
+			request.Method = "POST";
 
-			if (_proxy != null)
+			if (Proxy != null)
 			{
-				string[] proxyParts = _proxy.Server.Split(':');
-				req.Proxy = new WebProxy(proxyParts[0], int.Parse(proxyParts[1]));
+				string[] proxyParts = Proxy.Server.Split(':');
+				request.Proxy = new WebProxy(proxyParts[0], int.Parse(proxyParts[1]));
 			}
 
 			string postBody = string.Format("user={0},password={1}", System.Web.HttpUtility.UrlEncode(name), System.Web.HttpUtility.UrlEncode(password));
 
 			// WRONG! We don't take into account encoding here.
 			// But it'll probably work, so write the body to the request.
-			req.ContentLength = postBody.Length;
-			StreamWriter writer = new StreamWriter(req.GetRequestStream());
+			request.ContentLength = postBody.Length;
+			StreamWriter writer = new StreamWriter(request.GetRequestStream());
 			writer.Write(postBody);
 			writer.Close();
 
 			// Read the JSON back from the response.
-			HttpWebResponse response = (HttpWebResponse)req.GetResponse();
-			StreamReader sr = new StreamReader(response.GetResponseStream());
-			string json = sr.ReadLine();
-			sr.Close();
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			StreamReader streamReader = new StreamReader(response.GetResponseStream());
+			string json = streamReader.ReadLine();
+			streamReader.Close();
 
 			// Deserialize the JSON into an AuthResponse
 			JavaScriptSerializer s = new JavaScriptSerializer();
@@ -64,8 +64,8 @@ namespace LibOfLegends
 
 		#region Configuration variables
 
-		private string _loginQueueURL;
-		private Proxy _proxy;
+		string LoginQueueURL;
+		Proxy Proxy;
 
 		#endregion
 	}

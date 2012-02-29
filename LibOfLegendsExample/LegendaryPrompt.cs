@@ -36,7 +36,14 @@ namespace LibOfLegendsExample
 			OnConnectEvent = new AutoResetEvent(false);
 			ConnectionSuccess = false;
 			Console.WriteLine("Connecting to server...");
-			RPC.Connect(OnConnect);
+			try
+			{
+				RPC.Connect(OnConnect);
+			}
+			catch (Exception exception)
+			{
+				Console.WriteLine("Connection error: " + exception.Message);
+			}
 			OnConnectEvent.WaitOne();
 			PerformQueries();
 		}

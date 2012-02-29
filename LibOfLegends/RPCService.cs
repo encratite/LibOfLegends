@@ -17,78 +17,113 @@ namespace LibOfLegends
 {
 	public class RPCService
 	{
+		#region Delegates
+
+		public delegate void ConnectSubscriber(bool success);
+		ConnectSubscriber RPCConnectSubscriber = null;
+
+		#endregion
+
+		#region Server constants
+
+		const string EndpointString = "my-rtmps";
+
+		const string SummonerService = "summonerService";
+		const string PlayerStatsService = "playerStatsService";
+		const string ClientFacadeService = "clientFacadeService";
+
+		#endregion
+
+		#region Configuration variables
+
+		ConnectionProfile ConnectionData;
+
+		#endregion
+
+		#region Runtime variables
+
+		public NetConnection NetConnection { get { return RPCNetConnection; } set { RPCNetConnection = value; } }
+		NetConnection RPCNetConnection;
+
+		AuthResponse AuthResponse;
+		Session RPCSession;
+		LoginDataPacket RPCLoginDataPacket;
+
+		#endregion
+
 		public RPCService(ConnectionProfile connectionData)
 		{
-			_connectionData = connectionData;
+			ConnectionData = connectionData;
 		}
 
 		public void Connect(ConnectSubscriber connectSubscriber)
 		{
-			_connectSubscriber = connectSubscriber;
+			RPCConnectSubscriber = connectSubscriber;
 
 			// TODO: Run this in another thread and call back, this is a blocking operation.
 			try
 			{
-				AuthService authService = new AuthService(_connectionData.Region.LoginQueueURL, _connectionData.Proxy.LoginQueueProxy);
+				AuthService authService = new AuthService(ConnectionData.Region.LoginQueueURL, ConnectionData.Proxy.LoginQueueProxy);
 				// Get an Auth token (Dumb, assumes no queueing, blocks)
-				_authResponse = authService.Authenticate(_connectionData.User, _connectionData.Password);
+				AuthResponse = authService.Authenticate(ConnectionData.User, ConnectionData.Password);
 			}
-			catch (WebException e)
+			catch (WebException exception)
 			{
-				_connectSubscriber(false);
-				return;
+				RPCConnectSubscriber(false);
+				throw exception;
 			}
 
 			// Initialise our rtmps connection
-			_netConnection = new NetConnection();
-			_netConnection.Proxy = _connectionData.Proxy.RTMPProxy;
+			RPCNetConnection = new NetConnection();
+			RPCNetConnection.Proxy = ConnectionData.Proxy.RTMPProxy;
 
 			// We should use AMF3 to behave as closely to the client as possible.
-			_netConnection.ObjectEncoding = ObjectEncoding.AMF3;
+			RPCNetConnection.ObjectEncoding = ObjectEncoding.AMF3;
 
 			// Setup handlers for different network events.
-			_netConnection.OnConnect += new ConnectHandler(netConnection_OnConnect);
-			_netConnection.OnDisconnect += new DisconnectHandler(netConnection_OnDisconnect);
-			_netConnection.NetStatus += new NetStatusHandler(netConnection_NetStatus);
+			RPCNetConnection.OnConnect += new ConnectHandler(NetConnectionOnConnect);
+			RPCNetConnection.OnDisconnect += new DisconnectHandler(NetConnectionOnDisconnect);
+			RPCNetConnection.NetStatus += new NetStatusHandler(NetConnectionNetStatus);
 
 			// Connect to the rtmps server
-			_netConnection.Connect(_connectionData.Region.RPCURL);
+			RPCNetConnection.Connect(ConnectionData.Region.RPCURL);
 		}
 
 
 		#region Net connection state handlers
-		void netConnection_OnDisconnect(object sender, EventArgs e)
+
+		void NetConnectionOnDisconnect(object sender, EventArgs e)
 		{
 			/// TODO: Setup a delegate to call here
 		}
 
-		void netConnection_OnConnect(object sender, EventArgs e)
+		void NetConnectionOnConnect(object sender, EventArgs e)
 		{
 			/// TODO: Check if there was a problem connecting
 
 			// Now that we are connected call the remote login function
-			com.riotgames.platform.login.AuthenticationCredentials authenticationCredentials = new com.riotgames.platform.login.AuthenticationCredentials();
-			authenticationCredentials.authToken = _authResponse.Token;
+			AuthenticationCredentials authenticationCredentials = new com.riotgames.platform.login.AuthenticationCredentials();
+			authenticationCredentials.authToken = AuthResponse.Token;
 
-			authenticationCredentials.clientVersion = _connectionData.Authentication.ClientVersion;
-			authenticationCredentials.domain = _connectionData.Authentication.Domain;
-			authenticationCredentials.ipAddress = _connectionData.Authentication.IPAddress;
-			authenticationCredentials.locale = _connectionData.Authentication.Locale;
+			authenticationCredentials.clientVersion = ConnectionData.Authentication.ClientVersion;
+			authenticationCredentials.domain = ConnectionData.Authentication.Domain;
+			authenticationCredentials.ipAddress = ConnectionData.Authentication.IPAddress;
+			authenticationCredentials.locale = ConnectionData.Authentication.Locale;
 			authenticationCredentials.oldPassword = null;
 			authenticationCredentials.partnerCredentials = null;
 			authenticationCredentials.securityAnswer = null;
-			authenticationCredentials.password = _connectionData.Password;
-			authenticationCredentials.username = _connectionData.User;
+			authenticationCredentials.password = ConnectionData.Password;
+			authenticationCredentials.username = ConnectionData.User;
 
 			// Add some default headers
-			_netConnection.AddHeader(MessageBase.RequestTimeoutHeader, false, 60);
-			_netConnection.AddHeader(MessageBase.FlexClientIdHeader, false, Guid.NewGuid().ToString());
-			_netConnection.AddHeader(MessageBase.EndpointHeader, false, _endpoint);
+			RPCNetConnection.AddHeader(MessageBase.RequestTimeoutHeader, false, 60);
+			RPCNetConnection.AddHeader(MessageBase.FlexClientIdHeader, false, Guid.NewGuid().ToString());
+			RPCNetConnection.AddHeader(MessageBase.EndpointHeader, false, EndpointString);
 
-			_netConnection.Call(_endpoint, "loginService", null, "login", new Responder<com.riotgames.platform.login.Session>(_OnLogin), authenticationCredentials);
+			RPCNetConnection.Call(EndpointString, "loginService", null, "login", new Responder<com.riotgames.platform.login.Session>(OnLogin), authenticationCredentials);
 		}
 
-		void netConnection_NetStatus(object sender, NetStatusEventArgs e)
+		void NetConnectionNetStatus(object sender, NetStatusEventArgs e)
 		{
 			string level = e.Info["level"] as string;
 			/// TODO: Setup a delegate to call here
@@ -100,7 +135,7 @@ namespace LibOfLegends
 		/// 
 		/// </summary>
 		/// <param name="success"></param>
-		private void _OnLogin(Session session)
+		void OnLogin(Session session)
 		{
 			/// TODO: Convert this function to receive an arbitrary object and check for errors.
 			
@@ -108,71 +143,71 @@ namespace LibOfLegends
 			//  _connectSubscriber(false);
 
 			// Store the session
-			_session = session;
+			RPCSession = session;
 
 			// Client header should be set to the token we received from REST authentication
-			_netConnection.AddHeader(MessageBase.FlexClientIdHeader, false, session.token);
+			RPCNetConnection.AddHeader(MessageBase.FlexClientIdHeader, false, session.token);
 
 			// Create the command message which will do flex authentication
 			CommandMessage m = new CommandMessage();
 			m.operation = CommandMessage.LoginOperation;
-			m.body = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(_connectionData.User + ":" + session.token));
-			m.clientId = _netConnection.ClientId;
+			m.body = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(ConnectionData.User + ":" + session.token));
+			m.clientId = RPCNetConnection.ClientId;
 			m.correlationId = null;
 			m.destination = "";
 			m.messageId = Guid.NewGuid().ToString();
 
 			// Perform flex authentication.
 			//_netConnection.Call("auth", new Responder<AcknowledgeMessage>(_OnFlexLogin), m);
-			_netConnection.Call("auth", new Responder<string>(_OnFlexLogin), m);
+			RPCNetConnection.Call("auth", new Responder<string>(OnFlexLogin), m);
 		}
 
-		private void _OnFlexLogin(string message)
+		void OnFlexLogin(string message)
 		{
 			if (message == "success")
-				_connectSubscriber(true);
+				RPCConnectSubscriber(true);
 			else
-				_connectSubscriber(false);
+				RPCConnectSubscriber(false);
 		}
 
 		#endregion
 
 		#region Internal RPC
 
-		private void GetSummonerByNameInternal(Responder<PublicSummoner> responder, object[] arguments)
+		void GetSummonerByNameInternal(Responder<PublicSummoner> responder, object[] arguments)
 		{
-			_netConnection.Call(_endpoint, _summonerService, null, "getSummonerByName", responder, arguments);
+			RPCNetConnection.Call(EndpointString, SummonerService, null, "getSummonerByName", responder, arguments);
 		}
 
-		private void GetRecentGamesInternal(Responder<RecentGames> responder, object[] arguments)
+		void GetRecentGamesInternal(Responder<RecentGames> responder, object[] arguments)
 		{
-			_netConnection.Call(_endpoint, _playerStatsService, null, "getRecentGames", responder, arguments);
+			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "getRecentGames", responder, arguments);
 		}
 
 		public void GetAllPublicSummonerDataByAccountInternal(Responder<AllPublicSummonerDataDTO> responder, object[] arguments)
 		{
-			_netConnection.Call(_endpoint, _summonerService, null, "getAllPublicSummonerDataByAccount", responder, arguments);
+			RPCNetConnection.Call(EndpointString, SummonerService, null, "getAllPublicSummonerDataByAccount", responder, arguments);
 		}
 
 		public void GetAllSummonerDataByAccountInternal(Responder<AllSummonerData> responder, object[] arguments)
 		{
-			_netConnection.Call(_endpoint, _summonerService, null, "getAllSummonerDataByAccount", responder, arguments);
+			RPCNetConnection.Call(EndpointString, SummonerService, null, "getAllSummonerDataByAccount", responder, arguments);
 		}
 
 		public void RetrievePlayerStatsByAccountIDInternal(Responder<PlayerLifeTimeStats> responder, object[] arguments)
 		{
-			_netConnection.Call(_endpoint, _playerStatsService, null, "retrievePlayerStatsByAccountId", responder, arguments);
+			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "retrievePlayerStatsByAccountId", responder, arguments);
 		}
 
 		public void GetAggregatedStatsInternal(Responder<AggregatedStats> responder, object[] arguments)
 		{
-			_netConnection.Call(_endpoint, _playerStatsService, null, "getAggregatedStats", responder, arguments);
+			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "getAggregatedStats", responder, arguments);
 		}
 
 		//This call is not exposed to the outside
-		private void GetLoginDataPacketForUserInternal(Responder<LoginDataPacket> responder)
+		void GetLoginDataPacketForUserInternal(Responder<LoginDataPacket> responder)
 		{
-			_netConnection.Call(_endpoint, _clientFacadeService, null, "getLoginDataPacketForUser", responder, new object[] {});
+			RPCNetConnection.Call(EndpointString, ClientFacadeService, null, "getLoginDataPacketForUser", responder, new object[] {});
 		}
 
 		#endregion
@@ -243,37 +278,6 @@ namespace LibOfLegends
 			return (new InternalCallContext<AggregatedStats>(GetAggregatedStatsInternal, new object[] { accountID, gameMode, season })).Execute();
 		}
 
-		#endregion
-
-		#region Delegates
-		public delegate void ConnectSubscriber(bool success);
-		private ConnectSubscriber _connectSubscriber = null;
-#endregion
-
-		#region Server constants
-		
-		private const string _endpoint = "my-rtmps";
-
-		private const string _summonerService = "summonerService";
-		private const string _playerStatsService = "playerStatsService";
-		private const string _clientFacadeService = "clientFacadeService";
-
-		#endregion
-
-		#region Configuration variables
-
-		private ConnectionProfile _connectionData;
-		
-		#endregion
-
-		#region Runtime variables
-
-		public NetConnection NetConnection { get { return _netConnection; } set { _netConnection = value; } }
-		private NetConnection _netConnection;
-
-		private AuthResponse _authResponse;
-		private Session _session;
-		private LoginDataPacket _loginDataPacket;
 		#endregion
 	}
 }

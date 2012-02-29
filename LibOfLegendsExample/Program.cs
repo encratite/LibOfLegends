@@ -10,7 +10,7 @@ namespace LibOfLegendsExample
 {
 	class Program
 	{
-		private const string ConfigurationFile = "Configuration.xml";
+		const string ConfigurationFile = "Configuration.xml";
 
 		static void Main(string[] arguments)
 		{
