@@ -40,7 +40,10 @@
   <ItemGroup>
     <Reference Include="FluorineFx, Version=1.0.0.17, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\3rd Party\FluorineFx.dll</HintPath>
+      <HintPath>..\References\FluorineFx.dll</HintPath>
+    </Reference>
+    <Reference Include="Nil">
+      <HintPath>..\References\Nil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,11 +57,8 @@
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
     <Compile Include="LegendaryPrompt.cs" />
-    <Compile Include="SerialisableDictionary.cs" />
-    <Compile Include="Serialiser.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ServerProfile.cs" />
-    <Compile Include="Utility.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
