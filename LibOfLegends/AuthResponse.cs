@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LibOfLegends
+﻿namespace LibOfLegends
 {
 	/// <summary>
 	/// A class encapsulating the expected fields returned by the RESTful login queue.

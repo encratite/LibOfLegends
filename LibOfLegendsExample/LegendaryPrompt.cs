@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-
-using FluorineFx.Net;
 
 using LibOfLegends;
 
-using com.riotgames.platform.summoner;
 using com.riotgames.platform.statistics;
-using com.riotgames.platform.gameclient.domain;
+using com.riotgames.platform.summoner;
 
 namespace LibOfLegendsExample
 {

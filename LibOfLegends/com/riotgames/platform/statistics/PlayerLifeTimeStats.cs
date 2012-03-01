@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using com.riotgames.platform.gameclient.domain;
 

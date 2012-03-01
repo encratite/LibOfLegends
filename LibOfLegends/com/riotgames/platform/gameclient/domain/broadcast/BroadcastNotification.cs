@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using FluorineFx.AMF3;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+
+using FluorineFx.AMF3;
 
 namespace com.riotgames.platform.gameclient.domain.broadcast
 {
@@ -17,12 +17,12 @@ namespace com.riotgames.platform.gameclient.domain.broadcast
 		public void ReadExternal(IDataInput input)
 		{
 			string json = input.ReadUTF();
-			System.Runtime.Serialization.Json.DataContractJsonSerializer ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(BroadcastNotification));
+			DataContractJsonSerializer serialiser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(BroadcastNotification));
 
-			Stream s = new MemoryStream(ASCIIEncoding.Default.GetBytes(json));
+			Stream stream = new MemoryStream(ASCIIEncoding.Default.GetBytes(json));
 
-			BroadcastNotification bn = (BroadcastNotification)ser.ReadObject(s);
-			broadcastMessages = bn.broadcastMessages;
+			BroadcastNotification notification = (BroadcastNotification)serialiser.ReadObject(stream);
+			broadcastMessages = notification.broadcastMessages;
 		}
 
 		public void WriteExternal(IDataOutput output)

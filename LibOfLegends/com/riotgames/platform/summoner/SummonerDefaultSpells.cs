@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using com.riotgames.platform.summoner;
+﻿using System.Collections.Generic;
 
 using com.riotgames.platform.gameclient.domain;
 

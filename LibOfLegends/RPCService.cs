@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Net;
-using System.IO;
-using System.Threading;
 
 using FluorineFx;
-using FluorineFx.Net;
 using FluorineFx.Messaging.Messages;
+using FluorineFx.Net;
 
 using com.riotgames.platform.clientfacade.domain;
-using com.riotgames.platform.login;
-using com.riotgames.platform.summoner;
-using com.riotgames.platform.statistics;
 using com.riotgames.platform.gameclient.domain;
+using com.riotgames.platform.login;
+using com.riotgames.platform.statistics;
+using com.riotgames.platform.summoner;
 
 namespace LibOfLegends
 {
