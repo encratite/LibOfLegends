@@ -4,7 +4,7 @@
     <ClientVersion>1.55.12_02_29_10_50</ClientVersion>
     <Domain>lolclient.lol.riotgames.com</Domain>
     <IPAddress>10.0.0.1</IPAddress>
-    <Locale>en_GB</Locale>
+    <Locale>en_US</Locale>
   </Authentication>
   <!--
       <Proxy>
