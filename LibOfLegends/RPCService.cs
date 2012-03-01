@@ -47,7 +47,6 @@ namespace LibOfLegends
 
 		AuthResponse AuthResponse;
 		Session RPCSession;
-		LoginDataPacket RPCLoginDataPacket;
 
 		#endregion
 
@@ -73,7 +72,7 @@ namespace LibOfLegends
 				throw;
 			}
 
-			// Initialise our rtmps connection
+			// Initialise our RTMPS connection
 			RPCNetConnection = new NetConnection();
 			RPCNetConnection.Proxy = ConnectionData.Proxy.RTMPProxy;
 
@@ -85,7 +84,7 @@ namespace LibOfLegends
 			RPCNetConnection.OnDisconnect += new DisconnectHandler(NetConnectionOnDisconnect);
 			RPCNetConnection.NetStatus += new NetStatusHandler(NetConnectionNetStatus);
 
-			// Connect to the rtmps server
+			// Connect to the RTMPS server
 			RPCNetConnection.Connect(ConnectionData.Region.RPCURL);
 		}
 

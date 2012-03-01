@@ -5,6 +5,8 @@ using FluorineFx.AMF3;
 using com.riotgames.platform.statistics;
 using com.riotgames.platform.systemstate;
 
+#pragma warning disable 0649
+
 namespace com.riotgames.platform.clientfacade.domain
 {
 	class LoginDataPacket
