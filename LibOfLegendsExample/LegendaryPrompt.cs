@@ -241,7 +241,8 @@ namespace LibOfLegendsExample
 
 			Console.WriteLine("Account ID: " + publicSummoner.summonerId);
 			Console.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
-			Console.WriteLine("IP: " + allSummonerData.summonerLevelAndPoints.infPoints);
+			//No idea what this value contains now
+			//Console.WriteLine("IP: " + allSummonerData.summonerLevelAndPoints.infPoints);
 
 			/*
 			 * SK Ocelote:
