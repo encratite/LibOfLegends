@@ -104,7 +104,7 @@ namespace LibOfLegends
 
 			NodesNeutralised = MaybeLoad("NODE_NEUTRALIZE");
 			NodeNeutralisationAssists = MaybeLoad("NODE_NEUTRALIZE_ASSIST");
-			NodesNeutralised = MaybeLoad("NODE_CAPTURE");
+			NodesCaptured = MaybeLoad("NODE_CAPTURE");
 
 			VictoryPoints = MaybeLoad("VICTORY_POINT_TOTAL");
 			Objectives = MaybeLoad("TEAM_OBJECTIVE");
