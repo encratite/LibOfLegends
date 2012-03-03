@@ -306,7 +306,8 @@ namespace LibOfLegendsExample
 			}
 			foreach (var stats in recentGames)
 			{
-				Console.Write("[" + stats.gameId + "] ");
+				GameResult result = new GameResult(stats.statistics);
+				Console.Write("[{0}] [{1}] ", stats.gameId, result.Win ? "W" : "L");
 				if (stats.ranked)
 					Console.Write("Ranked ");
 				if (stats.gameType == "PRACTICE_GAME")
@@ -412,7 +413,7 @@ namespace LibOfLegendsExample
 				Console.WriteLine("Unable to retrieve aggregated statistics");
 				return;
 			}
-			List<ChampionStatistics> statistics = ChampionStatistics.TranslateAggregatedStatistics(aggregatedStatistics);
+			List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
 			foreach (var entry in statistics)
 			{
 				if (ProgramConfiguration.ChampionNames.ContainsKey(entry.ChampionId))

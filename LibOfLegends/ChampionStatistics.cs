@@ -123,7 +123,7 @@ namespace LibOfLegends
 			return (double)(Kills + Assists) / Deaths;
 		}
 
-		public static List<ChampionStatistics> TranslateAggregatedStatistics(AggregatedStats statistics)
+		public static List<ChampionStatistics> GetChampionStatistics(AggregatedStats statistics)
 		{
 			Dictionary<int, ChampionStatistics> output = new Dictionary<int, ChampionStatistics>();
 			foreach (var statisticsEntry in statistics.lifetimeStatistics)
