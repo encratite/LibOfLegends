@@ -416,6 +416,11 @@ namespace LibOfLegendsExample
 				return;
 			}
 			AggregatedStats aggregatedStatistics = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", "CURRENT");
+			if (aggregatedStatistics == null)
+			{
+				Console.WriteLine("Unable to retrieve aggregated statistics");
+				return;
+			}
 			List<ChampionStatistics> statistics = TranslateAggregatedStatistics(aggregatedStatistics);
 			foreach (var entry in statistics)
 			{
