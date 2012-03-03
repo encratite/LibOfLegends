@@ -357,6 +357,7 @@ namespace LibOfLegendsExample
 							break;
 					}
 				}
+				Console.Write(", {0} ({1})", stats.skinName, stats.skinIndex);
 				if (stats.adjustedRating != 0)
 				{
 					//Sometimes the servers are bugged and show invalid rating values
@@ -367,10 +368,16 @@ namespace LibOfLegendsExample
 					Console.Write(", adjusted " + stats.adjustedRating);
 				if (stats.teamRating != 0)
 					Console.Write(", team " + stats.teamRating + " (" + SignPrefix(stats.teamRating - stats.rating) + ")");
-				if (stats.predictedWinPct != 0)
+				if (stats.predictedWinPct != 0.0)
 					Console.Write(", prediction " + Percentage(stats.predictedWinPct));
 				if (stats.premadeSize > 1)
 					Console.Write(", queued with " + stats.premadeSize);
+				if (stats.leaver)
+					Console.Write(", left the game");
+				if (stats.afk)
+					Console.Write(", AFK");
+				Console.Write(", ping {0}", stats.userServerPing);
+				Console.Write(", {0} s spent in queue", stats.timeInQueue);
 				Console.WriteLine("");
 			}
 		}
@@ -415,7 +422,7 @@ namespace LibOfLegendsExample
 			}
 			statistics.Sort(CompareNames);
 			foreach (var entry in statistics)
-				Console.WriteLine(entry.Name + ": " + entry.Victories + " W - " + entry.Defeats + " L (" + SignPrefix(entry.Victories - entry.Defeats) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
+				Console.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 		}
 
 		void RunTest(List<string> arguments)

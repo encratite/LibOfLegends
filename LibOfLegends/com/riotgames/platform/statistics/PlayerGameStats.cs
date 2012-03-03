@@ -46,7 +46,7 @@ namespace com.riotgames.platform.statistics
 		public string subType;
 		public string queueType;
 		public bool premadeTeam;
-		public float predictedWinPct;
+		public double predictedWinPct;
 		public int rating;
 		public int championId;
 	}
