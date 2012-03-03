@@ -44,9 +44,9 @@ namespace LibOfLegends
 
 		List<RawStat> Statistics;
 
-		public GameResult(List<RawStat> statistics)
+		public GameResult(PlayerGameStats gameStatistics)
 		{
-			Statistics = statistics;
+			Statistics = gameStatistics.statistics;
 
 			int unused = 0;
 			Win = Load("WIN", ref unused);
@@ -104,14 +104,6 @@ namespace LibOfLegends
 			int output = 0;
 			if(!Load(name, ref output))
 				throw new Exception("Unable to find stat " + name);
-			return output;
-		}
-
-		public static List<GameResult> GetGameResults(List<PlayerGameStats> gameStats)
-		{
-			var output = new List<GameResult>();
-			foreach(var game in gameStats)
-				output.Add(new GameResult(game.statistics));
 			return output;
 		}
 	}

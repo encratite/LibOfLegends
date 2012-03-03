@@ -306,7 +306,7 @@ namespace LibOfLegendsExample
 			}
 			foreach (var stats in recentGames)
 			{
-				GameResult result = new GameResult(stats.statistics);
+				GameResult result = new GameResult(stats);
 				Console.Write("[{0}] [{1}] ", stats.gameId, result.Win ? "W" : "L");
 				if (stats.ranked)
 					Console.Write("Ranked ");
