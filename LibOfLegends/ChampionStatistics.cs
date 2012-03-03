@@ -8,8 +8,8 @@ namespace LibOfLegends
 {
 	public class ChampionStatistics
 	{
-		public int Victories;
-		public int Defeats;
+		public int Wins;
+		public int Losses;
 
 		public int Kills;
 		public int Deaths;
@@ -48,8 +48,8 @@ namespace LibOfLegends
 			ChampionId = championId;
 			Statistics = statistics;
 
-			Victories = Load("TOTAL_SESSIONS_WON");
-			Defeats = Load("TOTAL_SESSIONS_LOST");
+			Wins = Load("TOTAL_SESSIONS_WON");
+			Losses = Load("TOTAL_SESSIONS_LOST");
 
 			Kills = Load("TOTAL_CHAMPION_KILLS");
 			Deaths = Load("TOTAL_DEATHS_PER_SESSION");
@@ -90,12 +90,12 @@ namespace LibOfLegends
 
 		public int Games()
 		{
-			return Victories + Defeats;
+			return Wins + Losses;
 		}
 
 		public double WinRatio()
 		{
-			return (double)Victories / Games();
+			return (double)Wins / Games();
 		}
 
 		public double KillsPerGame()
