@@ -376,7 +376,7 @@ namespace LibOfLegendsExample
 					Console.Write(", left the game");
 				if (stats.afk)
 					Console.Write(", AFK");
-				Console.Write(", ping {0}", stats.userServerPing);
+				Console.Write(", {0} ms ping", stats.userServerPing);
 				Console.Write(", {0} s spent in queue", stats.timeInQueue);
 				Console.WriteLine("");
 			}
