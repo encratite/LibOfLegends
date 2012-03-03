@@ -33,14 +33,31 @@ namespace LibOfLegends
 
 		public int TotalHealingDone;
 
-		public int TurretsDestroyed;
-		public int InhibitorsDestroyed;
-
 		public int LargestCriticalStrike;
 		public int LargestMultiKill;
 		public int LargestKillingSpree;
 
 		public int TimeSpentDead;
+
+		//Summoner's Rift and Twisted Treeline specific
+
+		public int? TurretsDestroyed;
+		public int? InhibitorsDestroyed;
+
+		//Dominion specific
+
+		public int? NodesNeutralised;
+		public int? NodeNeutralisationAssists;
+		public int? NodesCaptured;
+
+		public int? VictoryPoints;
+		public int? Objectives;
+
+		public int? TotalScore;
+		public int? ObjectiveScore;
+		public int? CombatScore;
+
+		public int? Rank;
 
 		List<RawStat> Statistics;
 
@@ -76,14 +93,27 @@ namespace LibOfLegends
 
 			TotalHealingDone = Load("TOTAL_HEAL");
 
-			TurretsDestroyed = Load("TURRETS_KILLED");
-			InhibitorsDestroyed = Load("BARRACKS_KILLED");
-
 			LargestCriticalStrike = Load("LARGEST_CRITICAL_STRIKE");
 			LargestMultiKill = Load("LARGEST_MULTI_KILL");
 			LargestKillingSpree = Load("LARGEST_KILLING_SPREE");
 
 			TimeSpentDead = Load("TOTAL_TIME_SPENT_DEAD");
+
+			TurretsDestroyed = MaybeLoad("TURRETS_KILLED");
+			InhibitorsDestroyed = MaybeLoad("BARRACKS_KILLED");
+
+			NodesNeutralised = MaybeLoad("NODE_NEUTRALIZE");
+			NodeNeutralisationAssists = MaybeLoad("NODE_NEUTRALIZE_ASSIST");
+			NodesNeutralised = MaybeLoad("NODE_CAPTURE");
+
+			VictoryPoints = MaybeLoad("VICTORY_POINT_TOTAL");
+			Objectives = MaybeLoad("TEAM_OBJECTIVE");
+
+			TotalScore = MaybeLoad("TOTAL_PLAYER_SCORE");
+			ObjectiveScore = MaybeLoad("OBJECTIVE_PLAYER_SCORE");
+			CombatScore = MaybeLoad("COMBAT_PLAYER_SCORE");
+
+			Rank = MaybeLoad("TOTAL_SCORE_RANK");
 		}
 
 		bool Load(string name, ref int output)
@@ -104,6 +134,14 @@ namespace LibOfLegends
 			int output = 0;
 			if(!Load(name, ref output))
 				throw new Exception("Unable to find stat " + name);
+			return output;
+		}
+
+		int? MaybeLoad(string name)
+		{
+			int output = 0;
+			if (!Load(name, ref output))
+				return null;
 			return output;
 		}
 	}
