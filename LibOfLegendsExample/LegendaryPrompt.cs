@@ -385,22 +385,6 @@ namespace LibOfLegendsExample
 			return string.Format("{0:0.0}", input);
 		}
 
-		List<ChampionStatistics> TranslateAggregatedStatistics(AggregatedStats statistics)
-		{
-			Dictionary<int, ChampionStatistics> output = new Dictionary<int, ChampionStatistics>();
-			foreach (var statisticsEntry in statistics.lifetimeStatistics)
-			{
-				int key = statisticsEntry.championId;
-				if (key == 0)
-					continue;
-				if (output.ContainsKey(key))
-					continue;
-				ChampionStatistics newEntry = new ChampionStatistics(key, statistics);
-				output[key] = newEntry;
-			}
-			return output.Values.ToList();
-		}
-
 		int CompareNames(ChampionStatistics x, ChampionStatistics y)
 		{
 			return x.Name.CompareTo(y.Name);
@@ -421,7 +405,7 @@ namespace LibOfLegendsExample
 				Console.WriteLine("Unable to retrieve aggregated statistics");
 				return;
 			}
-			List<ChampionStatistics> statistics = TranslateAggregatedStatistics(aggregatedStatistics);
+			List<ChampionStatistics> statistics = ChampionStatistics.TranslateAggregatedStatistics(aggregatedStatistics);
 			foreach (var entry in statistics)
 			{
 				if (ProgramConfiguration.ChampionNames.ContainsKey(entry.ChampionId))

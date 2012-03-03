@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using com.riotgames.platform.statistics;
 
@@ -119,6 +121,22 @@ namespace LibOfLegends
 		public double KillsAndAssistsPerDeath()
 		{
 			return (double)(Kills + Assists) / Deaths;
+		}
+
+		public static List<ChampionStatistics> TranslateAggregatedStatistics(AggregatedStats statistics)
+		{
+			Dictionary<int, ChampionStatistics> output = new Dictionary<int, ChampionStatistics>();
+			foreach (var statisticsEntry in statistics.lifetimeStatistics)
+			{
+				int key = statisticsEntry.championId;
+				if (key == 0)
+					continue;
+				if (output.ContainsKey(key))
+					continue;
+				ChampionStatistics newEntry = new ChampionStatistics(key, statistics);
+				output[key] = newEntry;
+			}
+			return output.Values.ToList();
 		}
 	}
 }
