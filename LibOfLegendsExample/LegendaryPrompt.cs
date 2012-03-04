@@ -245,36 +245,7 @@ namespace LibOfLegendsExample
 			//No idea what this value contains now
 			//Console.WriteLine("IP: " + allSummonerData.summonerLevelAndPoints.infPoints);
 
-			/*
-			 * SK Ocelote:
-			 * 
-			 * RankedPremade3x3: 0 - 0, 1291 (1791)
-			 * RankedTeam3x3: 1 - 0, 1410 (1435)
-			 * RankedPremade5x5: 19 - 7, 1751 (2085)
-			 * RankedTeam5x5: 69 - 12, 1400 (1442)
-			 * 
-			 * Actual values from the profile:
-			 * 
-			 * Arranged team 5v5: 19 - 7, 1751 (2085)
-			 * Unranked in 3v3
-			 * 
-			 * syrela:
-			 * 
-			 * RankedPremade3x3: 37 - 9, 1715 (1924)
-			 * RankedTeam3x3: 53 - 6, 1400 (1400)
-			 * RankedPremade5x5: 19 - 6 1611 (1733)
-			 * RankedTeam5x5: 26 - 4, 1400 (1400)
-			 * 
-			 * Actual values from the profile:
-			 * 
-			 * Arranged team 3v3: 37 - 9, 1715 (1924)
-			 * Arranged team 5v5: 19 - 6, 1611 (1733)
-			 * 
-			 * Doesn't match any data from last season either.
-			 * This means that all the "Team" variants are unused right now.
-			 */
-
-
+			//The hidden "Team" variants of the "Premade" ratings are currently unused, it seems
 			AnalayseStatistics("Unranked Summoner's Rift", "Unranked", summaries, true, foundNormalElo, normalElo);
 			AnalayseStatistics("Ranked Twisted Treeline (team)", "RankedPremade3x3", summaries);
 			AnalayseStatistics("Ranked Summoner's Rift (solo)", "RankedSolo5x5", summaries);
