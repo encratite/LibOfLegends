@@ -225,18 +225,12 @@ namespace LibOfLegendsExample
 				return;
 			}
 
-			AllSummonerData allSummonerData = RPC.GetAllSummonerDataByAccount(publicSummoner.acctId);
-			if (allSummonerData == null)
-			{
-				Console.WriteLine("Unable to retrieve all summoner data");
-				return;
-			}
-
 			int normalElo = 0;
 			bool foundNormalElo = GetNormalElo(recentGames, ref normalElo);
 
 			List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
 
+			Console.WriteLine("Name: " + publicSummoner.name);
 			Console.WriteLine("Account ID: " + publicSummoner.summonerId);
 			Console.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
 			//No idea what this value contains now
