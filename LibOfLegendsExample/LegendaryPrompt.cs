@@ -228,7 +228,7 @@ namespace LibOfLegendsExample
 			}
 
 			AllSummonerData allSummonerData = RPC.GetAllSummonerDataByAccount(publicSummoner.acctId);
-			if (lifeTimeStatistics == null)
+			if (allSummonerData == null)
 			{
 				Console.WriteLine("Unable to retrieve all summoner data");
 				return;
@@ -239,6 +239,7 @@ namespace LibOfLegendsExample
 
 			List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
 
+			Console.WriteLine("Name: " + allSummonerData.summoner.name);
 			Console.WriteLine("Account ID: " + publicSummoner.summonerId);
 			Console.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
 			//No idea what this value contains now
