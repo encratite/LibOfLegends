@@ -17,8 +17,8 @@ namespace LibOfLegends
 	{
 		#region Delegates
 
-		public delegate void ConnectSubscriber(bool success);
-		ConnectSubscriber RPCConnectSubscriber = null;
+		public delegate void ConnectCallback(RPCConnectResult result);
+		ConnectCallback RPCConnectCallback = null;
 
 		#endregion
 
@@ -53,9 +53,9 @@ namespace LibOfLegends
 			ConnectionData = connectionData;
 		}
 
-		public void Connect(ConnectSubscriber connectSubscriber)
+		public void Connect(ConnectCallback connectCallback)
 		{
-			RPCConnectSubscriber = connectSubscriber;
+			RPCConnectCallback = connectCallback;
 
 			// TODO: Run this in another thread and call back, this is a blocking operation.
 			try
@@ -64,10 +64,10 @@ namespace LibOfLegends
 				// Get an Auth token (Dumb, assumes no queueing, blocks)
 				AuthResponse = authService.Authenticate(ConnectionData.User, ConnectionData.Password);
 			}
-			catch (WebException)
+			catch (WebException exception)
 			{
-				RPCConnectSubscriber(false);
-				throw;
+				RPCConnectCallback(new RPCConnectResult(exception));
+				return;
 			}
 
 			// Initialise our RTMPS connection
@@ -131,11 +131,6 @@ namespace LibOfLegends
 		
 		void OnLogin(Session session)
 		{
-			/// TODO: Convert this function to receive an arbitrary object and check for errors.
-			
-			// if (error)
-			//  _connectSubscriber(false);
-
 			// Store the session
 			RPCSession = session;
 
@@ -152,21 +147,22 @@ namespace LibOfLegends
 			message.messageId = Guid.NewGuid().ToString();
 
 			// Perform flex authentication.
-			//_netConnection.Call("auth", new Responder<AcknowledgeMessage>(_OnFlexLogin), m);
-			RPCNetConnection.Call("auth", new Responder<string>(OnFlexLogin), message);
+			RPCNetConnection.Call("auth", new Responder<string>(OnFlexLogin, OnFlexLoginFault), message);
 		}
 
 		void OnLoginFault(Fault fault)
 		{
-			Console.WriteLine("Login error: " + fault.FaultString);
+			RPCConnectCallback(new RPCConnectResult(RPCConnectResultType.LoginFault, fault));
 		}
 
 		void OnFlexLogin(string message)
 		{
-			if (message == "success")
-				RPCConnectSubscriber(true);
-			else
-				RPCConnectSubscriber(false);
+			RPCConnectCallback(new RPCConnectResult(message));
+		}
+
+		void OnFlexLoginFault(Fault fault)
+		{
+			RPCConnectCallback(new RPCConnectResult(RPCConnectResultType.FlexLoginFault, fault));
 		}
 
 		#endregion

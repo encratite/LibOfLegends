@@ -41,16 +41,14 @@ namespace LibOfLegendsExample
 				Console.WriteLine("Connection error: " + exception.Message);
 			}
 			OnConnectEvent.WaitOne();
-			PerformQueries();
+			if(ConnectionSuccess)
+				PerformQueries();
 		}
 
-		void OnConnect(bool connected)
+		void OnConnect(RPCConnectResult result)
 		{
-			ConnectionSuccess = connected;
-			if (connected)
-				Console.WriteLine("Successfully connected to the server.");
-			else
-				Console.WriteLine("There was an error connecting to the server.");
+			ConnectionSuccess = result.Success();
+			Console.WriteLine(result.GetMessage());
 			OnConnectEvent.Set();
 		}
 
@@ -239,7 +237,6 @@ namespace LibOfLegendsExample
 
 			List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
 
-			Console.WriteLine("Name: " + allSummonerData.summoner.name);
 			Console.WriteLine("Account ID: " + publicSummoner.summonerId);
 			Console.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
 			//No idea what this value contains now
