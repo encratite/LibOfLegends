@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
 
 using FluorineFx;
 using FluorineFx.Messaging.Messages;
@@ -54,6 +55,13 @@ namespace LibOfLegends
 		}
 
 		public void Connect(ConnectCallback connectCallback)
+		{
+			//The HTTPS authentication is currently blocking so just create a new thread to make it non-blocking (although it is sub-optimal)
+			Thread connectThread = new Thread(() => ConnectThread(connectCallback));
+			connectThread.Start();
+		}
+
+		void ConnectThread(ConnectCallback connectCallback)
 		{
 			RPCConnectCallback = connectCallback;
 
