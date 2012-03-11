@@ -94,10 +94,12 @@
     <Compile Include="GameResult.cs" />
     <Compile Include="InternalCallContext.cs" />
     <Compile Include="RPCConnectResult.cs" />
+    <Compile Include="RPCException.cs" />
     <Compile Include="RPCService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyProfile.cs" />
     <Compile Include="RegionProfile.cs" />
+    <Compile Include="TimeoutException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="services-config.xml" />

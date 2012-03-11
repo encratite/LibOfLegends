@@ -19,7 +19,6 @@ namespace LibOfLegends
 		public int GoldEarned;
 
 		public int MinionsKilled;
-		public int NeutralMinionsKilled;
 
 		public int[] Items;
 
@@ -43,6 +42,7 @@ namespace LibOfLegends
 
 		public int? TurretsDestroyed;
 		public int? InhibitorsDestroyed;
+		public int? NeutralMinionsKilled;
 
 		//Dominion specific
 
@@ -77,10 +77,9 @@ namespace LibOfLegends
 			GoldEarned = Load("GOLD_EARNED");
 
 			MinionsKilled = Load("MINIONS_KILLED");
-			NeutralMinionsKilled = Load("NEUTRAL_MINIONS_KILLED");
 
 			Items = new int[6];
-			for(int i = 0; i < Items.Length; i++)
+			for (int i = 0; i < Items.Length; i++)
 				Items[i] = Load(string.Format("ITEM{0}", i));
 
 			TotalDamageDealt = Load("TOTAL_DAMAGE_DEALT");
@@ -99,8 +98,14 @@ namespace LibOfLegends
 
 			TimeSpentDead = Load("TOTAL_TIME_SPENT_DEAD");
 
+			//Summoner's Rift and Twisted Treeline specific
+
+			NeutralMinionsKilled = MaybeLoad("NEUTRAL_MINIONS_KILLED");
+
 			TurretsDestroyed = MaybeLoad("TURRETS_KILLED");
 			InhibitorsDestroyed = MaybeLoad("BARRACKS_KILLED");
+
+			//Dominion specific
 
 			NodesNeutralised = MaybeLoad("NODE_NEUTRALIZE");
 			NodeNeutralisationAssists = MaybeLoad("NODE_NEUTRALIZE_ASSIST");
@@ -132,8 +137,13 @@ namespace LibOfLegends
 		int Load(string name)
 		{
 			int output = 0;
-			if(!Load(name, ref output))
-				throw new Exception("Unable to find stat " + name);
+			if (!Load(name, ref output))
+			{
+				//Dominion now leaves largest critical strike and such undefined if they did not occur
+				//This is a lazy solution but let's just return 0 instead for now
+				//throw new Exception("Unable to find stat " + name);
+				return 0;
+			}
 			return output;
 		}
 

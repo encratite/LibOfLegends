@@ -9,6 +9,10 @@ namespace LibOfLegends
 
 	class InternalCallContext<ReturnType>
 	{
+		//There is a timeout for every call to prevent it from blocking indefinitely
+		//An exception is raised when it occurs
+		const int Timeout = 3000;
+
 		InternalCallType<ReturnType> InternalCall;
 		object[] Arguments;
 		AutoResetEvent ReturnEvent;
@@ -27,13 +31,18 @@ namespace LibOfLegends
 		public ReturnType Execute()
 		{
 			InternalCall(new Responder<ReturnType>(OnReturn, OnFault), Arguments);
-			ReturnEvent.WaitOne();
-			if (CallFault != null)
+			if (ReturnEvent.WaitOne(Timeout))
 			{
-				//An error occurred, throw an exception
-				throw new Exception(CallFault.FaultString);
+				if (CallFault != null)
+				{
+					//An error occurred, throw an exception
+					throw new RPCException(CallFault.FaultString);
+				}
+				else
+					return Result;
 			}
-			return Result;
+			else
+				throw new TimeoutException("RPC timeout");
 		}
 
 		void OnFault(Fault fault)
