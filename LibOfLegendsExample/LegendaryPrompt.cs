@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using FluorineFx.Net;
+
+using Nil;
+
 using LibOfLegends;
 
 using com.riotgames.platform.statistics;
@@ -33,26 +37,44 @@ namespace LibOfLegendsExample
 		{
 			OnConnectEvent = new AutoResetEvent(false);
 			ConnectionSuccess = false;
-			Console.WriteLine("Connecting to server...");
+			WriteWithTimestamp("Connecting to server...");
 			try
 			{
-				RPC = new RPCService(ConnectionData);
-				RPC.Connect(OnConnect);
+				RPC = new RPCService(ConnectionData, OnConnect, OnDisconnect, OnNetStatus);
+				RPC.Connect();
 			}
 			catch (Exception exception)
 			{
-				Console.WriteLine("Connection error: " + exception.Message);
+				Output.WriteLine("Connection error: " + exception.Message);
 			}
 			OnConnectEvent.WaitOne();
 			if(ConnectionSuccess)
 				PerformQueries();
 		}
 
+		void WriteWithTimestamp(string input, params object[] arguments)
+		{
+			string message = string.Format("[{0}] {1}", Time.Timestamp(), input);
+			Output.WriteLine(message, arguments);
+		}
+
 		void OnConnect(RPCConnectResult result)
 		{
 			ConnectionSuccess = result.Success();
-			Console.WriteLine(result.GetMessage());
+			Output.WriteLine(result.GetMessage());
 			OnConnectEvent.Set();
+		}
+
+		void OnDisconnect()
+		{
+			WriteWithTimestamp("Disconnected");
+		}
+
+		void OnNetStatus(NetStatusEventArgs eventArguments)
+		{
+			WriteWithTimestamp("OnNetStatus:");
+			foreach (var pair in eventArguments.Info)
+					Output.WriteLine("{0}: {1}", pair.Key, pair.Value);
 		}
 
 		void ProcessLine(string line)
@@ -66,14 +88,14 @@ namespace LibOfLegendsExample
 
 			if (!CommandDictionary.ContainsKey(command))
 			{
-				Console.WriteLine("Unrecognised command, enter \"help\" for a list of commands");
+				Output.WriteLine("Unrecognised command, enter \"help\" for a list of commands");
 				return;
 			}
 
 			CommandInformation commandInformation = CommandDictionary[command];
 			if (commandInformation.ArgumentCount != -1 && arguments.Count != commandInformation.ArgumentCount)
 			{
-				Console.WriteLine("Invalid number of arguments specified");
+				Output.WriteLine("Invalid number of arguments specified");
 				return;
 			}
 
@@ -92,14 +114,14 @@ namespace LibOfLegendsExample
 				}
 				catch (RPCTimeoutException)
 				{
-					Console.WriteLine("RPC timeout occurred");
+					Output.WriteLine("RPC timeout occurred");
 					RPC.Disconnect();
 					return;
 				}
 				catch (Exception exception)
 				{
-					Console.WriteLine("An exception occurred:");
-					Console.WriteLine(exception.Message);
+					Output.WriteLine("An exception occurred:");
+					Output.WriteLine(exception.Message);
 					break;
 				}
 			}
@@ -120,12 +142,12 @@ namespace LibOfLegendsExample
 
 		void PrintHelp(List<string> arguments)
 		{
-			Console.WriteLine("List of commands available:");
+			Output.WriteLine("List of commands available:");
 			foreach (var entry in CommandDictionary)
 			{
 				var information = entry.Value;
-				Console.WriteLine(entry.Key + " " + information.ArgumentDescription);
-				Console.WriteLine("\t" + information.Description);
+				Output.WriteLine(entry.Key + " " + information.ArgumentDescription);
+				Output.WriteLine("\t" + information.Description);
 			}
 		}
 
@@ -146,7 +168,7 @@ namespace LibOfLegendsExample
 
 		void NoSuchSummoner()
 		{
-			Console.WriteLine("No such summoner");
+			Output.WriteLine("No such summoner");
 		}
 
 		void GetAccountID(List<string> arguments)
@@ -154,7 +176,7 @@ namespace LibOfLegendsExample
 			string summonerName = GetNameFromArguments(arguments);
 			PublicSummoner summoner = RPC.GetSummonerByName(summonerName);
 			if (summoner != null)
-				Console.WriteLine(summoner.acctId);
+				Output.WriteLine(summoner.acctId.ToString());
 			else
 				NoSuchSummoner();
 		}
@@ -204,12 +226,12 @@ namespace LibOfLegendsExample
 					if (isNormalElo)
 					{
 						if(foundNormalElo)
-							Console.WriteLine(intro + normalElo + ", " + winLossAnalysis);
+							Output.WriteLine(intro + normalElo + ", " + winLossAnalysis);
 						else
-							Console.WriteLine(intro + "unknown rating, " + winLossAnalysis);
+							Output.WriteLine(intro + "unknown rating, " + winLossAnalysis);
 					}
 					else
-						Console.WriteLine(intro + summary.rating + " (top " + summary.maxRating + "), " + winLossAnalysis);
+						Output.WriteLine(intro + summary.rating + " (top " + summary.maxRating + "), " + winLossAnalysis);
 					return;
 				}
 			}
@@ -230,7 +252,7 @@ namespace LibOfLegendsExample
 			PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(publicSummoner.acctId, "CURRENT");
 			if (lifeTimeStatistics == null)
 			{
-				Console.WriteLine("Unable to retrieve lifetime statistics");
+				Output.WriteLine("Unable to retrieve lifetime statistics");
 				return;
 			}
 
@@ -239,11 +261,11 @@ namespace LibOfLegendsExample
 
 			List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
 
-			Console.WriteLine("Name: " + publicSummoner.name);
-			Console.WriteLine("Account ID: " + publicSummoner.summonerId);
-			Console.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
+			Output.WriteLine("Name: " + publicSummoner.name);
+			Output.WriteLine("Account ID: " + publicSummoner.summonerId);
+			Output.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
 			//No idea what this value contains now
-			//Console.WriteLine("IP: " + allSummonerData.summonerLevelAndPoints.infPoints);
+			//Output.WriteLine("IP: " + allSummonerData.summonerLevelAndPoints.infPoints);
 
 			//The hidden "Team" variants of the "Premade" ratings are currently unused, it seems
 			AnalayseStatistics("Unranked Summoner's Rift", "Unranked", summaries, true, foundNormalElo, normalElo);
@@ -305,7 +327,7 @@ namespace LibOfLegendsExample
 					switch (stats.queueType)
 					{
 						case "RANKED_TEAM_3x3":
-							Console.WriteLine("Twisted Treeline");
+							Output.WriteLine("Twisted Treeline");
 							break;
 
 						case "NORMAL":
@@ -351,7 +373,7 @@ namespace LibOfLegendsExample
 					Console.Write(", AFK");
 				Console.Write(", {0} ms ping", stats.userServerPing);
 				Console.Write(", {0} s spent in queue", stats.timeInQueue);
-				Console.WriteLine("");
+				Output.WriteLine("");
 			}
 		}
 
@@ -382,7 +404,7 @@ namespace LibOfLegendsExample
 			AggregatedStats aggregatedStatistics = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", "CURRENT");
 			if (aggregatedStatistics == null)
 			{
-				Console.WriteLine("Unable to retrieve aggregated statistics");
+				Output.WriteLine("Unable to retrieve aggregated statistics");
 				return;
 			}
 			List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
@@ -395,7 +417,7 @@ namespace LibOfLegendsExample
 			}
 			statistics.Sort(CompareNames);
 			foreach (var entry in statistics)
-				Console.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
+				Output.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 		}
 
 		void RunTest(List<string> arguments)
@@ -408,7 +430,7 @@ namespace LibOfLegendsExample
 				return;
 			}
 			AggregatedStats result = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", "CURRENT");
-			Console.WriteLine("Successs");
+			Output.WriteLine("Successs");
 		}
 	}
 }

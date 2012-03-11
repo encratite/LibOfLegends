@@ -14,12 +14,17 @@ using com.riotgames.platform.summoner;
 
 namespace LibOfLegends
 {
+	public delegate void ConnectCallbackType(RPCConnectResult result);
+	public delegate void DisconnectCallbackType();
+	public delegate void NetStatusCallbackType(NetStatusEventArgs eventArguments);
+
 	public class RPCService
 	{
 		#region Delegates
 
-		public delegate void ConnectCallback(RPCConnectResult result);
-		ConnectCallback RPCConnectCallback = null;
+		ConnectCallbackType ConnectCallback;
+		DisconnectCallbackType DisconnectCallback;
+		NetStatusCallbackType NetStatusCallback;
 
 		#endregion
 
@@ -49,15 +54,18 @@ namespace LibOfLegends
 
 		#endregion
 
-		public RPCService(ConnectionProfile connectionData)
+		public RPCService(ConnectionProfile connectionData, ConnectCallbackType connectCallback, DisconnectCallbackType disconnectCallback = null, NetStatusCallbackType netStatusCallback = null)
 		{
 			ConnectionData = connectionData;
+			ConnectCallback = connectCallback;
+			DisconnectCallback = disconnectCallback;
+			NetStatusCallback = netStatusCallback;
 		}
 
-		public void Connect(ConnectCallback connectCallback)
+		public void Connect()
 		{
 			//The HTTPS authentication is currently blocking so just create a new thread to make it non-blocking (although it is sub-optimal)
-			Thread connectThread = new Thread(() => ConnectThread(connectCallback));
+			Thread connectThread = new Thread(ConnectThread);
 			connectThread.Start();
 		}
 
@@ -66,11 +74,8 @@ namespace LibOfLegends
 			NetConnection.Close();
 		}
 
-		void ConnectThread(ConnectCallback connectCallback)
+		void ConnectThread()
 		{
-			RPCConnectCallback = connectCallback;
-
-			// TODO: Run this in another thread and call back, this is a blocking operation.
 			try
 			{
 				AuthService authService = new AuthService(ConnectionData.Region.LoginQueueURL, ConnectionData.Proxy.LoginQueueProxy);
@@ -79,7 +84,7 @@ namespace LibOfLegends
 			}
 			catch (WebException exception)
 			{
-				RPCConnectCallback(new RPCConnectResult(exception));
+				ConnectCallback(new RPCConnectResult(exception));
 				return;
 			}
 
@@ -99,13 +104,7 @@ namespace LibOfLegends
 			RPCNetConnection.Connect(ConnectionData.Region.RPCURL);
 		}
 
-
 		#region Net connection state handlers
-
-		void NetConnectionOnDisconnect(object sender, EventArgs eventArguments)
-		{
-			/// TODO: Setup a delegate to call here
-		}
 
 		void NetConnectionOnConnect(object sender, EventArgs eventArguments)
 		{
@@ -133,10 +132,17 @@ namespace LibOfLegends
 			RPCNetConnection.Call(EndpointString, "loginService", null, "login", new Responder<Session>(OnLogin, OnLoginFault), authenticationCredentials);
 		}
 
+		void NetConnectionOnDisconnect(object sender, EventArgs eventArguments)
+		{
+			if (DisconnectCallback != null)
+				DisconnectCallback();
+		}
+
 		void NetConnectionNetStatus(object sender, NetStatusEventArgs eventArguments)
 		{
-			string level = eventArguments.Info["level"] as string;
-			/// TODO: Setup a delegate to call here
+			//string level = eventArguments.Info["level"] as string;
+			if (NetStatusCallback != null)
+				NetStatusCallback(eventArguments);
 		}
 		#endregion
 
@@ -165,17 +171,17 @@ namespace LibOfLegends
 
 		void OnLoginFault(Fault fault)
 		{
-			RPCConnectCallback(new RPCConnectResult(RPCConnectResultType.LoginFault, fault));
+			ConnectCallback(new RPCConnectResult(RPCConnectResultType.LoginFault, fault));
 		}
 
 		void OnFlexLogin(string message)
 		{
-			RPCConnectCallback(new RPCConnectResult(message));
+			ConnectCallback(new RPCConnectResult(message));
 		}
 
 		void OnFlexLoginFault(Fault fault)
 		{
-			RPCConnectCallback(new RPCConnectResult(RPCConnectResultType.FlexLoginFault, fault));
+			ConnectCallback(new RPCConnectResult(RPCConnectResultType.FlexLoginFault, fault));
 		}
 
 		#endregion
