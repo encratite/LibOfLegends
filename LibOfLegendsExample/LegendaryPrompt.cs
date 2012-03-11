@@ -93,7 +93,8 @@ namespace LibOfLegendsExample
 				catch (RPCTimeoutException)
 				{
 					Console.WriteLine("RPC timeout occurred");
-					break;
+					RPC.Disconnect();
+					return;
 				}
 				catch (Exception exception)
 				{
