@@ -20,10 +20,12 @@ namespace LibOfLegendsExample
 
 		Configuration ProgramConfiguration;
 
+		ConnectionProfile ConnectionData;
+
 		public LegendaryPrompt(Configuration configuration, ConnectionProfile connectionData)
 		{
 			ProgramConfiguration = configuration;
-			RPC = new RPCService(connectionData);
+			ConnectionData = connectionData;
 			InitialiseCommandDictionary();
 		}
 
@@ -34,6 +36,7 @@ namespace LibOfLegendsExample
 			Console.WriteLine("Connecting to server...");
 			try
 			{
+				RPC = new RPCService(ConnectionData);
 				RPC.Connect(OnConnect);
 			}
 			catch (Exception exception)
@@ -86,6 +89,11 @@ namespace LibOfLegendsExample
 				try
 				{
 					ProcessLine(line);
+				}
+				catch (RPCTimeoutException)
+				{
+					Console.WriteLine("RPC timeout occurred");
+					break;
 				}
 				catch (Exception exception)
 				{

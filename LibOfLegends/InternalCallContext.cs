@@ -42,7 +42,7 @@ namespace LibOfLegends
 					return Result;
 			}
 			else
-				throw new TimeoutException("RPC timeout");
+				throw new RPCTimeoutException("RPC timeout");
 		}
 
 		void OnFault(Fault fault)
