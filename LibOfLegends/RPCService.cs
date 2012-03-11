@@ -61,6 +61,11 @@ namespace LibOfLegends
 			connectThread.Start();
 		}
 
+		public void Disconnect()
+		{
+			NetConnection.Close();
+		}
+
 		void ConnectThread(ConnectCallback connectCallback)
 		{
 			RPCConnectCallback = connectCallback;
