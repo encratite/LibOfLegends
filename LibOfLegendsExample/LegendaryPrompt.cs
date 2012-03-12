@@ -72,9 +72,11 @@ namespace LibOfLegendsExample
 
 		void OnNetStatus(NetStatusEventArgs eventArguments)
 		{
+			/*
 			WriteWithTimestamp("OnNetStatus:");
 			foreach (var pair in eventArguments.Info)
 					Output.WriteLine("{0}: {1}", pair.Key, pair.Value);
+			*/
 		}
 
 		void ProcessLine(string line)
