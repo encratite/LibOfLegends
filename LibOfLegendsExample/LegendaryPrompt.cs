@@ -88,13 +88,14 @@ namespace LibOfLegendsExample
 			string command = arguments[0];
 			arguments.RemoveAt(0);
 
-			if (!CommandDictionary.ContainsKey(command))
+			CommandInformation commandInformation;
+			if (!CommandDictionary.TryGetValue(command, out commandInformation))
 			{
 				Output.WriteLine("Unrecognised command, enter \"help\" for a list of commands");
 				return;
 			}
 
-			CommandInformation commandInformation = CommandDictionary[command];
+
 			if (commandInformation.ArgumentCount != -1 && arguments.Count != commandInformation.ArgumentCount)
 			{
 				Output.WriteLine("Invalid number of arguments specified");
@@ -413,9 +414,7 @@ namespace LibOfLegendsExample
 			List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
 			foreach (var entry in statistics)
 			{
-				if (ProgramConfiguration.ChampionNames.ContainsKey(entry.ChampionId))
-					entry.Name = ProgramConfiguration.ChampionNames[entry.ChampionId];
-				else
+				if (!ProgramConfiguration.ChampionNames.TryGetValue(entry.ChampionId, out entry.Name))
 					entry.Name = "Champion " + entry.ChampionId;
 			}
 			statistics.Sort(CompareNames);
