@@ -185,7 +185,7 @@ namespace LibOfLegendsExample
 
 		static int CompareGames(PlayerGameStats x, PlayerGameStats y)
 		{
-			return - x.gameId.CompareTo(y.gameId);
+			return - x.createDate.CompareTo(y.createDate);
 		}
 
 		bool GetNormalElo(List<PlayerGameStats> recentGames, ref int normalElo)
@@ -329,7 +329,7 @@ namespace LibOfLegendsExample
 					switch (stats.queueType)
 					{
 						case "RANKED_TEAM_3x3":
-							Output.WriteLine("Twisted Treeline");
+							Output.Write("Twisted Treeline");
 							break;
 
 						case "NORMAL":
@@ -354,7 +354,8 @@ namespace LibOfLegendsExample
 							break;
 					}
 				}
-				Console.Write(", {0} ({1})", stats.skinName, stats.skinIndex);
+				if(stats.skinName != null)
+					Console.Write(", {0} ({1})", stats.skinName, stats.skinIndex);
 				if (stats.adjustedRating != 0)
 				{
 					//Sometimes the servers are bugged and show invalid rating values
