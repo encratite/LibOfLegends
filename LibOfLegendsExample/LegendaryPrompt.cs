@@ -303,8 +303,7 @@ namespace LibOfLegendsExample
 			}
 			foreach (var stats in recentGames)
 			{
-                bool isDominion = stats.gameMode == "ODIN" || stats.queueType == "ODIN_UNRANKED";
-				GameResult result = new GameResult(stats, isDominion);
+				GameResult result = new GameResult(stats);
 				Console.Write("[{0}] [{1}] [{2}] ", stats.gameId, stats.createDate, result.Win ? "W" : "L");
 				if (stats.ranked)
 					Console.Write("Ranked ");

@@ -62,10 +62,10 @@ namespace LibOfLegends
 		List<RawStat> Statistics;
         bool IsDominion;
 
-		public GameResult(PlayerGameStats gameStatistics, bool isDominion)
+		public GameResult(PlayerGameStats gameStatistics)
 		{
 			Statistics = gameStatistics.statistics;
-            IsDominion = isDominion;
+            IsDominion = gameStatistics.gameMapId == 8;
 
 			int unused = 0;
 			Win = Load("WIN", ref unused);
