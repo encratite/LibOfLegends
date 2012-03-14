@@ -1,0 +1,11 @@
+Mono works fine with most of the dependencies, even when compiled as 4.0, except for FluorineFXMods.
+It needs to be compiled with the 2.0 project, otherwise it just hangs on connecting, it seems.
+
+Certificates need to be imported manually like this:
+
+yes | certmgr -ssl "https://lq.na1.lol.riotgames.com/login-queue/rest/queue"
+yes | certmgr -ssl "rtmps://prod.na1.lol.riotgames.com:2099/"
+yes | certmgr -ssl "https://lq.eu.lol.riotgames.com/login-queue/rest/queue"
+yes | certmgr -ssl "rtmps://prod.eu.lol.riotgames.com:2099/"
+yes | certmgr -ssl "https://lq.eun1.lol.riotgames.com/login-queue/rest/queue"
+yes | certmgr -ssl "rtmps://prod.eun1.lol.riotgames.com:2099/"
