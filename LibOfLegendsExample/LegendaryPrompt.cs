@@ -303,7 +303,8 @@ namespace LibOfLegendsExample
 			}
 			foreach (var stats in recentGames)
 			{
-				GameResult result = new GameResult(stats);
+                bool isDominion = stats.gameMode == "ODIN" || stats.queueType == "ODIN_UNRANKED";
+				GameResult result = new GameResult(stats, isDominion);
 				Console.Write("[{0}] [{1}] [{2}] ", stats.gameId, stats.createDate, result.Win ? "W" : "L");
 				if (stats.ranked)
 					Console.Write("Ranked ");
@@ -355,31 +356,35 @@ namespace LibOfLegendsExample
 							break;
 					}
 				}
-				if(stats.skinName != null)
-					Console.Write(", {0} ({1})", stats.skinName, stats.skinIndex);
+                Console.WriteLine(", {0}, {1}/{2}/{3}", GetChampionName(stats.championId), result.Kills, result.Deaths, result.Assists);
+                List<string> units = new List<string>();
 				if (stats.adjustedRating != 0)
-				{
-					//Sometimes the servers are bugged and show invalid rating values
-					//Console.Write(", " + stats.rating + " " + GetPrefix(stats.eloChange) + " " + Math.Abs(stats.eloChange) + " = " + (stats.rating + stats.eloChange));
-					Console.Write(", " + (stats.rating + stats.eloChange) + " (" + SignPrefix(stats.eloChange) + ")");
-				}
+					units.Add(string.Format("Rating: {0} ({1})", stats.rating + stats.eloChange, SignPrefix(stats.eloChange)));
 				if (stats.adjustedRating != 0)
-					Console.Write(", adjusted " + stats.adjustedRating);
+					units.Add(string.Format("adjusted {0}", stats.adjustedRating));
 				if (stats.teamRating != 0)
-					Console.Write(", team " + stats.teamRating + " (" + SignPrefix(stats.teamRating - stats.rating) + ")");
+					units.Add(string.Format("team {0} ({1})", stats.teamRating, SignPrefix(stats.teamRating - stats.rating)));
+                PrintUnits(units);
 				if (stats.predictedWinPct != 0.0)
-					Console.Write(", prediction " + Percentage(stats.predictedWinPct));
+					units.Add(string.Format("Predicted winning percentage {0}", Percentage(stats.predictedWinPct)));
 				if (stats.premadeSize > 1)
-					Console.Write(", queued with " + stats.premadeSize);
+					units.Add(string.Format("Queued with {0}", stats.premadeSize));
 				if (stats.leaver)
-					Console.Write(", left the game");
+					units.Add("Left the game");
 				if (stats.afk)
-					Console.Write(", AFK");
-				Console.Write(", {0} ms ping", stats.userServerPing);
-				Console.Write(", {0} s spent in queue", stats.timeInQueue);
-				Output.WriteLine("");
+					units.Add("AFK");
+				units.Add(string.Format("{0} ms ping", stats.userServerPing));
+				units.Add(string.Format("{0} s spent in queue", stats.timeInQueue));
+                PrintUnits(units);
 			}
 		}
+
+        void PrintUnits(List<string> units)
+        {
+            if (units.Count > 0)
+                Output.WriteLine(string.Join(", ", units));
+            units.Clear();
+        }
 
 		string Percentage(double input)
 		{
@@ -412,15 +417,20 @@ namespace LibOfLegendsExample
 				return;
 			}
 			List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
-			foreach (var entry in statistics)
-			{
-				if (!ProgramConfiguration.ChampionNames.TryGetValue(entry.ChampionId, out entry.Name))
-					entry.Name = "Champion " + entry.ChampionId;
-			}
+            foreach (var entry in statistics)
+                entry.Name = GetChampionName(entry.ChampionId);
 			statistics.Sort(CompareNames);
 			foreach (var entry in statistics)
 				Output.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 		}
+
+        string GetChampionName(int championId)
+        {
+            string name;
+            if (!ProgramConfiguration.ChampionNames.TryGetValue(championId, out name))
+                name = string.Format("Champion {0}", championId);
+            return name;
+        }
 
 		void RunTest(List<string> arguments)
 		{
