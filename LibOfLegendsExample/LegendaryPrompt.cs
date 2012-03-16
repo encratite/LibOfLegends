@@ -139,7 +139,6 @@ namespace LibOfLegendsExample
 				{"profile", new CommandInformation(-1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
 				{"ranked", new CommandInformation(-1, RankedStatistics, "<name>", "Analyse the ranked statistics of the summoner given")},
 				{"recent", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
-				{"test", new CommandInformation(-1, RunTest, "<name>", "Perform test")},
 			};
 		}
 
@@ -430,18 +429,5 @@ namespace LibOfLegendsExample
                 name = string.Format("Champion {0}", championId);
             return name;
         }
-
-		void RunTest(List<string> arguments)
-		{
-			string summonerName = GetNameFromArguments(arguments);
-			PublicSummoner publicSummoner = RPC.GetSummonerByName(summonerName);
-			if (publicSummoner == null)
-			{
-				NoSuchSummoner();
-				return;
-			}
-			AggregatedStats result = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", "CURRENT");
-			Output.WriteLine("Successs");
-		}
 	}
 }
