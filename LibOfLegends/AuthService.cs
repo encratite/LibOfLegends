@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.Script.Serialization;
 
 using FluorineFx.Net;
@@ -21,6 +23,12 @@ namespace LibOfLegends
 				throw new NotImplementedException("Proxy not supported for login queue with type other than HTTP");
 		}
 
+		public static bool ValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		{
+			Console.WriteLine("ValidationCallback");
+			return true;
+		}
+
 		/// <summary>
 		/// Authenticates with the REST queue service.
 		/// Attempts may succeed and allow you straight to LOGIN, or succeed and enter you into a QUEUE.
@@ -30,6 +38,9 @@ namespace LibOfLegends
 		/// <returns></returns>
 		public AuthResponse Authenticate(string name, string password)
 		{
+			//This is a hack to ignore certificate issues
+			ServicePointManager.ServerCertificateValidationCallback = ValidationCallback;
+
 			// Authenticate with the queue service
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}/authenticate", LoginQueueURL));
 			request.Method = "POST";
