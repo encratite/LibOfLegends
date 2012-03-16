@@ -23,8 +23,9 @@ namespace LibOfLegends
 				throw new NotImplementedException("Proxy not supported for login queue with type other than HTTP");
 		}
 
-		public static bool ValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		public static bool TrustAllCertificates(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
+			Console.WriteLine("LibOfLegends TrustAllCertificates: {0}", certificate);
 			return true;
 		}
 
@@ -38,7 +39,7 @@ namespace LibOfLegends
 		public AuthResponse Authenticate(string name, string password)
 		{
 			//This is a hack to ignore certificate issues
-			ServicePointManager.ServerCertificateValidationCallback = ValidationCallback;
+			ServicePointManager.ServerCertificateValidationCallback = TrustAllCertificates;
 
 			// Authenticate with the queue service
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("{0}/authenticate", LoginQueueURL));

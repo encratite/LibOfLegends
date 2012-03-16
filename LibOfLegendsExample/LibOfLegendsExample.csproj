@@ -50,6 +50,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Nil.dll</HintPath>
     </Reference>
+    <Reference Include="Starksoft.Net.Proxy">
+      <HintPath>..\References\Starksoft.Net.Proxy.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />

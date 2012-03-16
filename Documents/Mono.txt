@@ -1,19 +1,19 @@
 Mono works fine with most of the dependencies, even when compiled as 4.0, except for FluorineFXMods.
 It needs to be compiled with the 2.0 project, otherwise it just hangs on connecting, it seems.
 
-Certificates need to be imported manually by the root:
+Certificates need to be imported manually:
 
-mozroots --import --ask-remove --machine
-
-Not entirely sure if this is needed:
-
-yes | certmgr -ssl -m "https://lq.na1.lol.riotgames.com/login-queue/rest/queue"
-yes | certmgr -ssl -m "rtmps://prod.na1.lol.riotgames.com:2099/"
-yes | certmgr -ssl -m "https://lq.eu.lol.riotgames.com/login-queue/rest/queue"
-yes | certmgr -ssl -m "rtmps://prod.eu.lol.riotgames.com:2099/"
-yes | certmgr -ssl -m "https://lq.eun1.lol.riotgames.com/login-queue/rest/queue"
-yes | certmgr -ssl -m "rtmps://prod.eun1.lol.riotgames.com:2099/"
+yes | certmgr -ssl "https://lq.na1.lol.riotgames.com/login-queue/rest/queue"
+yes | certmgr -ssl "rtmps://prod.na1.lol.riotgames.com:2099/"
+yes | certmgr -ssl "https://lq.eu.lol.riotgames.com/login-queue/rest/queue"
+yes | certmgr -ssl "rtmps://prod.eu.lol.riotgames.com:2099/"
+yes | certmgr -ssl "https://lq.eun1.lol.riotgames.com/login-queue/rest/queue"
+yes | certmgr -ssl "rtmps://prod.eun1.lol.riotgames.com:2099/"
 
 Otherwise errors such as this one can occur:
 
+Authentication error: Error getting response stream (Write: BeginWrite failure): SendFailure
 Authentication error: Error getting response stream (Write: The authentication or decryption has failed.): SendFailure
+
+The Windows Mono.Security.dll must not be used on Linux.
+It has its own implementation.
