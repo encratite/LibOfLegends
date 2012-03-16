@@ -50,7 +50,6 @@ namespace LibOfLegends
 		NetConnection RPCNetConnection;
 
 		AuthResponse AuthResponse;
-		Session RPCSession;
 
 		#endregion
 
@@ -150,9 +149,6 @@ namespace LibOfLegends
 		
 		void OnLogin(Session session)
 		{
-			// Store the session
-			RPCSession = session;
-
 			// Client header should be set to the token we received from REST authentication
 			RPCNetConnection.AddHeader(MessageBase.FlexClientIdHeader, false, session.token);
 
