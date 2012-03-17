@@ -16,6 +16,8 @@ namespace LibOfLegendsExample
 {
 	class LegendaryPrompt
 	{
+		bool Running;
+
 		RPCService RPC;
 		AutoResetEvent OnConnectEvent;
 		bool ConnectionSuccess;
@@ -31,25 +33,29 @@ namespace LibOfLegendsExample
 			ProgramConfiguration = configuration;
 			ConnectionData = connectionData;
 			InitialiseCommandDictionary();
+			Running = true;
 		}
 
 		public void Run()
 		{
-			OnConnectEvent = new AutoResetEvent(false);
-			ConnectionSuccess = false;
-			WriteWithTimestamp("Connecting to server...");
-			try
+			while (Running)
 			{
-				RPC = new RPCService(ConnectionData, OnConnect, OnDisconnect, OnNetStatus);
-				RPC.Connect();
+				OnConnectEvent = new AutoResetEvent(false);
+				ConnectionSuccess = false;
+				WriteWithTimestamp("Connecting to server...");
+				try
+				{
+					RPC = new RPCService(ConnectionData, OnConnect, OnDisconnect, OnNetStatus);
+					RPC.Connect();
+				}
+				catch (Exception exception)
+				{
+					Output.WriteLine("Connection error: " + exception.Message);
+				}
+				OnConnectEvent.WaitOne();
+				if (ConnectionSuccess)
+					PerformQueries();
 			}
-			catch (Exception exception)
-			{
-				Output.WriteLine("Connection error: " + exception.Message);
-			}
-			OnConnectEvent.WaitOne();
-			if(ConnectionSuccess)
-				PerformQueries();
 		}
 
 		void WriteWithTimestamp(string input, params object[] arguments)
@@ -107,7 +113,7 @@ namespace LibOfLegendsExample
 
 		void PerformQueries()
 		{
-			while (true)
+			while (Running)
 			{
 				Console.Write("> ");
 				string line = Console.ReadLine();
@@ -134,12 +140,19 @@ namespace LibOfLegendsExample
 		{
 			CommandDictionary = new Dictionary<string, CommandInformation>()
 			{
+				{"quit", new CommandInformation(0, Quit, "", "Terminates the application")},
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
 				{"id", new CommandInformation(-1, GetAccountID, "<name>", "Retrieve the account ID associated with the given summoner name")},
 				{"profile", new CommandInformation(-1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
 				{"ranked", new CommandInformation(-1, RankedStatistics, "<name>", "Analyse the ranked statistics of the summoner given")},
 				{"recent", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 			};
+		}
+
+		void Quit(List<string> arguments)
+		{
+			RPC.Disconnect();
+			Running = false;
 		}
 
 		void PrintHelp(List<string> arguments)
