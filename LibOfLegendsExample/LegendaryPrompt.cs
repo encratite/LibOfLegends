@@ -73,7 +73,8 @@ namespace LibOfLegendsExample
 
 		void OnDisconnect()
 		{
-			WriteWithTimestamp("Disconnected");
+			if(Running)
+				WriteWithTimestamp("Disconnected");
 		}
 
 		void OnNetStatus(NetStatusEventArgs eventArguments)
