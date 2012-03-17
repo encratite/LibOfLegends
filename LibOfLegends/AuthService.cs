@@ -25,7 +25,7 @@ namespace LibOfLegends
 
 		public static bool TrustAllCertificates(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			Console.WriteLine("LibOfLegends TrustAllCertificates: {0}", certificate);
+			//Console.WriteLine("LibOfLegends TrustAllCertificates:\n{0}", certificate);
 			return true;
 		}
 
