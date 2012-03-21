@@ -202,19 +202,6 @@ namespace LibOfLegendsExample
 			return - x.createDate.CompareTo(y.createDate);
 		}
 
-		bool GetNormalElo(List<PlayerGameStats> recentGames, ref int normalElo)
-		{
-			foreach (var stats in recentGames)
-			{
-				if (stats.queueType == "NORMAL" && stats.gameMode == "CLASSIC" && !stats.ranked)
-				{
-					normalElo = stats.rating + stats.eloChange;
-					return true;
-				}
-			}
-			return false;
-		}
-
 		bool GetRecentGames(string summonerName, ref PublicSummoner publicSummoner, ref List<PlayerGameStats> recentGames)
 		{
 			publicSummoner = RPC.GetSummonerByName(summonerName);
@@ -226,7 +213,7 @@ namespace LibOfLegendsExample
 			return true;
 		}
 
-		void AnalayseStatistics(string description, string target, List<PlayerStatSummary> summaries, bool isNormalElo = false, bool foundNormalElo = false, int normalElo = 0)
+		void AnalayseStatistics(string description, string target, List<PlayerStatSummary> summaries)
 		{
 			foreach (var summary in summaries)
 			{
@@ -235,19 +222,14 @@ namespace LibOfLegendsExample
 					int games = summary.wins + summary.losses;
 					if (games == 0)
 						continue;
-					string intro = description + ": ";
-					string winLossAnalysis = summary.wins + " W - " + summary.losses + " L (" + SignPrefix(summary.wins - summary.losses) + ")";
+					Output.Write("{0}: ", description);
+					//Check for the unranked/Dominion bogus value signature
+					if (summary.rating != 400 && summary.maxRating != 0)
+						Output.Write("{0} (top {1}), ", summary.rating, summary.maxRating);
+					Output.Write("{0} W - {1} L ({2})", summary.wins, summary.losses, SignPrefix(summary.wins - summary.losses));
 					if (summary.leaves > 0)
-						winLossAnalysis += ", left " + summary.leaves + " " + (summary.leaves > 1 ? "games" : "game");
-					if (isNormalElo)
-					{
-						if(foundNormalElo)
-							Output.WriteLine(intro + normalElo + ", " + winLossAnalysis);
-						else
-							Output.WriteLine(intro + "unknown rating, " + winLossAnalysis);
-					}
-					else
-						Output.WriteLine(intro + summary.rating + " (top " + summary.maxRating + "), " + winLossAnalysis);
+						Output.Write(", left {0} {1}", summary.leaves, (summary.leaves > 1 ? "games" : "game"));
+					Output.WriteLine("");
 					return;
 				}
 			}
@@ -272,9 +254,6 @@ namespace LibOfLegendsExample
 				return;
 			}
 
-			int normalElo = 0;
-			bool foundNormalElo = GetNormalElo(recentGames, ref normalElo);
-
 			List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
 
 			Output.WriteLine("Name: " + publicSummoner.name);
@@ -284,7 +263,7 @@ namespace LibOfLegendsExample
 			//Output.WriteLine("IP: " + allSummonerData.summonerLevelAndPoints.infPoints);
 
 			//The hidden "Team" variants of the "Premade" ratings are currently unused, it seems
-			AnalayseStatistics("Unranked Summoner's Rift", "Unranked", summaries, true, foundNormalElo, normalElo);
+			AnalayseStatistics("Unranked Summoner's Rift/Twisted Treeline", "Unranked", summaries);
 			AnalayseStatistics("Ranked Twisted Treeline (team)", "RankedPremade3x3", summaries);
 			AnalayseStatistics("Ranked Summoner's Rift (solo)", "RankedSolo5x5", summaries);
 			AnalayseStatistics("Ranked Summoner's Rift (team)", "RankedPremade5x5", summaries);
