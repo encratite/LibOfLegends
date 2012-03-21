@@ -37,7 +37,7 @@ namespace LibOfLegendsExample
 					Console.Write(" " + profile.Abbreviation);
 				Console.WriteLine("");
 				return;
-			}			
+			}
 
 			string server = arguments[0];
 			string user = arguments[1];
