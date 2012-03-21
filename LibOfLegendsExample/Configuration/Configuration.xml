@@ -3,7 +3,7 @@
   <Authentication>
     <ClientVersion>1.56.12_03_19_13_57</ClientVersion>
     <Domain>lolclient.lol.riotgames.com</Domain>
-    <IPAddress>10.0.0.1</IPAddress>
+    <IPAddress>127.0.0.1</IPAddress>
     <Locale>en_US</Locale>
   </Authentication>
   <!--
@@ -786,6 +786,14 @@
       </Key>
       <Value>
         <string>Ziggs</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>117</int>
+      </Key>
+      <Value>
+        <string>Lulu</string>
       </Value>
     </Item>
   </ChampionNames>
