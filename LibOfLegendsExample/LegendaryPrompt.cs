@@ -347,15 +347,17 @@ namespace LibOfLegendsExample
 							break;
 					}
 				}
-                Console.WriteLine(", {0}, {1}/{2}/{3}", GetChampionName(stats.championId), result.Kills, result.Deaths, result.Assists);
-                List<string> units = new List<string>();
+				Console.WriteLine(", {0}, {1}/{2}/{3}", GetChampionName(stats.championId), result.Kills, result.Deaths, result.Assists);
+				List<string> units = new List<string>();
 				if (stats.adjustedRating != 0)
 					units.Add(string.Format("Rating: {0} ({1})", stats.rating + stats.eloChange, SignPrefix(stats.eloChange)));
 				if (stats.adjustedRating != 0)
 					units.Add(string.Format("adjusted {0}", stats.adjustedRating));
 				if (stats.teamRating != 0)
 					units.Add(string.Format("team {0} ({1})", stats.teamRating, SignPrefix(stats.teamRating - stats.rating)));
-                PrintUnits(units);
+				PrintUnits(units);
+				if (stats.KCoefficient != 0)
+					units.Add(string.Format("K coefficient {0}", stats.KCoefficient));
 				if (stats.predictedWinPct != 0.0)
 					units.Add(string.Format("Predicted winning percentage {0}", Percentage(stats.predictedWinPct)));
 				if (stats.premadeSize > 1)
@@ -366,16 +368,16 @@ namespace LibOfLegendsExample
 					units.Add("AFK");
 				units.Add(string.Format("{0} ms ping", stats.userServerPing));
 				units.Add(string.Format("{0} s spent in queue", stats.timeInQueue));
-                PrintUnits(units);
+				PrintUnits(units);
 			}
 		}
 
-        void PrintUnits(List<string> units)
-        {
-            if (units.Count > 0)
-                Output.WriteLine(string.Join(", ", units));
-            units.Clear();
-        }
+		void PrintUnits(List<string> units)
+		{
+			if (units.Count > 0)
+				Output.WriteLine(string.Join(", ", units));
+			units.Clear();
+		}
 
 		string Percentage(double input)
 		{
@@ -408,19 +410,19 @@ namespace LibOfLegendsExample
 				return;
 			}
 			List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
-            foreach (var entry in statistics)
-                entry.Name = GetChampionName(entry.ChampionId);
+			foreach (var entry in statistics)
+				entry.Name = GetChampionName(entry.ChampionId);
 			statistics.Sort(CompareNames);
 			foreach (var entry in statistics)
 				Output.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 		}
 
-        string GetChampionName(int championId)
-        {
-            string name;
-            if (!ProgramConfiguration.ChampionNames.TryGetValue(championId, out name))
-                name = string.Format("Champion {0}", championId);
-            return name;
-        }
+		string GetChampionName(int championId)
+		{
+			string name;
+			if (!ProgramConfiguration.ChampionNames.TryGetValue(championId, out name))
+				name = string.Format("Champion {0}", championId);
+			return name;
+		}
 	}
 }

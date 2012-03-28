@@ -11,7 +11,7 @@ namespace LibOfLegends
 	{
 		//There is a timeout for every call to prevent it from blocking indefinitely
 		//An exception is raised when it occurs
-		const int Timeout = 20000;
+		const int Timeout = 10000;
 
 		InternalCallType<ReturnType> InternalCall;
 		object[] Arguments;
