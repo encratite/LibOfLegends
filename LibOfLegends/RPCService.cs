@@ -194,22 +194,22 @@ namespace LibOfLegends
 			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "getRecentGames", responder, arguments);
 		}
 
-		public void GetAllPublicSummonerDataByAccountInternal(Responder<AllPublicSummonerDataDTO> responder, object[] arguments)
+		void GetAllPublicSummonerDataByAccountInternal(Responder<AllPublicSummonerDataDTO> responder, object[] arguments)
 		{
 			RPCNetConnection.Call(EndpointString, SummonerService, null, "getAllPublicSummonerDataByAccount", responder, arguments);
 		}
 
-		public void GetAllSummonerDataByAccountInternal(Responder<AllSummonerData> responder, object[] arguments)
+		void GetAllSummonerDataByAccountInternal(Responder<AllSummonerData> responder, object[] arguments)
 		{
 			RPCNetConnection.Call(EndpointString, SummonerService, null, "getAllSummonerDataByAccount", responder, arguments);
 		}
 
-		public void RetrievePlayerStatsByAccountIDInternal(Responder<PlayerLifeTimeStats> responder, object[] arguments)
+		void RetrievePlayerStatsByAccountIDInternal(Responder<PlayerLifeTimeStats> responder, object[] arguments)
 		{
 			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "retrievePlayerStatsByAccountId", responder, arguments);
 		}
 
-		public void GetAggregatedStatsInternal(Responder<AggregatedStats> responder, object[] arguments)
+		void GetAggregatedStatsInternal(Responder<AggregatedStats> responder, object[] arguments)
 		{
 			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "getAggregatedStats", responder, arguments);
 		}

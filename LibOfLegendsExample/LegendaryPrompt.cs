@@ -11,6 +11,7 @@ using LibOfLegends;
 
 using com.riotgames.platform.statistics;
 using com.riotgames.platform.summoner;
+using com.riotgames.platform.gameclient.domain;
 
 namespace LibOfLegendsExample
 {
@@ -147,6 +148,7 @@ namespace LibOfLegendsExample
 				{"profile", new CommandInformation(-1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
 				{"ranked", new CommandInformation(-1, RankedStatistics, "<name>", "Analyse the ranked statistics of the summoner given")},
 				{"recent", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
+				{"runes", new CommandInformation(-1, RunePages, "<name>", "View rune pages")},
 			};
 		}
 
@@ -423,6 +425,43 @@ namespace LibOfLegendsExample
 			if (!ProgramConfiguration.ChampionNames.TryGetValue(championId, out name))
 				name = string.Format("Champion {0}", championId);
 			return name;
+		}
+
+		void RunePages(List<string> arguments)
+		{
+			string summonerName = GetNameFromArguments(arguments);
+			PublicSummoner summoner = RPC.GetSummonerByName(summonerName);
+			if (summoner == null)
+			{
+				NoSuchSummoner();
+				return;
+			}
+
+			AllPublicSummonerDataDTO allSummonerData = RPC.GetAllPublicSummonerDataByAccount(summoner.acctId);
+			if (allSummonerData == null)
+			{
+				Console.WriteLine("Unable to retrieve all public summoner data");
+				return;
+			}
+
+			if (allSummonerData.spellBook == null)
+			{
+				Console.WriteLine("Spell book not available");
+				return;
+			}
+
+			if (allSummonerData.spellBook.bookPages == null)
+			{
+				Console.WriteLine("Spell book pages not available");
+				return;
+			}
+
+			foreach (var page in allSummonerData.spellBook.bookPages)
+			{
+				Console.WriteLine("[{0}] {1} ({2})", page.createDate, page.name, page.isCurrent ? "active" : "not active");
+				foreach (var slot in page.slotEntries)
+					Console.WriteLine("Slot {0}: {1}", slot.runeSlotId, slot.runeId);
+			}
 		}
 	}
 }

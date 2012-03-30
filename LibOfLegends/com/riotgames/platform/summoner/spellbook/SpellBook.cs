@@ -6,8 +6,9 @@ namespace com.riotgames.platform.summoner.spellbook
 {
 	public class SpellBook : AbstractDomainObject
 	{
-		public List<SpellBookPage> spellBookPages;
-		public string spellBookPagesJson;
+		//Unknown type, always null
+		public object bookPagesJson;
+		public List<SpellBookPage> bookPages;
 		public string dateString;
 		public int summonerId;
 	}
