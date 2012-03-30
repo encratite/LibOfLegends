@@ -458,7 +458,7 @@ namespace LibOfLegendsExample
 
 			foreach (var page in allSummonerData.spellBook.bookPages)
 			{
-				Console.WriteLine("[{0}] {1} ({2})", page.createDate, page.name, page.isCurrent ? "active" : "not active");
+				Console.WriteLine("[{0}] {1} ({2})", page.createDate, page.name, page.current ? "active" : "not active");
 				foreach (var slot in page.slotEntries)
 					Console.WriteLine("Slot {0}: {1}", slot.runeSlotId, slot.runeId);
 			}

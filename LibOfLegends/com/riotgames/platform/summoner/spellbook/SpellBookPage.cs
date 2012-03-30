@@ -10,7 +10,7 @@ namespace com.riotgames.platform.summoner.spellbook
 		public int pageId;
 		public string name;
 		public List<SlotEntry> slotEntries;
-		public bool isCurrent;
+		public bool current;
 		public DateTime createDate;
 		public int summonerId;
 	}
