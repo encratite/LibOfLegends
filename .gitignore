@@ -1,7 +1,6 @@
-*.user
+bin
+obj
 *.suo
-/LibOfLegends/obj
-/LibOfLegends/bin
-/LibOfLegendsExample/bin
-/LibOfLegendsExample/obj
-/References
+*.user
+References
+AssemblyInfo.cs
