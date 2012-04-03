@@ -11,6 +11,7 @@ using com.riotgames.platform.gameclient.domain;
 using com.riotgames.platform.login;
 using com.riotgames.platform.statistics;
 using com.riotgames.platform.summoner;
+using com.riotgames.team.dto;
 
 namespace LibOfLegends
 {
@@ -35,6 +36,7 @@ namespace LibOfLegends
 		const string SummonerService = "summonerService";
 		const string PlayerStatsService = "playerStatsService";
 		const string ClientFacadeService = "clientFacadeService";
+		const string SummonerTeamService = "summonerTeamService";
 
 		#endregion
 
@@ -214,6 +216,11 @@ namespace LibOfLegends
 			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "getAggregatedStats", responder, arguments);
 		}
 
+		void FindPlayerInternal(Responder<PlayerDTO> responder, object[] arguments)
+		{
+			RPCNetConnection.Call(EndpointString, SummonerTeamService, null, "findPlayer", responder, arguments);
+		}
+
 		//This call is not exposed to the outside
 		void GetLoginDataPacketForUserInternal(Responder<LoginDataPacket> responder)
 		{
@@ -254,6 +261,11 @@ namespace LibOfLegends
 			GetAggregatedStatsInternal(responder, new object[] { accountID, gameMode, season });
 		}
 
+		public void FindPlayerAsync(int summonerID, Responder<PlayerDTO> responder)
+		{
+			FindPlayerInternal(responder, new object[] { summonerID });
+		}
+
 		#endregion
 
 		#region Blocking RPC
@@ -273,6 +285,7 @@ namespace LibOfLegends
 			return (new InternalCallContext<AllPublicSummonerDataDTO>(GetAllPublicSummonerDataByAccountInternal, new object[] { accountID })).Execute();
 		}
 
+		//I don't understand how this one works anymore, always returns null for me
 		public AllSummonerData GetAllSummonerDataByAccount(int accountID)
 		{
 			return (new InternalCallContext<AllSummonerData>(GetAllSummonerDataByAccountInternal, new object[] { accountID })).Execute();
@@ -286,6 +299,19 @@ namespace LibOfLegends
 		public AggregatedStats GetAggregatedStats(int accountID, string gameMode, string season)
 		{
 			return (new InternalCallContext<AggregatedStats>(GetAggregatedStatsInternal, new object[] { accountID, gameMode, season })).Execute();
+		}
+
+		public PlayerDTO FindPlayer(int summonerID)
+		{
+			try
+			{
+				return (new InternalCallContext<PlayerDTO>(FindPlayerInternal, new object[] { summonerID })).Execute();
+			}
+			catch (RPCException)
+			{
+				//This just means that the summoner ID was invalid
+				return null;
+			}
 		}
 
 		#endregion

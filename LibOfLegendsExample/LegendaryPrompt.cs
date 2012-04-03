@@ -12,6 +12,7 @@ using LibOfLegends;
 using com.riotgames.platform.statistics;
 using com.riotgames.platform.summoner;
 using com.riotgames.platform.gameclient.domain;
+using com.riotgames.team.dto;
 
 namespace LibOfLegendsExample
 {
@@ -144,11 +145,11 @@ namespace LibOfLegendsExample
 			{
 				{"quit", new CommandInformation(0, Quit, "", "Terminates the application")},
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
-				{"id", new CommandInformation(-1, GetAccountID, "<name>", "Retrieve the account ID associated with the given summoner name")},
 				{"profile", new CommandInformation(-1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
 				{"ranked", new CommandInformation(-1, RankedStatistics, "<name>", "Analyse the ranked statistics of the summoner given")},
 				{"recent", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"runes", new CommandInformation(-1, RunePages, "<name>", "View rune pages")},
+				{"test", new CommandInformation(1, RunTest, "<ID>", "Run summoner ID vs. account ID test")},
 			};
 		}
 
@@ -187,16 +188,6 @@ namespace LibOfLegendsExample
 		void NoSuchSummoner()
 		{
 			Output.WriteLine("No such summoner");
-		}
-
-		void GetAccountID(List<string> arguments)
-		{
-			string summonerName = GetNameFromArguments(arguments);
-			PublicSummoner summoner = RPC.GetSummonerByName(summonerName);
-			if (summoner != null)
-				Output.WriteLine(summoner.acctId.ToString());
-			else
-				NoSuchSummoner();
 		}
 
 		static int CompareGames(PlayerGameStats x, PlayerGameStats y)
@@ -259,10 +250,9 @@ namespace LibOfLegendsExample
 			List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
 
 			Output.WriteLine("Name: " + publicSummoner.name);
-			Output.WriteLine("Account ID: " + publicSummoner.summonerId);
+			Output.WriteLine("Account ID: " + publicSummoner.acctId);
+			Output.WriteLine("Summoner ID: " + publicSummoner.summonerId);
 			Output.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
-			//No idea what this value contains now
-			//Output.WriteLine("IP: " + allSummonerData.summonerLevelAndPoints.infPoints);
 
 			//The hidden "Team" variants of the "Premade" ratings are currently unused, it seems
 			AnalayseStatistics("Unranked Summoner's Rift/Twisted Treeline", "Unranked", summaries);
@@ -463,5 +453,20 @@ namespace LibOfLegendsExample
 					Console.WriteLine("Slot {0}: {1}", slot.runeSlotId, slot.runeId);
 			}
 		}
+
+		void RunTest(List<string> arguments)
+		{
+			int id = Convert.ToInt32(arguments[0]);
+
+			AllSummonerData summonerData = RPC.GetAllSummonerDataByAccount(id);
+			AllPublicSummonerDataDTO allSummonerData = RPC.GetAllPublicSummonerDataByAccount(id);
+			PlayerDTO findPlayerData = RPC.FindPlayer(id);
+
+			Console.WriteLine("getAllSummonerDataByAccount: {0}", summonerData != null);
+			Console.WriteLine("getAllPublicSummonerDataByAccount: {0}", allSummonerData != null);
+			Console.WriteLine("findPlayer: {0}", findPlayerData != null);
+			
+		}
 	}
 }
+

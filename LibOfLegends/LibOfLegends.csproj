@@ -95,6 +95,9 @@
     <Compile Include="com\riotgames\platform\summoner\SummonerTalentsAndPoints.cs" />
     <Compile Include="com\riotgames\platform\summoner\Talent.cs" />
     <Compile Include="com\riotgames\platform\systemstate\ClientSystemStatesNotification.cs" />
+    <Compile Include="com\riotgames\team\CreatedTeam.cs" />
+    <Compile Include="com\riotgames\team\dto\PlayerDTO.cs" />
+    <Compile Include="com\riotgames\team\TeamId.cs" />
     <Compile Include="ConnectionProfile.cs" />
     <Compile Include="GameResult.cs" />
     <Compile Include="InternalCallContext.cs" />
