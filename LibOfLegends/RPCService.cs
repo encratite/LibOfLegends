@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 
@@ -206,6 +207,11 @@ namespace LibOfLegends
 			RPCNetConnection.Call(EndpointString, SummonerService, null, "getAllSummonerDataByAccount", responder, arguments);
 		}
 
+		void GetSummonerNamesInternal(Responder<List<string>> responder, object[] arguments)
+		{
+			RPCNetConnection.Call(EndpointString, SummonerService, null, "getSummonerNames", responder, arguments);
+		}
+
 		void RetrievePlayerStatsByAccountIDInternal(Responder<PlayerLifeTimeStats> responder, object[] arguments)
 		{
 			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "retrievePlayerStatsByAccountId", responder, arguments);
@@ -251,6 +257,11 @@ namespace LibOfLegends
 			GetAllSummonerDataByAccountInternal(responder, new object[] { accountID });
 		}
 
+		public void GetSummonerNamesAsync(List<int> summonerIDs, Responder<List<string>> responder)
+		{
+			GetSummonerNamesInternal(responder, new object[] { summonerIDs });
+		}
+
 		public void RetrievePlayerStatsByAccountIDAsync(int accountID, string season, Responder<PlayerLifeTimeStats> responder)
 		{
 			RetrievePlayerStatsByAccountIDInternal(responder, new object[] { accountID, season });
@@ -289,6 +300,11 @@ namespace LibOfLegends
 		public AllSummonerData GetAllSummonerDataByAccount(int accountID)
 		{
 			return (new InternalCallContext<AllSummonerData>(GetAllSummonerDataByAccountInternal, new object[] { accountID })).Execute();
+		}
+
+		public object GetSummonerNames(List<int> summonerIDs)
+		{
+			return (new InternalCallContext<List<string>>(GetSummonerNamesInternal, new object[] { summonerIDs })).Execute();
 		}
 
 		public PlayerLifeTimeStats RetrievePlayerStatsByAccountID(int accountID, string season)

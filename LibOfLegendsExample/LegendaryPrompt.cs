@@ -465,7 +465,6 @@ namespace LibOfLegendsExample
 			Console.WriteLine("getAllSummonerDataByAccount: {0}", summonerData != null);
 			Console.WriteLine("getAllPublicSummonerDataByAccount: {0}", allSummonerData != null);
 			Console.WriteLine("findPlayer: {0}", findPlayerData != null);
-			
 		}
 	}
 }
