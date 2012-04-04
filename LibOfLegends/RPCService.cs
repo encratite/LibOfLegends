@@ -302,7 +302,7 @@ namespace LibOfLegends
 			return (new InternalCallContext<AllSummonerData>(GetAllSummonerDataByAccountInternal, new object[] { accountID })).Execute();
 		}
 
-		public object GetSummonerNames(List<int> summonerIDs)
+		public List<string> GetSummonerNames(List<int> summonerIDs)
 		{
 			return (new InternalCallContext<List<string>>(GetSummonerNamesInternal, new object[] { summonerIDs })).Execute();
 		}
