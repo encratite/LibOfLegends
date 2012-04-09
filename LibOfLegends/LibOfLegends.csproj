@@ -103,6 +103,7 @@
     <Compile Include="InternalCallContext.cs" />
     <Compile Include="RPCConnectResult.cs" />
     <Compile Include="RPCException.cs" />
+    <Compile Include="RPCNotConnectedException.cs" />
     <Compile Include="RPCService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyProfile.cs" />

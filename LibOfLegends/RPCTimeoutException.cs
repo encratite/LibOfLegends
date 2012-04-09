@@ -2,7 +2,7 @@
 
 namespace LibOfLegends
 {
-	public class RPCTimeoutException : Exception
+	public class RPCTimeoutException : RPCException
 	{
 		public RPCTimeoutException(string message)
 			: base(message)

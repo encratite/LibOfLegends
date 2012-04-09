@@ -187,50 +187,57 @@ namespace LibOfLegends
 
 		#region Internal RPC
 
+		void Call<ResponderType>(string destination, string operation, Responder<ResponderType> responder, params object[] arguments)
+		{
+			if (RPCNetConnection == null)
+				throw new RPCNotConnectedException("Connection has not been initialised yet");
+			RPCNetConnection.Call(EndpointString, destination, null, operation, responder, arguments);
+		}
+
 		void GetSummonerByNameInternal(Responder<PublicSummoner> responder, object[] arguments)
 		{
-			RPCNetConnection.Call(EndpointString, SummonerService, null, "getSummonerByName", responder, arguments);
+			Call(SummonerService, "getSummonerByName", responder, arguments);
 		}
 
 		void GetRecentGamesInternal(Responder<RecentGames> responder, object[] arguments)
 		{
-			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "getRecentGames", responder, arguments);
+			Call(PlayerStatsService, "getRecentGames", responder, arguments);
 		}
 
 		void GetAllPublicSummonerDataByAccountInternal(Responder<AllPublicSummonerDataDTO> responder, object[] arguments)
 		{
-			RPCNetConnection.Call(EndpointString, SummonerService, null, "getAllPublicSummonerDataByAccount", responder, arguments);
+			Call(SummonerService, "getAllPublicSummonerDataByAccount", responder, arguments);
 		}
 
 		void GetAllSummonerDataByAccountInternal(Responder<AllSummonerData> responder, object[] arguments)
 		{
-			RPCNetConnection.Call(EndpointString, SummonerService, null, "getAllSummonerDataByAccount", responder, arguments);
+			Call(SummonerService, "getAllSummonerDataByAccount", responder, arguments);
 		}
 
 		void GetSummonerNamesInternal(Responder<List<string>> responder, object[] arguments)
 		{
-			RPCNetConnection.Call(EndpointString, SummonerService, null, "getSummonerNames", responder, arguments);
+			Call(SummonerService, "getSummonerNames", responder, arguments);
 		}
 
 		void RetrievePlayerStatsByAccountIDInternal(Responder<PlayerLifeTimeStats> responder, object[] arguments)
 		{
-			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "retrievePlayerStatsByAccountId", responder, arguments);
+			Call(PlayerStatsService, "retrievePlayerStatsByAccountId", responder, arguments);
 		}
 
 		void GetAggregatedStatsInternal(Responder<AggregatedStats> responder, object[] arguments)
 		{
-			RPCNetConnection.Call(EndpointString, PlayerStatsService, null, "getAggregatedStats", responder, arguments);
+			Call(PlayerStatsService, "getAggregatedStats", responder, arguments);
 		}
 
 		void FindPlayerInternal(Responder<PlayerDTO> responder, object[] arguments)
 		{
-			RPCNetConnection.Call(EndpointString, SummonerTeamService, null, "findPlayer", responder, arguments);
+			Call(SummonerTeamService, "findPlayer", responder, arguments);
 		}
 
 		//This call is not exposed to the outside
 		void GetLoginDataPacketForUserInternal(Responder<LoginDataPacket> responder)
 		{
-			RPCNetConnection.Call(EndpointString, ClientFacadeService, null, "getLoginDataPacketForUser", responder, new object[] {});
+			Call( ClientFacadeService, "getLoginDataPacketForUser", responder, new object[] {});
 		}
 
 		#endregion
