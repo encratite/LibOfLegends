@@ -7,11 +7,11 @@
 	/// </summary>
 	public class AuthResponse
 	{
-		public int Rate { get; set; }
-		public string Token { get; set; }
-		public string Reason { get; set; }
-		public string Status { get; set; }
-		public int Delay { get; set; }
-		public string User { get; set; }
+		public int Rate;
+		public string Token;
+		public string Reason;
+		public string Status;
+		public int Delay;
+		public string User;
 	}
 }

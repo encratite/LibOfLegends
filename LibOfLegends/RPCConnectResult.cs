@@ -16,10 +16,10 @@ namespace LibOfLegends
 
 	public class RPCConnectResult
 	{
-		public RPCConnectResultType Result;
-		public Exception ConnectionError;
-		public string FlexErrorMessage;
-		public Fault FlexLoginFault;
+		public readonly RPCConnectResultType Result;
+		public readonly Exception ConnectionError;
+		public readonly string FlexErrorMessage;
+		public readonly Fault FlexLoginFault;
 
 		public RPCConnectResult(Exception exception)
 		{

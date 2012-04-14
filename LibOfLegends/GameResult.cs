@@ -8,56 +8,56 @@ namespace LibOfLegends
 {
 	public class GameResult
 	{
-		public bool Win;
+		public readonly bool Win;
 
-		public int Level;
+		public readonly int Level;
 
-		public int Kills;
-		public int Deaths;
-		public int Assists;
+		public readonly int Kills;
+		public readonly int Deaths;
+		public readonly int Assists;
 
-		public int GoldEarned;
+		public readonly int GoldEarned;
 
-		public int MinionsKilled;
+		public readonly int MinionsKilled;
 
-		public int[] Items;
+		public readonly int[] Items;
 
-		public int TotalDamageDealt;
-		public int PhysicalDamageDealt;
-		public int MagicalDamageDealt;
+		public readonly int TotalDamageDealt;
+		public readonly int PhysicalDamageDealt;
+		public readonly int MagicalDamageDealt;
 
-		public int TotalDamageTaken;
-		public int PhysicalDamageTaken;
-		public int MagicalDamageTaken;
+		public readonly int TotalDamageTaken;
+		public readonly int PhysicalDamageTaken;
+		public readonly int MagicalDamageTaken;
 
-		public int TotalHealingDone;
+		public readonly int TotalHealingDone;
 
-		public int LargestCriticalStrike;
-		public int LargestMultiKill;
-		public int LargestKillingSpree;
+		public readonly int LargestCriticalStrike;
+		public readonly int LargestMultiKill;
+		public readonly int LargestKillingSpree;
 
-		public int TimeSpentDead;
+		public readonly int TimeSpentDead;
 
 		//Summoner's Rift and Twisted Treeline specific
 
-		public int? TurretsDestroyed;
-		public int? InhibitorsDestroyed;
-		public int? NeutralMinionsKilled;
+		public readonly int? TurretsDestroyed;
+		public readonly int? InhibitorsDestroyed;
+		public readonly int? NeutralMinionsKilled;
 
 		//Dominion specific
 
-		public int? NodesNeutralised;
-		public int? NodeNeutralisationAssists;
-		public int? NodesCaptured;
+		public readonly int? NodesNeutralised;
+		public readonly int? NodeNeutralisationAssists;
+		public readonly int? NodesCaptured;
 
-		public int? VictoryPoints;
-		public int? Objectives;
+		public readonly int? VictoryPoints;
+		public readonly int? Objectives;
 
-		public int? TotalScore;
-		public int? ObjectiveScore;
-		public int? CombatScore;
+		public readonly int? TotalScore;
+		public readonly int? ObjectiveScore;
+		public readonly int? CombatScore;
 
-		public int? Rank;
+		public readonly int? Rank;
 
 		List<RawStat> Statistics;
 		bool IsDominion;

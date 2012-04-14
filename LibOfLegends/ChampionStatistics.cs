@@ -8,36 +8,37 @@ namespace LibOfLegends
 {
 	public class ChampionStatistics
 	{
-		public int Wins;
-		public int Losses;
+		public readonly int Wins;
+		public readonly int Losses;
 
-		public int Kills;
-		public int Deaths;
-		public int Assists;
+		public readonly int Kills;
+		public readonly int Deaths;
+		public readonly int Assists;
 
-		public int MinionKills;
+		public readonly int MinionKills;
 
-		public int Gold;
+		public readonly int Gold;
 
-		public int TurretsDestroyed;
+		public readonly int TurretsDestroyed;
 
-		public int DamageDealt;
-		public int PhysicalDamageDealt;
-		public int MagicalDamageDealt;
+		public readonly int DamageDealt;
+		public readonly int PhysicalDamageDealt;
+		public readonly int MagicalDamageDealt;
 
-		public int DamageTaken;
+		public readonly int DamageTaken;
 
-		public int DoubleKills;
-		public int TripleKills;
-		public int QuadraKills;
-		public int PentaKills;
+		public readonly int DoubleKills;
+		public readonly int TripleKills;
+		public readonly int QuadraKills;
+		public readonly int PentaKills;
 
-		public int TimeSpentDead;
+		public readonly int TimeSpentDead;
 
-		public int MaximumKills;
-		public int MaximumDeaths;
+		public readonly int MaximumKills;
+		public readonly int MaximumDeaths;
 
-		public int ChampionId;
+		public readonly int ChampionId;
+
 		AggregatedStats Statistics;
 
 		//Must be set by user
