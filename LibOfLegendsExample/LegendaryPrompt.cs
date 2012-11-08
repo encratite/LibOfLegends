@@ -458,13 +458,9 @@ namespace LibOfLegendsExample
 		{
 			int id = Convert.ToInt32(arguments[0]);
 
-			AllSummonerData summonerData = RPC.GetAllSummonerDataByAccount(id);
-			AllPublicSummonerDataDTO allSummonerData = RPC.GetAllPublicSummonerDataByAccount(id);
-			PlayerDTO findPlayerData = RPC.FindPlayer(id);
+			RecentGames recentGames = RPC.GetRecentGames(id);
 
-			Console.WriteLine("getAllSummonerDataByAccount: {0}", summonerData != null);
-			Console.WriteLine("getAllPublicSummonerDataByAccount: {0}", allSummonerData != null);
-			Console.WriteLine("findPlayer: {0}", findPlayerData != null);
+			Console.WriteLine("Retrieved recent games");
 		}
 	}
 }

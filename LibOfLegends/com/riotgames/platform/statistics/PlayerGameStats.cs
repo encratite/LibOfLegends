@@ -25,7 +25,8 @@ namespace com.riotgames.platform.statistics
 		public List<RawStat> statistics;
 		public int spell2;
 		public bool afk;
-		public int id;
+		// Is always set to null now, used to be an integer
+		public object id;
 		public int boostXpEarned;
 		public int level;
 		public bool invalid;

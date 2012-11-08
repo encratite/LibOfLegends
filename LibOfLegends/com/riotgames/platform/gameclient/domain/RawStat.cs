@@ -2,7 +2,8 @@
 {
 	public class RawStat
 	{
-		public string displayName;
+		// Was removed
+		// public string displayName;
 		public string statType;
 		public int value;
 	}

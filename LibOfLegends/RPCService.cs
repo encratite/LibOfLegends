@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 
 using FluorineFx;
@@ -102,8 +103,16 @@ namespace LibOfLegends
 			RPCNetConnection.OnDisconnect += new DisconnectHandler(NetConnectionOnDisconnect);
 			RPCNetConnection.NetStatus += new NetStatusHandler(NetConnectionNetStatus);
 
-			// Connect to the RTMPS server
-			RPCNetConnection.Connect(ConnectionData.Region.RPCURL);
+			try
+			{
+				// Connect to the RTMPS server
+				RPCNetConnection.Connect(ConnectionData.Region.RPCURL);
+			}
+			catch (SocketException)
+			{
+				if (DisconnectCallback != null)
+					DisconnectCallback();
+			}
 		}
 
 		#region Net connection state handlers
