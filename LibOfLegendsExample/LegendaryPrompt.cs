@@ -145,10 +145,11 @@ namespace LibOfLegendsExample
 			{
 				{"quit", new CommandInformation(0, Quit, "", "Terminates the application")},
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
-				{"profile", new CommandInformation(-1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
-				{"ranked", new CommandInformation(-1, RankedStatistics, "<name>", "Analyse the ranked statistics of the summoner given")},
-				{"recent", new CommandInformation(-1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
-				{"runes", new CommandInformation(-1, RunePages, "<name>", "View rune pages")},
+				{"profile", new CommandInformation(1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
+				{"ranked", new CommandInformation(1, RankedStatistics, "<name>", "Analyse the ranked statistics of the summoner given")},
+				{"recent", new CommandInformation(1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
+				{"runes", new CommandInformation(1, RunePages, "<name>", "View rune pages")},
+				{"normals", new CommandInformation(-1, AnalyseNormalGames, "<name> <summoners names to exclude due to premades>", "Analyse the Elo of other players in normal games in the recent match history of the summoner given")},
 				{"test", new CommandInformation(1, RunTest, "<ID>", "Run summoner ID vs. account ID test")},
 			};
 		}
@@ -170,19 +171,11 @@ namespace LibOfLegendsExample
 			}
 		}
 
-		string GetNameFromArguments(List<string> arguments)
+		string GetSummonerName(string input)
 		{
-			string summonerName = "";
-			bool first = true;
-			foreach (var argument in arguments)
-			{
-				if (first)
-					first = false;
-				else
-					summonerName += " ";
-				summonerName += argument;
-			}
-			return summonerName;
+			string output = input.Replace(".", " ");
+			output = output.Replace("-", " ");
+			return output;
 		}
 
 		void NoSuchSummoner()
@@ -230,7 +223,7 @@ namespace LibOfLegendsExample
 
 		void AnalyseSummonerProfile(List<string> arguments)
 		{
-			string summonerName = GetNameFromArguments(arguments);
+			string summonerName = GetSummonerName(arguments[0]);
 			PublicSummoner publicSummoner = new PublicSummoner();
 			List<PlayerGameStats> recentGames = new List<PlayerGameStats>();
 			bool foundSummoner = GetRecentGames(summonerName, ref publicSummoner, ref recentGames);
@@ -276,7 +269,7 @@ namespace LibOfLegendsExample
 
 		void AnalyseRecentGames(List<string> arguments)
 		{
-			string summonerName = GetNameFromArguments(arguments);
+			string summonerName = GetSummonerName(arguments[0]);
 			PublicSummoner publicSummoner = new PublicSummoner();
 			List<PlayerGameStats> recentGames = new List<PlayerGameStats>();
 			bool foundSummoner = GetRecentGames(summonerName, ref publicSummoner, ref recentGames);
@@ -388,7 +381,7 @@ namespace LibOfLegendsExample
 
 		void RankedStatistics(List<string> arguments)
 		{
-			string summonerName = GetNameFromArguments(arguments);
+			string summonerName = GetSummonerName(arguments[0]);
 			PublicSummoner publicSummoner = RPC.GetSummonerByName(summonerName);
 			if (publicSummoner == null)
 			{
@@ -419,7 +412,7 @@ namespace LibOfLegendsExample
 
 		void RunePages(List<string> arguments)
 		{
-			string summonerName = GetNameFromArguments(arguments);
+			string summonerName = GetSummonerName(arguments[0]);
 			PublicSummoner summoner = RPC.GetSummonerByName(summonerName);
 			if (summoner == null)
 			{
@@ -454,13 +447,137 @@ namespace LibOfLegendsExample
 			}
 		}
 
+		void AnalyseNormalGames(List<string> arguments)
+		{
+			if (arguments.Count == 0)
+				return;
+			string summonerName = GetSummonerName(arguments[0]);
+			var excludedNames = new List<string>();
+			for (int i = 1; i < arguments.Count; i++)
+				excludedNames.Add(GetSummonerName(arguments[i]));
+			PublicSummoner publicSummoner = new PublicSummoner();
+			List<PlayerGameStats> recentGames = new List<PlayerGameStats>();
+			bool foundSummoner = GetRecentGames(summonerName, ref publicSummoner, ref recentGames);
+			if (!foundSummoner)
+			{
+				NoSuchSummoner();
+				return;
+			}
+
+			var knownSummoners = new HashSet<string>();
+			var currentRatings = new List<int>();
+			var topRatings = new List<int>();
+			int gameCount = 0;
+
+			foreach (var stats in recentGames)
+			{
+				GameResult result = new GameResult(stats);
+				if (stats.gameType == "PRACTICE_GAME" || stats.queueType != "NORMAL")
+					continue;
+				var ids = new List<int>();
+				foreach (var fellowPlayer in stats.fellowPlayers)
+					ids.Add(fellowPlayer.summonerId);
+				var names = RPC.GetSummonerNames(ids);
+				bool isValidGame = true;
+				foreach (var name in excludedNames)
+				{
+					if (names.IndexOf(name) >= 0)
+					{
+						isValidGame = false;
+						break;
+					}
+				}
+				if (!isValidGame)
+					continue;
+				gameCount++;
+				foreach (var name in names)
+				{
+					if (knownSummoners.Contains(name))
+						continue;
+					knownSummoners.Add(name);
+					PublicSummoner summoner = RPC.GetSummonerByName(name);
+					if (summoner == null)
+					{
+						Console.WriteLine("Unable to load summoner {0}", name);
+						return;
+					}
+
+					PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(summoner.acctId, "CURRENT");
+					if (lifeTimeStatistics == null)
+					{
+						Console.WriteLine("Unable to retrieve lifetime statistics for summoner {0}", name);
+						return;
+					}
+
+					List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
+					const string target = "RankedSolo5x5";
+					foreach (var summary in summaries)
+					{
+						if (summary.playerStatSummaryType == target)
+						{
+							int games = summary.wins + summary.losses;
+							if (games == 0)
+								break;
+
+							Console.Write("{0} ", name);
+							Console.Write("{0} (top {1}), ", summary.rating, summary.maxRating);
+							Console.Write("{0} W - {1} L ({2})", summary.wins, summary.losses, SignPrefix(summary.wins - summary.losses));
+							if (summary.leaves > 0)
+								Console.Write(", left {0} {1}", summary.leaves, (summary.leaves > 1 ? "games" : "game"));
+							Console.WriteLine("");
+
+							currentRatings.Add(summary.rating);
+							topRatings.Add(summary.maxRating);
+							break;
+						}
+					}
+				}
+			}
+
+			currentRatings.Sort();
+			topRatings.Sort();
+
+			PrintRatings("Current ratings", currentRatings);
+			PrintRatings("Top ratings", topRatings);
+			
+			int playerCount = 9 * gameCount;
+			int rankedPlayers = topRatings.Count;
+			float rankedRatio = (float)rankedPlayers / playerCount;
+			Console.WriteLine("Ranked players: {0}/{1} ({2:F1}%)", rankedPlayers, playerCount, rankedRatio * 100);
+		}
+
+		void PrintRatings(string description, List<int> ratings)
+		{
+			Console.Write("{0}: ", description);
+			if (ratings.Count == 0)
+			{
+				Console.WriteLine("none");
+				return;
+			}
+			bool first = true;
+			foreach (var rating in ratings)
+			{
+				if (first)
+					first = false;
+				else
+					Console.Write(", ");
+				Console.Write(rating);
+			}
+			int median = ratings[ratings.Count / 2];
+			Console.WriteLine(" (median {0})", median);
+		}
+
 		void RunTest(List<string> arguments)
 		{
 			int id = Convert.ToInt32(arguments[0]);
 
-			RecentGames recentGames = RPC.GetRecentGames(id);
+			AllSummonerData summonerData = RPC.GetAllSummonerDataByAccount(id);
+			AllPublicSummonerDataDTO allSummonerData = RPC.GetAllPublicSummonerDataByAccount(id);
+			PlayerDTO findPlayerData = RPC.FindPlayer(id);
 
-			Console.WriteLine("Retrieved recent games");
+			Console.WriteLine("getAllSummonerDataByAccount: {0}", summonerData != null);
+			Console.WriteLine("getAllPublicSummonerDataByAccount: {0}", allSummonerData != null);
+			Console.WriteLine("findPlayer: {0}", findPlayerData != null);
 		}
 	}
 }
