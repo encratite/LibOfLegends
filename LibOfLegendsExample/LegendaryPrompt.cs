@@ -233,26 +233,38 @@ namespace LibOfLegendsExample
 				return;
 			}
 
-			PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(publicSummoner.acctId, "CURRENT");
-			if (lifeTimeStatistics == null)
-			{
-				Output.WriteLine("Unable to retrieve lifetime statistics");
-				return;
-			}
-
-			List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
-
 			Output.WriteLine("Name: " + publicSummoner.name);
 			Output.WriteLine("Account ID: " + publicSummoner.acctId);
 			Output.WriteLine("Summoner ID: " + publicSummoner.summonerId);
 			Output.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
 
-			//The hidden "Team" variants of the "Premade" ratings are currently unused, it seems
-			AnalayseStatistics("Unranked Summoner's Rift/Twisted Treeline", "Unranked", summaries);
-			AnalayseStatistics("Ranked Twisted Treeline (team)", "RankedPremade3x3", summaries);
-			AnalayseStatistics("Ranked Summoner's Rift (solo)", "RankedSolo5x5", summaries);
-			AnalayseStatistics("Ranked Summoner's Rift (team)", "RankedPremade5x5", summaries);
-			AnalayseStatistics("Unranked Dominion", "OdinUnranked", summaries);
+			string[] seasonStrings =
+			{
+				"CURRENT",
+				"TWO",
+				"ONE",
+			};
+
+			foreach (string seasonString in seasonStrings)
+			{
+				Output.WriteLine("Season: \"{0}\"", seasonString);
+
+				PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(publicSummoner.acctId, seasonString);
+				if (lifeTimeStatistics == null)
+				{
+					Output.WriteLine("Unable to retrieve lifetime statistics");
+					return;
+				}
+
+				List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
+
+				//The hidden "Team" variants of the "Premade" ratings are currently unused, it seems
+				AnalayseStatistics("Unranked Summoner's Rift/Twisted Treeline", "Unranked", summaries);
+				AnalayseStatistics("Ranked Twisted Treeline (team)", "RankedPremade3x3", summaries);
+				AnalayseStatistics("Ranked Summoner's Rift (solo)", "RankedSolo5x5", summaries);
+				AnalayseStatistics("Ranked Summoner's Rift (team)", "RankedPremade5x5", summaries);
+				AnalayseStatistics("Unranked Dominion", "OdinUnranked", summaries);
+			}
 		}
 
 		string GetPrefix(int input)
@@ -502,7 +514,7 @@ namespace LibOfLegendsExample
 						return;
 					}
 
-					PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(summoner.acctId, "CURRENT");
+					PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(summoner.acctId, "TWO");
 					if (lifeTimeStatistics == null)
 					{
 						Console.WriteLine("Unable to retrieve lifetime statistics for summoner {0}", name);

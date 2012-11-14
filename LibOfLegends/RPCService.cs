@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -107,6 +108,11 @@ namespace LibOfLegends
 			{
 				// Connect to the RTMPS server
 				RPCNetConnection.Connect(ConnectionData.Region.RPCURL);
+			}
+			catch (IOException)
+			{
+				if (DisconnectCallback != null)
+					DisconnectCallback();
 			}
 			catch (SocketException)
 			{
