@@ -400,18 +400,29 @@ namespace LibOfLegendsExample
 				NoSuchSummoner();
 				return;
 			}
-			AggregatedStats aggregatedStatistics = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", "CURRENT");
-			if (aggregatedStatistics == null)
+			string[] seasonStrings =
 			{
-				Output.WriteLine("Unable to retrieve aggregated statistics");
-				return;
+				"CURRENT",
+				"TWO",
+				"ONE",
+			};
+
+			foreach (string seasonString in seasonStrings)
+			{
+				Output.WriteLine("Season: \"{0}\"", seasonString);
+				AggregatedStats aggregatedStatistics = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", seasonString);
+				if (aggregatedStatistics == null)
+				{
+					Output.WriteLine("Unable to retrieve aggregated statistics");
+					return;
+				}
+				List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
+				foreach (var entry in statistics)
+					entry.Name = GetChampionName(entry.ChampionId);
+				statistics.Sort(CompareNames);
+				foreach (var entry in statistics)
+					Output.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 			}
-			List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
-			foreach (var entry in statistics)
-				entry.Name = GetChampionName(entry.ChampionId);
-			statistics.Sort(CompareNames);
-			foreach (var entry in statistics)
-				Output.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 		}
 
 		string GetChampionName(int championId)
