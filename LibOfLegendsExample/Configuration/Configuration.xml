@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Authentication>
-    <ClientVersion>1.59.12_04_30_20_33</ClientVersion>
+    <ClientVersion>1.71.12_11_13_11_00</ClientVersion>
     <Domain>lolclient.lol.riotgames.com</Domain>
     <IPAddress>127.0.0.1</IPAddress>
     <Locale>en_US</Locale>
@@ -478,6 +478,14 @@
     </Item>
     <Item>
       <Key>
+        <int>60</int>
+      </Key>
+      <Value>
+        <string>Elise</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
         <int>61</int>
       </Key>
       <Value>
@@ -750,6 +758,14 @@
     </Item>
     <Item>
       <Key>
+        <int>107</int>
+      </Key>
+      <Value>
+        <string>Rengar</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
         <int>111</int>
       </Key>
       <Value>
@@ -794,6 +810,70 @@
       </Key>
       <Value>
         <string>Lulu</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>119</int>
+      </Key>
+      <Value>
+        <string>Draven</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>120</int>
+      </Key>
+      <Value>
+        <string>Hecarim</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>121</int>
+      </Key>
+      <Value>
+        <string>Kha'Zix</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>122</int>
+      </Key>
+      <Value>
+        <string>Darius</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>126</int>
+      </Key>
+      <Value>
+        <string>Jayce</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>131</int>
+      </Key>
+      <Value>
+        <string>Diana</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>134</int>
+      </Key>
+      <Value>
+        <string>Syndra</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>143</int>
+      </Key>
+      <Value>
+        <string>Zyra</string>
       </Value>
     </Item>
   </ChampionNames>
