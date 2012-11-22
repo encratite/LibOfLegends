@@ -876,5 +876,13 @@
         <string>Zyra</string>
       </Value>
     </Item>
+    <Item>
+      <Key>
+        <int>238</int>
+      </Key>
+      <Value>
+        <string>Zed</string>
+      </Value>
+    </Item>
   </ChampionNames>
 </Configuration>

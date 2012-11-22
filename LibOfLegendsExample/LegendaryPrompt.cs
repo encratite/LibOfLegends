@@ -47,8 +47,7 @@ namespace LibOfLegendsExample
 				WriteWithTimestamp("Connecting to server...");
 				try
 				{
-					RPC = new RPCService(ConnectionData, OnConnect, OnDisconnect, OnNetStatus);
-					RPC.Connect();
+					Connect();
 				}
 				catch (Exception exception)
 				{
@@ -58,6 +57,12 @@ namespace LibOfLegendsExample
 				if (ConnectionSuccess)
 					PerformQueries();
 			}
+		}
+
+		void Connect()
+		{
+			RPC = new RPCService(ConnectionData, OnConnect, OnDisconnect, OnNetStatus);
+			RPC.Connect();
 		}
 
 		void WriteWithTimestamp(string input, params object[] arguments)
@@ -75,8 +80,11 @@ namespace LibOfLegendsExample
 
 		void OnDisconnect()
 		{
-			if(Running)
+			if (Running)
+			{
 				WriteWithTimestamp("Disconnected");
+				Connect();
+			}
 		}
 
 		void OnNetStatus(NetStatusEventArgs eventArguments)
@@ -128,7 +136,7 @@ namespace LibOfLegendsExample
 				{
 					Output.WriteLine("RPC timeout occurred");
 					RPC.Disconnect();
-					return;
+					Connect();
 				}
 				catch (Exception exception)
 				{
@@ -386,9 +394,9 @@ namespace LibOfLegendsExample
 			return string.Format("{0:0.0}", input);
 		}
 
-		int CompareNames(ChampionStatistics x, ChampionStatistics y)
+		int CompareChampions(ChampionStatistics x, ChampionStatistics y)
 		{
-			return x.Name.CompareTo(y.Name);
+			return (x.Wins - x.Losses).CompareTo(y.Wins - y.Losses);
 		}
 
 		void RankedStatistics(List<string> arguments)
@@ -419,7 +427,7 @@ namespace LibOfLegendsExample
 				List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
 				foreach (var entry in statistics)
 					entry.Name = GetChampionName(entry.ChampionId);
-				statistics.Sort(CompareNames);
+				statistics.Sort(CompareChampions);
 				foreach (var entry in statistics)
 					Output.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 			}
