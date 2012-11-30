@@ -64,6 +64,8 @@ namespace LibOfLegends
 			ConnectCallback = connectCallback;
 			DisconnectCallback = disconnectCallback;
 			NetStatusCallback = netStatusCallback;
+
+			NetConnection = null;
 		}
 
 		public void Connect()
@@ -75,7 +77,11 @@ namespace LibOfLegends
 
 		public void Disconnect()
 		{
-			NetConnection.Close();
+			if (NetConnection != null)
+			{
+				NetConnection.Close();
+				NetConnection = null;
+			}
 		}
 
 		void ConnectThread()

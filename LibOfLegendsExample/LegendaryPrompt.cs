@@ -154,7 +154,8 @@ namespace LibOfLegendsExample
 				{"quit", new CommandInformation(0, Quit, "", "Terminates the application")},
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
 				{"profile", new CommandInformation(1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
-				{"ranked", new CommandInformation(1, RankedStatistics, "<name>", "Analyse the ranked statistics of the summoner given")},
+				{"ranked", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, false), "<name>", "Analyse the ranked statistics of the summoner given")},
+				{"ranked-wld", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true), "<name>", "Analyse the ranked statistics of the summoner given, sort by win/loss differnece")},
 				{"recent", new CommandInformation(1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"runes", new CommandInformation(1, RunePages, "<name>", "View rune pages")},
 				{"normals", new CommandInformation(-1, AnalyseNormalGames, "<name> <summoners names to exclude due to premades>", "Analyse the Elo of other players in normal games in the recent match history of the summoner given")},
@@ -394,12 +395,17 @@ namespace LibOfLegendsExample
 			return string.Format("{0:0.0}", input);
 		}
 
-		int CompareChampions(ChampionStatistics x, ChampionStatistics y)
+		int CompareChampionWinLossDifferences(ChampionStatistics x, ChampionStatistics y)
 		{
 			return (x.Wins - x.Losses).CompareTo(y.Wins - y.Losses);
 		}
 
-		void RankedStatistics(List<string> arguments)
+		int CompareChampionNames(ChampionStatistics x, ChampionStatistics y)
+		{
+			return GetChampionName(x.ChampionId).CompareTo(GetChampionName(y.ChampionId));
+		}
+
+		void RankedStatistics(List<string> arguments, bool sortByWinLossDifference)
 		{
 			string summonerName = GetSummonerName(arguments[0]);
 			PublicSummoner publicSummoner = RPC.GetSummonerByName(summonerName);
@@ -427,7 +433,10 @@ namespace LibOfLegendsExample
 				List<ChampionStatistics> statistics = ChampionStatistics.GetChampionStatistics(aggregatedStatistics);
 				foreach (var entry in statistics)
 					entry.Name = GetChampionName(entry.ChampionId);
-				statistics.Sort(CompareChampions);
+				if(sortByWinLossDifference)
+					statistics.Sort(CompareChampionWinLossDifferences);
+				else
+					statistics.Sort(CompareChampionNames);
 				foreach (var entry in statistics)
 					Output.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
 			}
