@@ -158,7 +158,8 @@ namespace LibOfLegendsExample
 				{"ranked-wld", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true), "<name>", "Analyse the ranked statistics of the summoner given, sort by win/loss differnece")},
 				{"recent", new CommandInformation(1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"runes", new CommandInformation(1, RunePages, "<name>", "View rune pages")},
-				{"normals", new CommandInformation(-1, AnalyseNormalGames, "<name> <summoners names to exclude due to premades>", "Analyse the Elo of other players in normal games in the recent match history of the summoner given")},
+				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false), "<name> <summoners names to exclude due to premades>", "Analyse the season 2 Elo of other players in normal games in the recent match history of the summoner given")},
+				{"ranked-s2", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true), "<name> <summoners names to exclude due to premades>", "Analyse the season 2 Elo of other players in ranked games in the recent match history of the summoner given")},
 				{"test", new CommandInformation(1, RunTest, "<ID>", "Run summoner ID vs. account ID test")},
 			};
 		}
@@ -487,7 +488,7 @@ namespace LibOfLegendsExample
 			}
 		}
 
-		void AnalyseNormalGames(List<string> arguments)
+		void AnalyseEnvironmentalRating(List<string> arguments, bool ranked)
 		{
 			if (arguments.Count == 0)
 				return;
@@ -512,7 +513,11 @@ namespace LibOfLegendsExample
 			foreach (var stats in recentGames)
 			{
 				GameResult result = new GameResult(stats);
-				if (stats.gameType == "PRACTICE_GAME" || stats.queueType != "NORMAL")
+				if (
+					(stats.gameType == "PRACTICE_GAME") ||
+					(!ranked && stats.queueType != "NORMAL") ||
+					(ranked && stats.queueType != "RANKED_SOLO_5x5")
+					)
 					continue;
 				var ids = new List<int>();
 				foreach (var fellowPlayer in stats.fellowPlayers)
@@ -559,8 +564,17 @@ namespace LibOfLegendsExample
 							if (games == 0)
 								break;
 
-							Console.Write("{0} ", name);
+							Console.Write("{0}: ", name);
+							if (summary.maxRating >= 2200)
+								Console.ForegroundColor = ConsoleColor.White;
+							else if (summary.maxRating >= 1850)
+								Console.ForegroundColor = ConsoleColor.DarkCyan;
+							else if (summary.maxRating >= 1500)
+								Console.ForegroundColor = ConsoleColor.DarkYellow;
+							else if (summary.maxRating < 1150 && summary.maxRating != 0)
+								Console.ForegroundColor = ConsoleColor.DarkGray;
 							Console.Write("{0} (top {1}), ", summary.rating, summary.maxRating);
+							Console.ResetColor();
 							Console.Write("{0} W - {1} L ({2})", summary.wins, summary.losses, SignPrefix(summary.wins - summary.losses));
 							if (summary.leaves > 0)
 								Console.Write(", left {0} {1}", summary.leaves, (summary.leaves > 1 ? "games" : "game"));
