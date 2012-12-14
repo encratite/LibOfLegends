@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Authentication>
-    <ClientVersion>1.72.12_12_06_17_12</ClientVersion>
+    <ClientVersion>1.73.12_12_13_12_51</ClientVersion>
     <Domain>lolclient.lol.riotgames.com</Domain>
     <IPAddress>127.0.0.1</IPAddress>
     <Locale>en_US</Locale>
