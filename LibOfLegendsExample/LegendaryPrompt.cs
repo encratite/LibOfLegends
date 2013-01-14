@@ -154,8 +154,10 @@ namespace LibOfLegendsExample
 				{"quit", new CommandInformation(0, Quit, "", "Terminates the application")},
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
 				{"profile", new CommandInformation(1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
-				{"ranked", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, false), "<name>", "Analyse the ranked statistics of the summoner given")},
-				{"ranked-wld", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true), "<name>", "Analyse the ranked statistics of the summoner given, sort by win/loss differnece")},
+				{"ranked", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, false, false), "<name>", "Analyse the ranked statistics of the summoner given")},
+				{"ranked-wld", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true, false), "<name>", "Analyse the ranked statistics of the summoner given, sort by win/loss differnece")},
+				{"current", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, false, true), "<name>", "Analyse the current ranked statistics of the summoner given")},
+				{"current-wld", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true, true), "<name>", "Analyse the current ranked statistics of the summoner given, sort by win/loss differnece")},
 				{"recent", new CommandInformation(1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"runes", new CommandInformation(1, RunePages, "<name>", "View rune pages")},
 				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false), "<name> <summoners names to exclude due to premades>", "Analyse the season 2 Elo of other players in normal games in the recent match history of the summoner given")},
@@ -406,7 +408,7 @@ namespace LibOfLegendsExample
 			return GetChampionName(x.ChampionId).CompareTo(GetChampionName(y.ChampionId));
 		}
 
-		void RankedStatistics(List<string> arguments, bool sortByWinLossDifference)
+		void RankedStatistics(List<string> arguments, bool sortByWinLossDifference, bool currentOnly)
 		{
 			string summonerName = GetSummonerName(arguments[0]);
 			PublicSummoner publicSummoner = RPC.GetSummonerByName(summonerName);
@@ -440,6 +442,8 @@ namespace LibOfLegendsExample
 					statistics.Sort(CompareChampionNames);
 				foreach (var entry in statistics)
 					Output.WriteLine(entry.Name + ": " + entry.Wins + " W - " + entry.Losses + " L (" + SignPrefix(entry.Wins - entry.Losses) + "), " + Percentage(entry.WinRatio()) + ", " + Round(entry.KillsPerGame()) + "/" + Round(entry.DeathsPerGame()) + "/" + Round(entry.AssistsPerGame()) + ", " + Round(entry.KillsAndAssistsPerDeath()));
+				if (currentOnly)
+					break;
 			}
 		}
 
