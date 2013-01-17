@@ -160,8 +160,8 @@ namespace LibOfLegendsExample
 				{"current-wld", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true, true), "<name>", "Analyse the current ranked statistics of the summoner given, sort by win/loss differnece")},
 				{"recent", new CommandInformation(1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"runes", new CommandInformation(1, RunePages, "<name>", "View rune pages")},
-				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false), "<name> <summoners names to exclude due to premades>", "Analyse the season 2 Elo of other players in normal games in the recent match history of the summoner given")},
-				{"ranked-s2", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true), "<name> <summoners names to exclude due to premades>", "Analyse the season 2 Elo of other players in ranked games in the recent match history of the summoner given")},
+				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT"), "<name> <summoners names to exclude due to premades>", "Analyse the Elo of other players in normal games in the recent match history of the summoner given")},
+				{"ranked-s2", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "TWO"), "<name> <summoners names to exclude due to premades>", "Analyse the season 2 Elo of other players in ranked games in the recent match history of the summoner given")},
 				{"test", new CommandInformation(1, RunTest, "<ID>", "Run summoner ID vs. account ID test")},
 			};
 		}
@@ -492,7 +492,7 @@ namespace LibOfLegendsExample
 			}
 		}
 
-		void AnalyseEnvironmentalRating(List<string> arguments, bool ranked)
+		void AnalyseEnvironmentalRating(List<string> arguments, bool ranked, string season)
 		{
 			if (arguments.Count == 0)
 				return;
@@ -551,7 +551,7 @@ namespace LibOfLegendsExample
 						return;
 					}
 
-					PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(summoner.acctId, "TWO");
+					PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(summoner.acctId, season);
 					if (lifeTimeStatistics == null)
 					{
 						Console.WriteLine("Unable to retrieve lifetime statistics for summoner {0}", name);
