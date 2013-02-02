@@ -10,6 +10,7 @@ namespace LibOfLegends
 	{
 		public readonly int Wins;
 		public readonly int Losses;
+		public readonly int Games;
 
 		public readonly int Kills;
 		public readonly int Deaths;
@@ -51,6 +52,7 @@ namespace LibOfLegends
 
 			Wins = Load("TOTAL_SESSIONS_WON");
 			Losses = Load("TOTAL_SESSIONS_LOST");
+			Games = Load("TOTAL_SESSIONS_PLAYED");
 
 			Kills = Load("TOTAL_CHAMPION_KILLS");
 			Deaths = Load("TOTAL_DEATHS_PER_SESSION");
@@ -89,29 +91,24 @@ namespace LibOfLegends
 			throw new Exception("Unable to find stat " + name + " for champion " + ChampionId);
 		}
 
-		public int Games()
-		{
-			return Wins + Losses;
-		}
-
 		public double WinRatio()
 		{
-			return (double)Wins / Games();
+			return (double)Wins / Games;
 		}
 
 		public double KillsPerGame()
 		{
-			return (double)Kills / Games();
+			return (double)Kills / Games;
 		}
 
 		public double DeathsPerGame()
 		{
-			return (double)Deaths / Games();
+			return (double)Deaths / Games;
 		}
 
 		public double AssistsPerGame()
 		{
-			return (double)Assists / Games();
+			return (double)Assists / Games;
 		}
 
 		public double KillsPerDeath()

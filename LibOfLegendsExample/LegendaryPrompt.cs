@@ -627,15 +627,9 @@ namespace LibOfLegendsExample
 
 		void RunTest(List<string> arguments)
 		{
-			int id = Convert.ToInt32(arguments[0]);
-
-			AllSummonerData summonerData = RPC.GetAllSummonerDataByAccount(id);
-			AllPublicSummonerDataDTO allSummonerData = RPC.GetAllPublicSummonerDataByAccount(id);
-			PlayerDTO findPlayerData = RPC.FindPlayer(id);
-
-			Console.WriteLine("getAllSummonerDataByAccount: {0}", summonerData != null);
-			Console.WriteLine("getAllPublicSummonerDataByAccount: {0}", allSummonerData != null);
-			Console.WriteLine("findPlayer: {0}", findPlayerData != null);
+			string summonerName = GetSummonerName(arguments[0]);
+			PublicSummoner publicSummoner = RPC.GetSummonerByName(summonerName);
+			AggregatedStats aggregatedStatistics = RPC.GetAggregatedStats(publicSummoner.acctId, "CLASSIC", "CURRENT");
 		}
 	}
 }
