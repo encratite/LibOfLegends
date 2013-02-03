@@ -14,7 +14,8 @@ namespace com.riotgames.platform.statistics
 		//Can be null so it must not have the right type right away, otherwise it will get converted to a bogus date
 		//public DateTime dodgePenaltyDate;
 		public object dodgePenaltyDate;
-		public string playerStatsJson;
+		//Appears to be null even though one might expect a string
+		public object playerStatsJson;
 		public PlayerStats playerStats;
 	}
 }

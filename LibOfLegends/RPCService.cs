@@ -12,10 +12,12 @@ using FluorineFx.Net;
 
 using com.riotgames.platform.clientfacade.domain;
 using com.riotgames.platform.gameclient.domain;
+using com.riotgames.platform.leagues.client.dto;
 using com.riotgames.platform.login;
 using com.riotgames.platform.statistics;
 using com.riotgames.platform.summoner;
 using com.riotgames.team.dto;
+using com.riotgames.leagues.pojo;
 
 namespace LibOfLegends
 {
@@ -41,6 +43,7 @@ namespace LibOfLegends
 		const string PlayerStatsService = "playerStatsService";
 		const string ClientFacadeService = "clientFacadeService";
 		const string SummonerTeamService = "summonerTeamService";
+		const string LeaguesServiceProxy = "leaguesServiceProxy";
 
 		#endregion
 
@@ -263,10 +266,15 @@ namespace LibOfLegends
 			Call(SummonerTeamService, "findPlayer", responder, arguments);
 		}
 
+		void GetAllLeaguesForPlayerInternal(Responder<SummonerLeaguesDTO> responder, object[] arguments)
+		{
+			Call(LeaguesServiceProxy, "getAllLeaguesForPlayer", responder, arguments);
+		}
+
 		//This call is not exposed to the outside
 		void GetLoginDataPacketForUserInternal(Responder<LoginDataPacket> responder)
 		{
-			Call( ClientFacadeService, "getLoginDataPacketForUser", responder, new object[] {});
+			Call(ClientFacadeService, "getLoginDataPacketForUser", responder, new object[] {});
 		}
 
 		#endregion
@@ -311,6 +319,11 @@ namespace LibOfLegends
 		public void FindPlayerAsync(int summonerID, Responder<PlayerDTO> responder)
 		{
 			FindPlayerInternal(responder, new object[] { summonerID });
+		}
+
+		public void GetAllLeaguesForPlayerAsync(int summonerID, Responder<SummonerLeaguesDTO> responder)
+		{
+			GetAllLeaguesForPlayerInternal(responder, new object[] { summonerID });
 		}
 
 		#endregion
@@ -364,6 +377,11 @@ namespace LibOfLegends
 				//This just means that the summoner ID was invalid
 				return null;
 			}
+		}
+
+		public SummonerLeaguesDTO GetAllLeaguesForPlayer(int summonerID)
+		{
+			return (new InternalCallContext<SummonerLeaguesDTO>(GetAllLeaguesForPlayerInternal, new object[] { summonerID })).Execute();
 		}
 
 		#endregion

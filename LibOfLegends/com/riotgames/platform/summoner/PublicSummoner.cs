@@ -10,7 +10,6 @@ namespace com.riotgames.platform.summoner
 		public string name;
 		public int acctId;
 		public int profileIconId;
-		public object summonerAssociatedTalents;
 		public DateTime revisionDate;
 		public int revisionId;
 		public int summonerLevel;

@@ -42,7 +42,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\FluorineFx.dll</HintPath>
     </Reference>
-    <Reference Include="LibOfLegends, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="LibOfLegends, Version=0.0.0.130, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\LibOfLegends\bin\Debug\LibOfLegends.dll</HintPath>
     </Reference>

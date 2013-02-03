@@ -6,7 +6,7 @@ namespace com.riotgames.platform.statistics
 {
 	public class LeaverPenaltyStats : AbstractDomainObject
 	{
-		//Unknown type
+		//Always null
 		public object lastLevelIncrease;
 		public int level;
 		public DateTime lastDecay;

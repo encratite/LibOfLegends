@@ -57,9 +57,14 @@
     <Compile Include="AuthResponse.cs" />
     <Compile Include="AuthService.cs" />
     <Compile Include="ChampionStatistics.cs" />
+    <Compile Include="com\riotgames\platform\leagues\client\dto\SummonerLeaguesDTO.cs" />
+    <Compile Include="com\riotgames\leagues\pojo\LeagueItemDTO.cs" />
+    <Compile Include="com\riotgames\leagues\pojo\LeagueListDTO.cs" />
+    <Compile Include="com\riotgames\leagues\pojo\MiniSeriesDTO.cs" />
     <Compile Include="com\riotgames\platform\clientfacade\domain\LoginDatapacket.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\AbstractDomainObject.cs" />
     <Compile Include="com\riotgames\platform\gameclient\domain\AllPublicSummonerDataDTO.cs" />
+    <Compile Include="com\riotgames\platform\login\Session.cs" />
     <Compile Include="com\riotgames\platform\statistics\AggregatedStat.cs" />
     <Compile Include="com\riotgames\platform\statistics\AggregatedStats.cs" />
     <Compile Include="com\riotgames\platform\statistics\AggregatedStatsKey.cs" />
@@ -79,7 +84,7 @@
     <Compile Include="com\riotgames\platform\gameclient\domain\Spell.cs" />
     <Compile Include="com\riotgames\platform\summoner\Summoner.cs" />
     <Compile Include="com\riotgames\platform\summoner\SummonerDefaultSpells.cs" />
-    <Compile Include="com\riotgames\platform\login\Login.cs" />
+    <Compile Include="com\riotgames\platform\login\AuthenticationCredentials.cs" />
     <Compile Include="com\riotgames\platform\statistics\PlayerGameStats.cs" />
     <Compile Include="com\riotgames\platform\statistics\RecentGames.cs" />
     <Compile Include="com\riotgames\platform\summoner\PublicSummoner.cs" />
