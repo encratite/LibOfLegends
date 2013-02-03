@@ -244,10 +244,17 @@ namespace LibOfLegendsExample
 				return;
 			}
 
-			Output.WriteLine("Name: " + publicSummoner.name);
-			Output.WriteLine("Account ID: " + publicSummoner.acctId);
-			Output.WriteLine("Summoner ID: " + publicSummoner.summonerId);
-			Output.WriteLine("Summoner level: " + publicSummoner.summonerLevel);
+			SummonerLeaguesDTO summonerLeagues = RPC.GetAllLeaguesForPlayer(publicSummoner.summonerId);
+
+			Output.WriteLine("Name: {0}", publicSummoner.name);
+			Output.WriteLine("Account ID: {0}", publicSummoner.acctId);
+			Output.WriteLine("Summoner ID: {0}", publicSummoner.summonerId);
+			Output.WriteLine("Summoner level: {0}", publicSummoner.summonerLevel);
+
+			foreach (var league in summonerLeagues.summonerLeagues)
+			{
+				Output.WriteLine("League ({0}): {1} {2} ({3})", league.queue, league.tier, league.requestorsRank, league.name);
+			}
 
 			string[] seasonStrings =
 			{
@@ -628,7 +635,8 @@ namespace LibOfLegendsExample
 		{
 			string summonerName = GetSummonerName(arguments[0]);
 			PublicSummoner publicSummoner = RPC.GetSummonerByName(summonerName);
-			SummonerLeaguesDTO league = RPC.GetAllLeaguesForPlayer(publicSummoner.summonerId);
+			//SummonerLeaguesDTO league = RPC.GetAllLeaguesForPlayer(publicSummoner.summonerId);
+			AllSummonerData data = RPC.GetAllSummonerDataByAccount(publicSummoner.acctId);
 		}
 	}
 }

@@ -1,9 +1,7 @@
 ﻿namespace com.riotgames.platform.gameclient.domain
 {
-	public class RawStat
+	public class RawStat : AbstractDomainObject
 	{
-		// Was removed
-		// public string displayName;
 		public string statType;
 		public int value;
 	}

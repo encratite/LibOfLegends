@@ -26,6 +26,10 @@ namespace LibOfLegends
 		public readonly int PhysicalDamageDealt;
 		public readonly int MagicalDamageDealt;
 
+		public readonly int TotalDamageDealtToChampions;
+		public readonly int PhysicalDamageDealtToChampions;
+		public readonly int MagicalDamageDealtToChampions;
+
 		public readonly int TotalDamageTaken;
 		public readonly int PhysicalDamageTaken;
 		public readonly int MagicalDamageTaken;
@@ -37,6 +41,9 @@ namespace LibOfLegends
 		public readonly int LargestKillingSpree;
 
 		public readonly int TimeSpentDead;
+
+		public readonly int SightWardsBought;
+		public readonly int VisionWardsBought;
 
 		//Summoner's Rift and Twisted Treeline specific
 
@@ -88,6 +95,10 @@ namespace LibOfLegends
 			PhysicalDamageDealt = Load("PHYSICAL_DAMAGE_DEALT_PLAYER");
 			MagicalDamageDealt = Load("MAGIC_DAMAGE_DEALT_PLAYER");
 
+			TotalDamageDealtToChampions = Load("TOTAL_DAMAGE_DEALT_TO_CHAMPIONS");
+			PhysicalDamageDealtToChampions = Load("PHYSICAL_DAMAGE_DEALT_TO_CHAMPIONS");
+			MagicalDamageDealtToChampions = Load("MAGIC_DAMAGE_DEALT_TO_CHAMPIONS");
+
 			TotalDamageTaken = Load("TOTAL_DAMAGE_TAKEN");
 			PhysicalDamageTaken = Load("PHYSICAL_DAMAGE_TAKEN");
 			MagicalDamageTaken = Load("MAGIC_DAMAGE_TAKEN");
@@ -99,6 +110,9 @@ namespace LibOfLegends
 			LargestKillingSpree = Load("LARGEST_KILLING_SPREE");
 
 			TimeSpentDead = Load("TOTAL_TIME_SPENT_DEAD");
+
+			SightWardsBought = Load("SIGHT_WARDS_BOUGHT_IN_GAME");
+			VisionWardsBought = Load("VISION_WARDS_BOUGHT_IN_GAME");
 
 			//Summoner's Rift and Twisted Treeline specific
 

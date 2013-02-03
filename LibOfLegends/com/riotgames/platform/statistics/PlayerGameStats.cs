@@ -13,8 +13,10 @@ namespace com.riotgames.platform.statistics
 		public List<FellowPlayerInfo> fellowPlayers;
 		public string gameType;
 		public int experienceEarned;
-		public string rawStatsJson;
+		// Always null
+		public object rawStatsJson;
 		public bool eligibleFirstWinOfDay;
+		// Always null
 		public object difficulty;
 		public int gameMapId;
 		public bool leaver;
@@ -41,13 +43,18 @@ namespace com.riotgames.platform.statistics
 		public int ipEarned;
 		public int eloChange;
 		public string gameMode;
-		public string difficultyString;
+		// Always null
+		public object difficultyString;
+		// Always 0
 		public int KCoefficient;
+		// Always 0
 		public int teamRating;
 		public string subType;
 		public string queueType;
 		public bool premadeTeam;
+		// Always 0
 		public double predictedWinPct;
+		// Always 0
 		public int rating;
 		public int championId;
 	}
