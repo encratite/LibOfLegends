@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
 
 using FluorineFx;
@@ -57,6 +58,13 @@ namespace LibOfLegends
 		AuthResponse AuthResponse;
 
 		#endregion
+
+		static RPCService()
+		{
+			// This is necessary to make FluorineFxMods only scan the current assembly to resolve types for deserialisation
+			// In the past this used to be REALLY slow
+			TypeHelper.AddTargetAssembly(Assembly.GetExecutingAssembly());
+		}
 
 		public RPCService(ConnectionProfile connectionData, ConnectCallbackType connectCallback, DisconnectCallbackType disconnectCallback = null, NetStatusCallbackType netStatusCallback = null)
 		{
