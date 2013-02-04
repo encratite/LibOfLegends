@@ -253,7 +253,25 @@ namespace LibOfLegendsExample
 
 			foreach (var league in summonerLeagues.summonerLeagues)
 			{
-				Output.WriteLine("League ({0}): {1} {2} ({3})", league.queue, league.tier, league.requestorsRank, league.name);
+				int? leaguePoints = null;
+				foreach (var entry in league.entries)
+				{
+					try
+					{
+						int id = Convert.ToInt32(entry.playerOrTeamId);
+						if (publicSummoner.summonerId == id)
+						{
+							leaguePoints = entry.leaguePoints;
+							break;
+						}
+					}
+					catch (Exception)
+					{
+						// playerOrTeamId may be a strange string like "TEAM-xxx" for team queue
+						break;
+					}
+				}
+				Output.WriteLine("League ({0}): {1} {2}, {3} LP ({4})", league.queue, league.tier, league.requestorsRank, leaguePoints == null ? "?" : leaguePoints.Value.ToString(), league.name);
 			}
 
 			string[] seasonStrings =
@@ -362,7 +380,7 @@ namespace LibOfLegendsExample
 							break;
 					}
 				}
-				Console.WriteLine(", {0}, {1}/{2}/{3}", GetChampionName(stats.championId), result.Kills, result.Deaths, result.Assists);
+				Console.WriteLine(", {0}, {1}/{2}/{3}, {4}/{5} wards", GetChampionName(stats.championId), result.Kills, result.Deaths, result.Assists, result.SightWardsBought, result.VisionWardsBought);
 				List<string> units = new List<string>();
 				if (stats.adjustedRating != 0)
 					units.Add(string.Format("Rating: {0} ({1})", stats.rating + stats.eloChange, SignPrefix(stats.eloChange)));

@@ -8,7 +8,7 @@ namespace com.riotgames.leagues.pojo
 		public string name;
 		public string tier;
 		public string requestorsRank;
-		public List<object> entries;
+		public List<LeagueItemDTO> entries;
 		public string requestorsName;
 	}
 }

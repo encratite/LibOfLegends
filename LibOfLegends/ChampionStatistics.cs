@@ -8,7 +8,9 @@ namespace LibOfLegends
 {
 	public class ChampionStatistics
 	{
+		// Always 0 now
 		public readonly int Wins;
+		// Always 0 now
 		public readonly int Losses;
 		public readonly int Games;
 
@@ -33,10 +35,22 @@ namespace LibOfLegends
 		public readonly int QuadraKills;
 		public readonly int PentaKills;
 
+		// Same as penta kills, I think
+		public readonly int UnrealKills;
+
 		public readonly int TimeSpentDead;
 
 		public readonly int MaximumKills;
 		public readonly int MaximumDeaths;
+
+		// Not sure, I think it was the same as MaximumKills
+		public readonly int MostChampionKillsPerSession;
+
+		// Always 0
+		public readonly int FirstBlood;
+
+		// Always 0
+		public readonly int SpellsCast;
 
 		public readonly int ChampionId;
 
@@ -75,10 +89,18 @@ namespace LibOfLegends
 			QuadraKills = Load("TOTAL_QUADRA_KILLS");
 			PentaKills = Load("TOTAL_PENTA_KILLS");
 
+			UnrealKills = Load("TOTAL_UNREAL_KILLS");
+
 			TimeSpentDead = Load("TOTAL_TIME_SPENT_DEAD");
 
 			MaximumKills = Load("MAX_CHAMPIONS_KILLED");
 			MaximumDeaths = Load("MAX_NUM_DEATHS");
+
+			MostChampionKillsPerSession = Load("MOST_CHAMPION_KILLS_PER_SESSION");
+
+			FirstBlood = Load("TOTAL_FIRST_BLOOD");
+
+			SpellsCast = Load("MOST_SPELLS_CAST");
 		}
 
 		int Load(string name)
