@@ -516,6 +516,95 @@ namespace LibOfLegendsExample
 			}
 		}
 
+		class LeagueRating : IComparable<LeagueRating>
+		{
+			public readonly string SummonerName;
+			public readonly string TierString;
+			public readonly string RankString;
+			int Tier;
+			int Rank;
+			public readonly ConsoleColor Colour;
+
+			public LeagueRating(string summonerName, string tierString, string rankString)
+			{
+				SummonerName = summonerName;
+				TierString = tierString;
+				RankString = rankString;
+
+				switch (tierString)
+				{
+					case "BRONZE":
+						Tier = 1;
+						Colour = ConsoleColor.Gray;
+						break;
+
+					case "SILVER":
+						Tier = 2;
+						Colour = ConsoleColor.DarkGray;
+						break;
+
+					case "GOLD":
+						Tier = 3;
+						Colour = ConsoleColor.DarkYellow;
+						break;
+
+					case "PLATINUM":
+						Tier = 4;
+						Colour = ConsoleColor.DarkCyan;
+						break;
+
+					case "DIAMOND":
+						Tier = 5;
+						Colour = ConsoleColor.White;
+						break;
+
+					case "CHALLENGER":
+						Tier = 6;
+						Colour = ConsoleColor.Yellow;
+						break;
+
+					default:
+						throw new Exception(string.Format("Unknown tier: {0}", tierString));
+				}
+
+				switch (rankString)
+				{
+					case "I":
+						Rank = 1;
+						break;
+
+					case "II":
+						Rank = 2;
+						break;
+
+					case "III":
+						Rank = 3;
+						break;
+
+					case "IV":
+						Rank = 4;
+						break;
+
+					case "V":
+						Rank = 5;
+						break;
+
+					default:
+						throw new Exception(string.Format("Unknown rank: {0}", rankString));
+				}
+			}
+
+			public int GetRating()
+			{
+				return Tier * 3 + 5 - Rank;
+			}
+
+			public int CompareTo(LeagueRating otherRating)
+			{
+				return GetRating() - otherRating.GetRating();
+			}
+		}
+
 		void AnalyseEnvironmentalRating(List<string> arguments, bool ranked, string season)
 		{
 			if (arguments.Count == 0)
@@ -534,8 +623,7 @@ namespace LibOfLegendsExample
 			}
 
 			var knownSummoners = new HashSet<string>();
-			var currentRatings = new List<int>();
-			var topRatings = new List<int>();
+			var ratings = new List<LeagueRating>();
 			int gameCount = 0;
 
 			foreach (var stats in recentGames)
@@ -568,6 +656,7 @@ namespace LibOfLegendsExample
 					if (knownSummoners.Contains(name))
 						continue;
 					knownSummoners.Add(name);
+					Console.WriteLine("Checking {0}", name);
 					PublicSummoner summoner = RPC.GetSummonerByName(name);
 					if (summoner == null)
 					{
@@ -575,55 +664,40 @@ namespace LibOfLegendsExample
 						return;
 					}
 
-					PlayerLifeTimeStats lifeTimeStatistics = RPC.RetrievePlayerStatsByAccountID(summoner.acctId, season);
-					if (lifeTimeStatistics == null)
+					SummonerLeaguesDTO leagues = RPC.GetAllLeaguesForPlayer(summoner.summonerId);
+					if (leagues == null)
 					{
-						Console.WriteLine("Unable to retrieve lifetime statistics for summoner {0}", name);
+						Console.WriteLine("Unable to retrieve leagues for summoner {0}", name);
 						return;
 					}
 
-					List<PlayerStatSummary> summaries = lifeTimeStatistics.playerStatSummaries.playerStatSummarySet;
-					const string target = "RankedSolo5x5";
-					foreach (var summary in summaries)
+					const string target = "RANKED_SOLO_5x5";
+					foreach (var league in leagues.summonerLeagues)
 					{
-						if (summary.playerStatSummaryType == target)
-						{
-							int games = summary.wins + summary.losses;
-							if (games == 0)
-								break;
-
-							Console.Write("{0}: ", name);
-							if (summary.maxRating >= 2200)
-								Console.ForegroundColor = ConsoleColor.White;
-							else if (summary.maxRating >= 1850)
-								Console.ForegroundColor = ConsoleColor.DarkCyan;
-							else if (summary.maxRating >= 1500)
-								Console.ForegroundColor = ConsoleColor.DarkYellow;
-							else if (summary.maxRating < 1150 && summary.maxRating != 0)
-								Console.ForegroundColor = ConsoleColor.DarkGray;
-							Console.Write("{0} (top {1}), ", summary.rating, summary.maxRating);
-							Console.ResetColor();
-							Console.Write("{0} W - {1} L ({2})", summary.wins, summary.losses, SignPrefix(summary.wins - summary.losses));
-							if (summary.leaves > 0)
-								Console.Write(", left {0} {1}", summary.leaves, (summary.leaves > 1 ? "games" : "game"));
-							Console.WriteLine("");
-
-							currentRatings.Add(summary.rating);
-							topRatings.Add(summary.maxRating);
-							break;
-						}
+						if (league.queue != target)
+							continue;
+						LeagueRating rating = new LeagueRating(name, league.tier, league.requestorsRank);
+						Console.ForegroundColor = rating.Colour;
+						Console.WriteLine("{0}: {1} {2}", rating.SummonerName, rating.TierString, rating.RankString);
+						Console.ForegroundColor = ConsoleColor.Gray;
+						ratings.Add(rating);
 					}
+					//Thread.Sleep(15000);
 				}
 			}
 
-			currentRatings.Sort();
-			topRatings.Sort();
+			if(gameCount == 0)
+			{
+				Console.WriteLine("No games found");
+				return;
+			}
 
-			PrintRatings("Current ratings", currentRatings);
-			PrintRatings("Top ratings", topRatings);
+			LeagueRating median = ratings[ratings.Count / 2];
+
+			Console.WriteLine("Median: {0} {1}", median.TierString, median.RankString);
 			
 			int playerCount = 9 * gameCount;
-			int rankedPlayers = topRatings.Count;
+			int rankedPlayers = ratings.Count;
 			float rankedRatio = (float)rankedPlayers / playerCount;
 			Console.WriteLine("Ranked players: {0}/{1} ({2:F1}%)", rankedPlayers, playerCount, rankedRatio * 100);
 		}

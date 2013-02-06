@@ -50,7 +50,7 @@ namespace LibOfLegends
 		public readonly int FirstBlood;
 
 		// Always 0
-		public readonly int SpellsCast;
+		//public readonly int SpellsCast;
 
 		public readonly int ChampionId;
 
@@ -100,7 +100,7 @@ namespace LibOfLegends
 
 			FirstBlood = Load("TOTAL_FIRST_BLOOD");
 
-			SpellsCast = Load("MOST_SPELLS_CAST");
+			//SpellsCast = Load("MOST_SPELLS_CAST");
 		}
 
 		int Load(string name)
