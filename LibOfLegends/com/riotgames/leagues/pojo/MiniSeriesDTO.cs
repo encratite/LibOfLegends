@@ -6,7 +6,7 @@ namespace com.riotgames.leagues.pojo
 	{
 		public int target;
 		public int losses;
-		public int timeLeftToPlayMillis;
+		public long timeLeftToPlayMillis;
 		public int wins;
 	}
 }

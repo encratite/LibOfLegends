@@ -518,16 +518,16 @@ namespace LibOfLegendsExample
 
 		class LeagueRating : IComparable<LeagueRating>
 		{
-			public readonly string SummonerName;
+			public readonly int SummonerId;
 			public readonly string TierString;
 			public readonly string RankString;
 			int Tier;
 			int Rank;
 			public readonly ConsoleColor Colour;
 
-			public LeagueRating(string summonerName, string tierString, string rankString)
+			public LeagueRating(int summonerId, string tierString, string rankString)
 			{
-				SummonerName = summonerName;
+				SummonerId = summonerId;
 				TierString = tierString;
 				RankString = rankString;
 
@@ -610,9 +610,6 @@ namespace LibOfLegendsExample
 			if (arguments.Count == 0)
 				return;
 			string summonerName = GetSummonerName(arguments[0]);
-			var excludedNames = new List<string>();
-			for (int i = 1; i < arguments.Count; i++)
-				excludedNames.Add(GetSummonerName(arguments[i]));
 			PublicSummoner publicSummoner = new PublicSummoner();
 			List<PlayerGameStats> recentGames = new List<PlayerGameStats>();
 			bool foundSummoner = GetRecentGames(summonerName, ref publicSummoner, ref recentGames);
@@ -622,7 +619,7 @@ namespace LibOfLegendsExample
 				return;
 			}
 
-			var knownSummoners = new HashSet<string>();
+			var knownSummoners = new HashSet<int>();
 			var ratings = new List<LeagueRating>();
 			int gameCount = 0;
 
@@ -635,39 +632,19 @@ namespace LibOfLegendsExample
 					(ranked && stats.queueType != "RANKED_SOLO_5x5")
 					)
 					continue;
-				var ids = new List<int>();
-				foreach (var fellowPlayer in stats.fellowPlayers)
-					ids.Add(fellowPlayer.summonerId);
-				var names = RPC.GetSummonerNames(ids);
-				bool isValidGame = true;
-				foreach (var name in excludedNames)
-				{
-					if (names.IndexOf(name) >= 0)
-					{
-						isValidGame = false;
-						break;
-					}
-				}
-				if (!isValidGame)
-					continue;
 				gameCount++;
-				foreach (var name in names)
+				foreach (var fellowPlayer in stats.fellowPlayers)
 				{
-					if (knownSummoners.Contains(name))
+					int summonerId = fellowPlayer.summonerId;
+					if (knownSummoners.Contains(summonerId))
 						continue;
-					knownSummoners.Add(name);
-					Console.WriteLine("Checking {0}", name);
-					PublicSummoner summoner = RPC.GetSummonerByName(name);
-					if (summoner == null)
-					{
-						Console.WriteLine("Unable to load summoner {0}", name);
-						return;
-					}
+					knownSummoners.Add(summonerId);
+					Console.WriteLine("Checking {0}", summonerId);
 
-					SummonerLeaguesDTO leagues = RPC.GetAllLeaguesForPlayer(summoner.summonerId);
+					SummonerLeaguesDTO leagues = RPC.GetAllLeaguesForPlayer(summonerId);
 					if (leagues == null)
 					{
-						Console.WriteLine("Unable to retrieve leagues for summoner {0}", name);
+						Console.WriteLine("Unable to retrieve leagues for summoner {0}", summonerId);
 						return;
 					}
 
@@ -676,9 +653,9 @@ namespace LibOfLegendsExample
 					{
 						if (league.queue != target)
 							continue;
-						LeagueRating rating = new LeagueRating(name, league.tier, league.requestorsRank);
+						LeagueRating rating = new LeagueRating(summonerId, league.tier, league.requestorsRank);
 						Console.ForegroundColor = rating.Colour;
-						Console.WriteLine("{0}: {1} {2}", rating.SummonerName, rating.TierString, rating.RankString);
+						Console.WriteLine("{0}: {1} {2}", rating.SummonerId, rating.TierString, rating.RankString);
 						Console.ForegroundColor = ConsoleColor.Gray;
 						ratings.Add(rating);
 					}
