@@ -155,14 +155,14 @@ namespace LibOfLegendsExample
 				{"quit", new CommandInformation(0, Quit, "", "Terminates the application")},
 				{"help", new CommandInformation(0, PrintHelp, "", "Prints this help")},
 				{"profile", new CommandInformation(1, AnalyseSummonerProfile, "<name>", "Retrieve general information about the summoner with the specified name")},
-				{"ranked", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, false, false), "<name>", "Analyse the ranked statistics of the summoner given")},
-				{"ranked-games", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true, false), "<name>", "Analyse the ranked statistics of the summoner given, sort by win/loss differnece")},
+				{"ranked-all", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, false, false), "<name>", "Analyse the ranked statistics of the summoner given")},
+				{"ranked-all-games", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true, false), "<name>", "Analyse the ranked statistics of the summoner given, sort by win/loss differnece")},
 				{"current", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, false, true), "<name>", "Analyse the current ranked statistics of the summoner given")},
 				{"current-games", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true, true), "<name>", "Analyse the current ranked statistics of the summoner given, sort by win/loss differnece")},
 				{"recent", new CommandInformation(1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"runes", new CommandInformation(1, RunePages, "<name>", "View rune pages")},
-				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT"), "<name> <summoners names to exclude due to premades>", "Analyse the Elo of other players in normal games in the recent match history of the summoner given")},
-				{"ranked-s2", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "TWO"), "<name> <summoners names to exclude due to premades>", "Analyse the season 2 Elo of other players in ranked games in the recent match history of the summoner given")},
+				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT"), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in normal games in the recent match history of the summoner given")},
+				{"ranked", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "CURRENT"), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in ranked games in the recent match history of the summoner given")},
 				{"test", new CommandInformation(1, RunTest, "<ID>", "Run summoner ID vs. account ID test")},
 			};
 		}
@@ -690,7 +690,9 @@ namespace LibOfLegendsExample
 				return;
 			}
 
-			LeagueRating median = ratings[ratings.Count / 2];
+			ratings.Sort();
+
+			LeagueRating median = ratings[ratings.Count / 2 + ratings.Count % 2];
 
 			Console.Write("Median: ", median.TierString, median.RankString);
 			Console.ForegroundColor = median.Colour;
