@@ -330,7 +330,10 @@ namespace LibOfLegendsExample
 			foreach (var stats in recentGames)
 			{
 				GameResult result = new GameResult(stats);
-				Console.Write("[{0}] [{1}] [{2}] ", stats.gameId, stats.createDate, result.Win ? "W" : "L");
+				Console.Write("[{0}] [{1}] ", stats.gameId, stats.createDate);
+				Console.ForegroundColor = result.Win ? ConsoleColor.Green : ConsoleColor.Red;
+				Console.Write("[{0}] ", result.Win ? "W" : "L");
+				Console.ForegroundColor = ConsoleColor.Gray;
 				if (stats.ranked)
 					Console.Write("Ranked ");
 				if (stats.gameType == "PRACTICE_GAME")
@@ -381,7 +384,14 @@ namespace LibOfLegendsExample
 							break;
 					}
 				}
-				Console.WriteLine(", {0}, {1}/{2}/{3}, {4}/{5} wards", GetChampionName(stats.championId), result.Kills, result.Deaths, result.Assists, result.SightWardsBought, result.VisionWardsBought);
+				Console.WriteLine(", {0}, {1}/{2}/{3}", GetChampionName(stats.championId), result.Kills, result.Deaths, result.Assists);
+				if (stats.premadeSize > 1)
+				{
+					Console.ForegroundColor = ConsoleColor.Magenta;
+					Console.Write("Queued with {0}", stats.premadeSize);
+					Console.ForegroundColor = ConsoleColor.Gray;
+					Console.Write(", ");
+				}
 				List<string> units = new List<string>();
 				if (stats.adjustedRating != 0)
 					units.Add(string.Format("Rating: {0} ({1})", stats.rating + stats.eloChange, SignPrefix(stats.eloChange)));
@@ -394,12 +404,11 @@ namespace LibOfLegendsExample
 					units.Add(string.Format("K coefficient {0}", stats.KCoefficient));
 				if (stats.predictedWinPct != 0.0)
 					units.Add(string.Format("Predicted winning percentage {0}", Percentage(stats.predictedWinPct)));
-				if (stats.premadeSize > 1)
-					units.Add(string.Format("Queued with {0}", stats.premadeSize));
 				if (stats.leaver)
 					units.Add("Left the game");
 				if (stats.afk)
 					units.Add("AFK");
+				units.Add(string.Format("{0}/{1} wards", result.SightWardsBought, result.VisionWardsBought));
 				units.Add(string.Format("{0} ms ping", stats.userServerPing));
 				units.Add(string.Format("{0} s spent in queue", stats.timeInQueue));
 				PrintUnits(units);
