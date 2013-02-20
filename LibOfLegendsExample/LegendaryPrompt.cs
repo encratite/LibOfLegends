@@ -161,8 +161,9 @@ namespace LibOfLegendsExample
 				{"current-games", new CommandInformation(1, (List<string> arguments) => RankedStatistics(arguments, true, true), "<name>", "Analyse the current ranked statistics of the summoner given, sort by win/loss differnece")},
 				{"recent", new CommandInformation(1, AnalyseRecentGames, "<name>", "Analyse the recent games of the summoner given")},
 				{"runes", new CommandInformation(1, RunePages, "<name>", "View rune pages")},
-				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT"), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in normal games in the recent match history of the summoner given")},
-				{"ranked", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "CURRENT"), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in ranked games in the recent match history of the summoner given")},
+				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT", false), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in normal games in the recent match history of the summoner given")},
+				{"ranked", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "CURRENT", false), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in ranked games in the recent match history of the summoner given")},
+				{"last-normal", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT", true), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in the last normal game in the recent match history of the summoner given")},
 				{"test", new CommandInformation(1, RunTest, "<ID>", "Run summoner ID vs. account ID test")},
 			};
 		}
@@ -596,16 +597,16 @@ namespace LibOfLegendsExample
 
 			public int GetRating()
 			{
-				return Tier * 3 + 5 - Rank;
+				return Tier * 5 + 5 - Rank;
 			}
 
 			public int CompareTo(LeagueRating otherRating)
 			{
-				return GetRating() - otherRating.GetRating();
+				return GetRating().CompareTo(otherRating.GetRating());
 			}
 		}
 
-		void AnalyseEnvironmentalRating(List<string> arguments, bool ranked, string season)
+		void AnalyseEnvironmentalRating(List<string> arguments, bool ranked, string season, bool lastGameMode)
 		{
 			if (arguments.Count == 0)
 				return;
@@ -670,6 +671,7 @@ namespace LibOfLegendsExample
 						return;
 					}
 
+					bool isRanked = false;
 					const string target = "RANKED_SOLO_5x5";
 					foreach (var league in leagues.summonerLeagues)
 					{
@@ -680,8 +682,14 @@ namespace LibOfLegendsExample
 						Console.WriteLine("{0}: {1} {2}", rating.SummonerName, rating.TierString, rating.RankString);
 						Console.ForegroundColor = ConsoleColor.Gray;
 						ratings.Add(rating);
+						isRanked = true;
+						break;
 					}
+					if(!isRanked)
+						Console.WriteLine("{0}: unranked", summoner.name);
 				}
+				if (lastGameMode)
+					break;
 			}
 
 			if (gameCount == 0)
