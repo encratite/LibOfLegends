@@ -164,6 +164,7 @@ namespace LibOfLegendsExample
 				{"normals", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT", false), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in normal games in the recent match history of the summoner given")},
 				{"ranked", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "CURRENT", false), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in ranked games in the recent match history of the summoner given")},
 				{"last-normal", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT", true), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in the last normal game in the recent match history of the summoner given")},
+				{"last-ranked", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "CURRENT", true), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in the last ranked game in the recent match history of the summoner given")},
 				{"test", new CommandInformation(1, RunTest, "<ID>", "Run summoner ID vs. account ID test")},
 			};
 		}
