@@ -870,6 +870,14 @@
     </Item>
     <Item>
       <Key>
+        <int>133</int>
+      </Key>
+      <Value>
+        <string>Quinn</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
         <int>134</int>
       </Key>
       <Value>
@@ -898,6 +906,14 @@
       </Key>
       <Value>
         <string>Nami</string>
+      </Value>
+    </Item>
+    <Item>
+      <Key>
+        <int>412</int>
+      </Key>
+      <Value>
+        <string>Thresh</string>
       </Value>
     </Item>
   </ChampionNames>
