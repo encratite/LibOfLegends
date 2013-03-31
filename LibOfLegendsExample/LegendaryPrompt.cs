@@ -165,6 +165,7 @@ namespace LibOfLegendsExample
 				{"ranked", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "CURRENT", false), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in ranked games in the recent match history of the summoner given")},
 				{"last-normal", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, false, "CURRENT", true), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in the last normal game in the recent match history of the summoner given")},
 				{"last-ranked", new CommandInformation(-1, (List<string> arguments) => AnalyseEnvironmentalRating(arguments, true, "CURRENT", true), "<name> <summoners names to exclude due to premades>", "Analyse the ranked leagues of other players in the last ranked game in the recent match history of the summoner given")},
+				{"summoner-id", new CommandInformation(1, AnalyseSummonerId, "<ID>", "Retrieve the name and the account ID of a summoner based on their summoner ID")},
 				{"test", new CommandInformation(1, RunTest, "<ID>", "Run summoner ID vs. account ID test")},
 			};
 		}
@@ -742,6 +743,24 @@ namespace LibOfLegendsExample
 			}
 			int median = ratings[ratings.Count / 2];
 			Console.WriteLine(" (median {0})", median);
+		}
+
+		void AnalyseSummonerId(List<string> arguments)
+		{
+			int summonerId = Convert.ToInt32(arguments[0]);
+			List<int> summonerIds = new List<int>();
+			summonerIds.Add(summonerId);
+			var names = RPC.GetSummonerNames(summonerIds);
+			if (names == null)
+			{
+				Console.WriteLine("Invalid ID");
+				return;
+			}
+			foreach (var name in names)
+			{
+				PublicSummoner publicSummoner = RPC.GetSummonerByName(name);
+				Console.WriteLine("{0} ({1})", publicSummoner.name, publicSummoner.acctId);
+			}
 		}
 
 		void RunTest(List<string> arguments)
